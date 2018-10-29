@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package grpc;
+
+//option optimize_for = LITE_RUNTIME;
+
+
+//地理位置信息
+message LocationInfo {
+	string country = 1; //国家
+	string province = 2; //省份
+	string city = 3; //市区	
+}
+
+//平台类型
+enum PlatFormType {
+	PLAT_IOS = 0;
+	PLAT_ANDROID = 1;
+	PLAT_PC = 2;
+}
+
+//数据来源
+enum DataFromType {
+	FROM_IOS = 0;
+	FROM_ANDROID = 1;
+	FROM_PC = 2;
+	FROM_PHP_SERVER = 3;
+	FROM_IM_SERVER = 4;
+}
+
+// 统计服务接口
+service Statistic {
+	rpc UpdateUserContext (UserContexts) returns (CommonRsp) {}; //用户上下文更新接口
+	rpc PushUserAction (UserActions) returns (CommonRsp) {};  //用户行为统计接口
+}
+
+message CommonRsp {
+  string  sMsgId = 1;	//消息ID
+  uint32  nErrCode = 2;  //0-成功 1-失败
+  string  sErrMessage = 3;
+}
+
+//用户上下文消息体
+message UserContext {
+  string sUserId = 1; //用户ID
+  LocationInfo location = 2; //地理位置信息
+  string sDeviceId  = 3; //设备ID
+  string sAppId = 4; //AppID
+  string sAppVersion = 5; //App版本
+  string sDeviceBrand = 6; //设备品牌
+  string sDeviceModel = 7; //设备信号
+  PlatFormType PlatForm = 8; //平台类型
+  string sOsVersion = 9; //固件版本
+  string sSysLang = 10; //系统语言
+  uint32 nAppChannel = 11; //安装渠道--参考<<统计服务数据说明.docx>> app_channel_code
+  string sIP = 12; //设备IP
+}
+message UserContexts {
+	string sMsgId = 1; //消息ID
+	repeated UserContext contexts = 2; //用户上下文集合
+}
+
+//用户行为消息体
+message UserAction {
+	string sUserId = 1; //用户ID
+	string sActionType = 2; /*用户行为类型--参考<<统计服务数据说明.docx>> 用户行为类型表，jason格式
+							eg: { "LV1":{
+										  "value":1,
+										  "LV2":{
+										  "value":1
+										  }
+										}
+								}*/
+	string sContent = 3; //用户行为内容jason格式
+	string sGroupId = 4; //群组ID,群行为时赋值
+	DataFromType Data_From = 5; //数据来源
+	string sDescription = 6; //行为描述
+}
+
+message UserActions {
+	string sMsgId = 1; //消息ID
+	repeated UserAction actions = 2; //用户行为集合
+}
+

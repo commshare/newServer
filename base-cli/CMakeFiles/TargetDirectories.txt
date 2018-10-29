@@ -1,0 +1,3 @@
+/home/thz/IM/base-cli/CMakeFiles/rebuild_cache.dir
+/home/thz/IM/base-cli/CMakeFiles/edit_cache.dir
+/home/thz/IM/base-cli/CMakeFiles/base-cli.dir

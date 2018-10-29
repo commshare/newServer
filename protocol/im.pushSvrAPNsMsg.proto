@@ -1,0 +1,55 @@
+﻿syntax = "proto3";
+
+package im;
+import "im.pub.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+//payloadMsg的消息格式
+//message PayloadMsg
+//{
+//
+//}
+
+////////////////////////////////////////////////////////////////////////
+//APNS_PUSH						= 0xd001; //推送消息
+////////////////////////////////////////////////////////////////////////
+//服务器之间交互消息内容
+message PSvrMsg
+{
+	MsgType eMsgType 			= 1;				// 消息类型 详见enum MsgType
+	string  sMsgId				= 2; 				//Generated uuid by APP Id;
+	uint32	nGroupId			= 3;				//群id			
+	string 	sFromId				= 4;				//send user id
+	string sToId				= 5;				//receive user id
+	uint32	uDeviceVer			= 6;				//设备版本信息
+	string sToToken				= 7;				//receive token
+	string 	sBody 				= 8;				// 消息内容	
+	uint32  nUnreadNotifyMsgCount		= 9;			// 未读的推送消息的数目
+}
+
+//业务服务器--------------pushServer服务器------------------APNs服务器
+//<-----------PSvrMsgAck--
+//APNS_PUSH_ACK=0xd002
+message PSvrMsgAck{
+	string  sMsgId				= 1;				// Generated uuid by APP Id;
+	ErrCode	nErr				= 2;				//协议正确与否
+}
+
+// apns返回，通知给消息服务器的信息
+//APNS_NOTIFY= 0xd004;pushServer(APNS)通知消息推送状态
+message PSvrAPNsRespone
+{
+	string  sMsgId				= 1;  				//Generated uuid by APP Id;
+	string 	sToId				= 2;				//receive user id
+	ErrCode	nErr		 		= 3;				//error code
+}
+
+//APNS_NOTIFY_ACK= 0xd005;//业务服务器应答 
+message PSvrAPNsNotifyAck
+{
+	string  sMsgId				= 1;  				//Generated uuid by APP Id;
+	string 	sToId				= 2;				//receive user id
+	ErrCode	nErr		 		= 3;				//error code
+}
+

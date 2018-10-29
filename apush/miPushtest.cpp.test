@@ -1,0 +1,152 @@
+#include "ssl_post_impl.h"
+#include "base_client.h"
+#include "mainframe.h"
+
+#include "mi_push_client.h"
+
+/*
+class CMiPushClient : public CBaseClient
+{
+public:
+	bool Init() 
+	{
+		m_pPostPoolMgr = new CPostPoolMgr;
+		if (!m_pPostPoolMgr)
+		{
+			ErrLog("m_pPostPoolMgr is null");
+			return false;
+		}
+
+		return Regist();
+	};
+
+	bool Regist()
+	{
+		m_pManage =  CApushLocalManager::GetInstance();
+		if (!m_pManage)
+		{
+			ErrLog("CApushLocalSvr Initialize");
+			return false;
+		}
+
+		if (!m_pManage->RegistClient(this, XM_PUSH))
+		{
+			ErrLog("CApushLocalSvr StartApp");
+			return false;
+		}
+
+		return true;
+	};
+
+	void Start()
+	{
+		if (!m_pPostPoolMgr)
+		{
+			ErrLog("m_pPostPoolMgr is nullptr");
+			return;
+		}
+		m_pPostPoolMgr->Init(10, CBaseClient::OnNotifyCallBack, this, "api.xmpush.xiaomi.com", 443);
+	}
+	
+	void Stop()
+	{ };
+
+	int AddTask(shared_ptr<APushData> data)
+	{
+		m_pPostPoolMgr->Post(data);
+	}
+	
+	
+private:
+
+	/*
+	uint16_t	m_uConnectNum;
+	uint16_t	m_uMaxConnectNum;
+
+	
+	CApushLocalManager *m_pManage;
+	
+
+	CPostPoolMgr *m_pPostPoolMgr;
+};
+*/
+
+void *epollThreadRun(void * arg)
+{ 
+	CSslEventDispatch::Instance()->StartDispatch();
+}
+
+int ___main()
+{
+
+	SSL_library_init();
+	OpenSSL_add_all_algorithms();
+	SSL_load_error_strings();
+
+	init_locks();
+
+
+	pthread_t tid;
+	pthread_create(&tid, nullptr, epollThreadRun, nullptr);
+
+
+	string strHead = "POST /v2/message/alias HTTP/1.1\r\n"
+		"authorization: key=mo1RvQlyn7lCTeGe1i/S+g==\r\n"
+		"Host: api.xmpush.xiaomi.com\r\n"
+		//"Accept: */*\r\n"
+		"Content-Type:  application/x-www-form-urlencoded\r\n"
+		"Content-Length: %d\r\n"
+		"\n%s\r\n";
+
+	string strData = "alias=liulang001&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&title=title&description=description&payload=this+is+xiaomi+push";
+
+
+	CMiPushClient client(nullptr);
+
+	client.Init();
+
+	client.Start();
+	static int count = 0;
+
+	while (count < 10)
+	{
+		shared_ptr<APushData> ptrData(new APushData);
+
+		APushData *pdata = ptrData.get();
+
+	//strData = rfc1738_encode(strData);
+
+
+		char data[1024];
+
+		sprintf(data, strHead.c_str(), strData.size(), strData.c_str());
+
+		pdata->sendBuf = data;
+
+		int iRet = client.AddTask(ptrData);
+
+		if (iRet <= 0)
+		{
+			InfoLog("AddTask");
+			//break;
+		}
+		//string strEnd = "\r\n";
+		//pdata->sendBuf = strEnd;
+		//client.AddTask(ptrData);
+
+		usleep(1000);
+
+		InfoLog("count:%d\n", ++count);
+	}
+
+
+
+	while (1)
+	{
+		sleep(10);
+	}
+	return 0;
+}
+
+
+//

@@ -1,0 +1,4 @@
+/home/thz/IM/client/CMakeFiles/rebuild_cache.dir
+/home/thz/IM/client/CMakeFiles/edit_cache.dir
+/home/thz/IM/client/CMakeFiles/client2.dir
+/home/thz/IM/client/CMakeFiles/client.dir

@@ -1,0 +1,40 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/base-cli.dir/Base64.cpp.o"
+  "CMakeFiles/base-cli.dir/BaseSocket.cpp.o"
+  "CMakeFiles/base-cli.dir/Condition.cpp.o"
+  "CMakeFiles/base-cli.dir/ConfigFileReader.cpp.o"
+  "CMakeFiles/base-cli.dir/EncDec.cpp.o"
+  "CMakeFiles/base-cli.dir/EventDispatch.cpp.o"
+  "CMakeFiles/base-cli.dir/HttpClient.cpp.o"
+  "CMakeFiles/base-cli.dir/HttpParserWrapper.cpp.o"
+  "CMakeFiles/base-cli.dir/ImPduBase.cpp.o"
+  "CMakeFiles/base-cli.dir/Lock.cpp.o"
+  "CMakeFiles/base-cli.dir/ServInfo.cpp.o"
+  "CMakeFiles/base-cli.dir/Thread.cpp.o"
+  "CMakeFiles/base-cli.dir/ThreadPool.cpp.o"
+  "CMakeFiles/base-cli.dir/TokenValidator.cpp.o"
+  "CMakeFiles/base-cli.dir/UtilPdu.cpp.o"
+  "CMakeFiles/base-cli.dir/http_parser.cpp.o"
+  "CMakeFiles/base-cli.dir/im_conn_util.cpp.o"
+  "CMakeFiles/base-cli.dir/imconn.cpp.o"
+  "CMakeFiles/base-cli.dir/log4z.cpp.o"
+  "CMakeFiles/base-cli.dir/netlib.cpp.o"
+  "CMakeFiles/base-cli.dir/util.cpp.o"
+  "CMakeFiles/base-cli.dir/pb/im.cm.pb.cc.o"
+  "CMakeFiles/base-cli.dir/pb/im.group.pb.cc.o"
+  "CMakeFiles/base-cli.dir/pb/im.mes.pb.cc.o"
+  "CMakeFiles/base-cli.dir/pb/im.pub.pb.cc.o"
+  "CMakeFiles/base-cli.dir/pb/im.push.android.pb.cc.o"
+  "CMakeFiles/base-cli.dir/pb/im.pushSvrAPNsMsg.pb.cc.o"
+  "CMakeFiles/base-cli.dir/pb/im.sig.pb.cc.o"
+  "CMakeFiles/base-cli.dir/jsoncpp/json_reader.cpp.o"
+  "CMakeFiles/base-cli.dir/jsoncpp/json_value.cpp.o"
+  "CMakeFiles/base-cli.dir/jsoncpp/json_writer.cpp.o"
+  "libbase-cli.pdb"
+  "libbase-cli.a"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/base-cli.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

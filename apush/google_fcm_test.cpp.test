@@ -1,0 +1,266 @@
+#include "jsoncpp/json/json.h"
+
+#include "ssl_socket.h"
+#include "ssl_event.h"
+#include "ssl_post_mgr.h"
+#include "mainframe.h"
+
+
+static const string fcm_webSite  = "fcm-xmpp.googleapis.com";
+static short fcm_test_port = 5235;
+
+static const string str1 = "<stream:stream to='gcm.googleapis.com' version='1.0' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>";
+static const string str3 = "<auth mechanism='PLAIN' xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</auth>";
+
+static const string str5 = "<?xml version='1.0' ?><stream:stream to='gcm.googleapis.com' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'  xml:lang='en' version='1.0'>";
+
+static const string str7 = "<iq type='set' id = '10086' xmlns='jabber:client'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><resource/></bind></iq>";
+
+static const string msg = "<message> <gcm xmlns='google:mobile:data'>  {'to':'f922R63WwXo:APA91bEhdaazFuTKbI3PO_EBFp3w-JMKpkhssiaqZrC35RJl0wzsNO0_VXJ-okGJl9rxz6mFr83Ghjp7bEE1vQzliuv5TYn0xpaaETuy1MUBO9QgW7HqPtDeXtjSXu-1YUhffyZRhK9u','message_id':'m-1366082849205' 'data':{'hello':'world',}'time_to_live':'600','delivery_receipt_requested': true  }</gcm></message>";
+
+const string sendId = "846530884595";
+const string pwd = "AIzaSyBj1FIhdGqDh-1zjFhGARs2I2bP2AlL6ik";
+
+void *eventThreadRun(void * arg)
+{ 
+	//init_locks();
+	CSslEventDispatch::Instance()->StartDispatch();
+}
+
+
+static const string MsgTemplate = "<message> <gcm xmlns='google:mobile:data'> %s </gcm></message>";
+string TestMsgIncJson(int msgNum, string msg_id)
+{
+	Json::Value jroot;
+
+	if (msgNum%2 == 1)
+	{
+		jroot["to"] = "eUqHJHtGKec:APA91bH5l0LsSWHYcltn-lBRW4uE5U19U_ioon0dUoaKerTowGSsp2rSrUK7H-ann15KmSXXmKcH_YFvWOlMchnTB7x5m12LsJRx9nLDncWgEtwlfn9UfZmUsiXnnzCnqvczhhRWBebL";
+	}
+	else
+	{
+		jroot["to"] = "cvvHJ5cglVU:APA91bHAcACJwI9ZZxWkV1VSziDAE6DLxjkLy_oXn5IS0YEy6tj14ez1FPotC5bhUCePcfTbiqrmj8kSA5Q-0vaPGrM_FtXhv0nRmPj0CMZOGpNaBnI8ysy5OGqoJ2Dp7GNWZMPPZRq4";
+	}
+
+	//jroot["to"] = "cgLe29AKh-E:APA91bE_D3ii_kBjwOyaNngHtD8x6Bch5Vm1R63kMTGwtk5glXbw5R7TWq4lYPidYy9Bok9EEqch6fUQLVixpsDsDOnGYlHdz-acXBlJUgMuVAhFCJfXd_68Qw6iEIec9s0BBmSGHg2j";
+	jroot["message_id"] = msg_id;
+	//jroot["time_to_live"] = 600;
+	jroot["delivery_receipt_requested"] = true;
+
+	jroot["priority"] =  "high";
+	jroot["content_available"] =  true;
+
+	//jroot["dry_run"] =  true;
+
+	Json::Value jnotification;
+	jnotification["title"] = "Portugal vs. Denmark";
+
+	jnotification["body"] = msg_id + string ("++ 5 to 1 time");
+
+	jroot["notification"] = jnotification;
+
+	string jsonNotify = jroot.toStyledString();
+	
+	//cout<<"jsonNotify: "<<jsonNotify<<endl;
+
+	char sendMsg[1024] = {0};
+	sprintf(sendMsg, MsgTemplate.c_str(), jsonNotify.c_str());
+
+	return sendMsg;
+}
+
+
+static int numRecv;
+static void FcmTestCallBack(void* callback_data, uint8_t msg, uint32_t handle, void* pParam)
+{
+
+	CSslSocket *sock = nullptr;
+	if (callback_data)
+	{
+		sock = (CSslSocket *)callback_data;
+		//printf("callback_data:%p\n", callback_data);
+	}
+	else
+	{
+		printf("data error!\n");
+		return;
+	}
+
+	//printf("FcmTestCallBack:%d\n", msg);
+	if (msg == NETLIB_MSG_READ && sock)
+	{
+		int iRet =  1;
+		do
+		{
+			char recvBuf[1024];
+			memset(recvBuf, 0, 1024);
+			iRet = sock->Recv(recvBuf, 1024);
+
+			if (strlen(recvBuf) > 0)
+			{
+				//InfoLog("iRet:%d, Recv:%s, strlen:%d\n", iRet, recvBuf, strlen(recvBuf));
+			}
+		}while ( iRet > 0);
+	}
+	else if (msg == NETLIB_MSG_WRITE)
+	{
+		//return;
+		static int num = 100;
+		static int count = 0;
+		int iRet = 1;
+
+		static string msg;
+
+		while (1)
+		{
+
+			//sleep(1);
+			char msgid[100];
+			sprintf(msgid, "msg-num-%u---%d\n",num, num);
+
+			if (msg.empty())
+			{
+				msg = TestMsgIncJson(count, msgid);
+			}
+
+			
+			iRet = sock->Send((void *)msg.c_str(), msg.size());
+			//InfoLog("send :%s len:%d\n",msg.c_str() , iRet); 
+
+			if (iRet <= 0)
+			{
+				break;
+			}
+
+			msg.clear();
+
+			count++;
+
+			//usleep(1000);
+		}
+
+	}else if (msg == NETLIB_MSG_CLOSE)
+	{
+		//exit(-1);
+	}
+}
+
+
+void *ThreadRun(void * arg)
+{ 
+	CSslSocket *sock = (CSslSocket *)arg;
+
+	char recvBuf[1024];
+	while (1)
+	{
+		memset(recvBuf, 0, 1024);
+		sock->Recv(recvBuf, 1024);
+		printf("Recv:%s\n", recvBuf);
+	}
+
+}
+
+
+int _main()
+{
+
+	SSL_library_init();
+	OpenSSL_add_all_algorithms();
+	SSL_load_error_strings();
+
+	init_locks();
+	CSslSocket *sock = new CSslSocket;
+	printf("sock:%p\n", sock);
+
+	char recvBuf[1024]= {0};
+	sock->Init();
+	sock->SslConnectWebSite(FcmTestCallBack, sock, fcm_webSite.c_str(), fcm_test_port);
+
+
+	pthread_t tid;
+	pthread_create(&tid, nullptr, eventThreadRun, nullptr);
+
+	sock->Send((void *)str1.c_str(), str1.size());
+	memset(recvBuf, 0, 1024);
+	sock->Recv(recvBuf, 1024);
+	printf("Recv:%s\n", recvBuf);
+
+	memset(recvBuf, 0, 1024);
+	sock->Recv(recvBuf, 1024);
+	printf("Recv:%s\n", recvBuf);
+
+	char send[1024] = {0};
+
+	string loginstr;
+	loginstr += '\0';
+	loginstr += sendId;
+	loginstr += '\0';
+	loginstr += pwd;
+
+	string key = base64_encode(loginstr);
+	cout << base64_decode(key)<<endl;
+	memset(send, 0 , 1024);
+	sprintf(send, str3.c_str(), key.c_str());
+
+	key = send;
+	cout<<key<<endl;
+	sock->Send((void *)key.c_str(), key.size());
+	memset(recvBuf, 0, 1024);
+	sock->Recv(recvBuf, 1024);
+	printf("Recv:%s\n", recvBuf);
+
+
+	cout<<str5<<endl;
+	sock->Send((void *)str5.c_str(), str5.size());
+	memset(recvBuf, 0, 1024);
+	sock->Recv(recvBuf, 1024);
+	printf("Recv:%s\n", recvBuf);
+
+	memset(recvBuf, 0, 1024);
+	sock->Recv(recvBuf, 1024);
+	printf("Recv:%s\n", recvBuf);
+
+	cout<<str7<<endl;
+	sock->Send((void *)str7.c_str(), str7.size());
+	memset(recvBuf, 0, 1024);
+	sock->Recv(recvBuf, 1024);
+	printf("Recv:%s\n", recvBuf);
+
+	
+	if (-1 == SetBlockOrNot(sock->GetSocket(), 1))
+	{
+		ErrLog("set blocking socket  error!");
+		return -1;
+	}
+
+	CSslEventDispatch::Instance()->AddEvent(sock, 5*60*1000);
+	
+
+	//pthread_create(&tid, nullptr, ThreadRun, sock);
+
+	int num = 0;
+	int whilenum = 300;
+	int iRet = 1;
+	while (iRet >= 0)
+	{
+		
+		char msgid[100];
+		sprintf(msgid, "msg-num-%u-%d\n",num, num);
+		string msg = TestMsgIncJson(num, msgid);
+		InfoLog("send"); 
+		iRet = sock->Send((void *)msg.c_str(), msg.size());
+
+		//usleep(1);
+	}
+	
+
+	while (1)
+	{
+		sleep(1);
+		return 0;
+	}
+
+	//sleep(100);
+	return 0;
+}
+
