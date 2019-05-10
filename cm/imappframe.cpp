@@ -38,13 +38,6 @@ bool CIMAppFrame::StartApp()
 
 	for(i = 0;  i < m_nActualServiceInst; i++)
 	{
-		m_pUserMgr[i] =  new CUserManage(m_pConfigReader,i);
-		if(!m_pUserMgr[i] || (false==m_pUserMgr[i]->Initialize()))
-		{
-			bRet = false;
-			break;
-		}
-		
 		m_pTransmission[i] = new CTransimission(i);
 		if(!m_pTransmission[i] || (false==m_pTransmission[i]->Initialize()))
 		{
@@ -63,11 +56,6 @@ void CIMAppFrame::StopApp()
 
 	for(i = 0;  i < m_nActualServiceInst; i++)
 	{
-		if(m_pUserMgr[i])
-		{
-			delete m_pUserMgr[i];
-		}
-
 		if(m_pTransmission[i])
 		{
 			delete m_pTransmission[i];

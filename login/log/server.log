@@ -1,0 +1,603 @@
+2018-10-11 14:08:04,148 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:08:04,148 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:20:23,542 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:20:23,543 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:27:29,737 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:27:29,737 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:29:05,448 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2400
+2018-10-11 14:33:17,487 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:33:17,487 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:33:40,527 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:33:40,527 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:34:33,071 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:34:33,072 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:36:59,655 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:36:59,655 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:38:20,821 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:38:20,822 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:39:18,806 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:39:18,806 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:42:51,256 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:42:51,256 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:47:58,753 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:47:58,753 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 14:54:57,201 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 14:54:57,201 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 15:03:20,800 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 15:05:21,552 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 15:05:21,552 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 15:05:43,296 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 15:05:43,296 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 15:20:45,538 [ERROR IM] - <imframe.cpp>|<49>|<InitFrame>,Err of CZookeeper initialization
+2018-10-11 15:20:45,538 [ERROR IM] - <imframe.cpp>|<123>|<main>,Failed to initialize server ...
+2018-10-11 15:22:58,057 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x146d698
+2018-10-11 15:22:58,057 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-11 15:22:58,057 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2400
+2018-10-11 15:22:58,086 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-11 15:22:58,101 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0960
+2018-10-11 15:25:01,776 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x9f7698
+2018-10-11 15:25:01,777 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-11 15:25:01,777 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2400
+2018-10-11 15:25:01,790 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-11 15:25:01,812 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0960
+2018-10-13 15:01:04,019 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x1cf8cc8
+2018-10-13 15:01:04,020 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-13 15:01:04,023 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2300
+2018-10-13 15:01:04,034 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-13 15:01:04,039 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:08fc
+2018-10-13 15:01:14,037 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-13 15:01:14,041 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:08fc
+2018-10-15 11:15:53,381 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 11:15:53,383 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:15:53,384 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2300
+2018-10-15 11:20:02,869 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x2260cc8
+2018-10-15 11:20:02,869 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:20:02,869 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2300
+2018-10-15 11:20:02,882 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 11:20:02,886 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:08fc
+2018-10-15 11:22:00,412 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 11:22:00,413 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:22:00,422 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2800
+2018-10-15 11:30:47,052 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 11:30:47,054 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:30:47,054 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2800
+2018-10-15 11:31:37,908 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 11:33:42,416 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:33:42,416 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:34:14,084 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 11:34:14,084 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:34:14,085 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2800
+2018-10-15 11:34:58,940 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 11:38:38,785 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:38:38,785 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:40:15,832 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 11:40:15,833 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:40:15,833 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2800
+2018-10-15 11:40:50,171 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 11:42:43,206 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:43:06,142 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:43:06,142 [ERROR IM] - <zookeeper.cpp>|<165>|<Finalize>,Failed to cleanup ZooKeeper, zookeeper_close: 
+2018-10-15 11:43:46,932 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 11:43:46,932 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 11:43:46,933 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:2800
+2018-10-15 11:43:57,092 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 11:44:46,959 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:44:51,933 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0af0
+2018-10-15 11:45:04,301 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:09,580 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x2496cc8
+2018-10-15 13:44:09,580 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 13:44:09,590 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 13:44:09,606 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:09,613 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:44:19,607 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:19,611 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:44:29,610 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:29,616 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:44:39,615 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:39,621 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:44:49,615 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:49,640 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:44:59,620 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:44:59,624 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:45:09,619 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:45:09,625 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:45:19,620 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:45:19,627 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:45:29,626 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:45:29,629 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:45:39,628 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:45:39,632 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:45:49,631 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:45:49,637 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:45:59,634 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:45:59,637 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:46:09,639 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:46:09,644 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:46:19,636 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:46:19,642 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:46:29,637 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:46:29,644 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:46:39,639 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:46:39,645 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:46:49,647 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:46:49,653 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:46:59,647 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:46:59,650 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:47:09,648 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:47:09,661 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:47:19,650 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:47:19,656 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:47:29,654 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:47:29,659 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:47:39,656 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:47:39,659 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:47:49,659 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:47:49,665 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:47:59,660 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:47:59,666 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:48:09,662 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:48:09,665 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:48:19,664 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:48:19,670 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:48:29,683 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:48:29,693 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:48:39,674 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:48:39,677 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:48:49,677 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:48:49,681 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:48:59,681 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:48:59,685 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:49:09,684 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:49:09,688 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:49:19,687 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:49:19,694 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:49:29,689 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:49:29,694 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:49:39,692 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:49:39,696 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:49:49,696 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:49:49,700 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:49:59,703 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:49:59,707 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:50:09,700 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:50:09,706 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:50:19,704 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:50:19,707 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:50:29,708 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:50:29,714 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 13:50:39,708 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 13:50:39,712 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:05:52,809 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0xc01cc8
+2018-10-15 14:05:52,809 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 14:05:52,810 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 14:05:52,820 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:05:52,824 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:06:02,826 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:06:02,829 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:53:32,454 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0xe39cc8
+2018-10-15 14:53:32,455 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 14:53:32,455 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 14:53:32,466 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:53:32,469 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:53:42,469 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:53:42,473 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:54:16,018 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 14:54:16,020 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 14:54:16,021 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 14:54:24,278 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:54:58,524 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:59:15,803 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x1bd2cc8
+2018-10-15 14:59:15,803 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 14:59:15,803 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 14:59:15,816 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:59:15,820 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:59:25,818 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:59:25,822 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:59:35,820 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:59:35,824 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:59:45,821 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:59:45,825 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 14:59:55,828 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 14:59:55,831 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:00:05,825 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:00:05,836 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:00:15,830 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:00:15,833 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:00:25,832 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:00:25,846 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:00:35,836 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:00:35,843 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:00:45,839 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:00:45,851 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:00:55,852 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:00:55,856 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:01:05,844 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:01:05,847 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:01:15,845 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:01:15,849 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:01:25,844 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:01:25,848 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:01:35,846 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:01:35,854 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:01:45,849 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:01:45,853 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:01:55,853 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:01:55,857 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:02:05,856 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:02:05,860 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:02:15,860 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:02:15,864 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:02:25,864 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:02:25,868 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:02:35,862 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:02:35,865 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:02:45,868 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:02:45,871 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:02:55,871 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:02:55,875 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:03:05,877 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:03:05,880 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:03:15,874 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:03:15,877 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:03:25,880 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:03:25,884 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:03:35,880 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:03:35,888 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:03:45,886 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:03:45,890 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:03:55,888 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:03:55,892 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:04:05,893 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:04:05,896 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:04:15,894 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:04:15,898 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:04:25,895 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:04:25,900 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:04:35,899 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:04:35,903 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:04:45,902 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:04:45,906 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:04:55,904 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:04:55,908 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:05:05,905 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:05:05,909 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:05:15,905 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:05:15,907 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:05:25,925 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:05:25,929 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:05:35,919 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:05:35,922 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:05:45,920 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:05:45,931 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:07:14,572 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 15:07:14,573 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:07:14,574 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:07:26,907 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:07:47,634 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:10:32,312 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:10:33,091 [ERROR IM] - <zookeeper.cpp>|<165>|<Finalize>,Failed to cleanup ZooKeeper, zookeeper_close: 
+2018-10-15 15:11:22,659 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 15:11:22,659 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:11:22,660 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:12:14,200 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 15:12:14,201 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:12:14,201 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:12:18,275 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:13:18,124 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:14:21,583 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:14:38,522 [ERROR IM] - <zookeeper.cpp>|<165>|<Finalize>,Failed to cleanup ZooKeeper, zookeeper_close: 
+2018-10-15 15:15:18,400 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:15:48,920 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:19:19,548 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 15:19:19,550 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:19:19,550 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:19:19,585 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:20:17,445 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:20:17,449 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:20:17,477 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:20:27,609 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:20:27,630 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:20:27,640 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:20:45,124 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 15:20:45,124 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:20:45,124 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:20:45,154 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:20:53,846 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:21:20,064 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 15:21:20,064 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:21:20,064 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:21:20,090 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:21:30,637 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:22:28,997 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:22:28,999 [ERROR IM] - <zookeeper.cpp>|<165>|<Finalize>,Failed to cleanup ZooKeeper, zookeeper_close: 
+2018-10-15 15:22:39,020 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:22:39,026 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:22:49,032 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:22:49,041 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:22:59,045 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:23:58,605 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:24:07,213 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:24:07,216 [ERROR IM] - <zookeeper.cpp>|<165>|<Finalize>,Failed to cleanup ZooKeeper, zookeeper_close: 
+2018-10-15 15:24:17,240 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:26:13,301 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:26:13,301 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:26:23,324 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:49:44,791 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x1205cc8
+2018-10-15 15:49:44,791 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 15:49:44,791 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 15:49:44,801 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:49:44,804 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:49:54,805 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:49:54,809 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:50:04,804 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:50:04,808 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:50:14,807 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:50:14,810 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:50:24,810 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:50:24,813 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:50:34,811 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:50:34,814 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:50:44,815 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:50:44,821 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:50:54,862 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:50:54,866 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:51:04,821 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:51:04,823 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:51:14,824 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:51:14,828 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:51:24,827 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:51:24,831 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:51:34,831 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:51:34,834 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:51:44,828 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:51:44,831 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:51:54,833 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:51:54,836 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:52:04,833 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:52:04,837 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:52:14,834 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:52:14,838 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:52:24,841 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:52:24,845 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:52:34,846 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:52:34,850 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:52:44,842 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:52:44,846 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:52:54,842 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:52:54,846 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:53:04,849 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:53:04,853 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:53:14,845 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:53:14,848 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:53:24,848 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:53:24,851 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:53:34,935 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:53:34,938 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:53:44,854 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:53:44,859 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:53:54,854 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:53:54,857 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:54:04,856 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:54:04,860 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:54:14,858 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:54:14,862 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:54:24,858 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:54:24,863 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:54:34,927 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:54:34,933 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:54:44,868 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:54:44,872 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:54:54,870 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:54:54,874 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:55:04,873 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:55:04,877 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:55:14,875 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:55:14,880 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:55:24,876 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:55:24,879 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:55:34,880 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:55:34,884 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:55:44,884 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:55:44,887 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:55:54,901 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:55:54,924 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:56:04,891 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:56:04,896 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:56:14,897 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:56:14,900 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:56:24,903 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:56:24,906 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:56:34,897 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:56:34,902 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:56:44,897 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:56:44,900 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:56:54,901 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:56:54,905 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:57:04,901 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:57:04,905 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:57:14,905 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:57:14,909 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:57:24,907 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:57:24,911 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:57:34,910 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:57:34,913 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:57:44,924 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:57:44,947 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:57:54,915 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:57:54,919 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:58:04,918 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:58:04,921 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:58:14,922 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:58:14,925 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:58:24,924 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:58:24,927 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:58:34,922 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:58:34,924 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:58:44,926 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:58:44,944 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:58:54,927 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:58:54,931 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:59:04,930 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:59:04,935 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:59:14,932 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:59:14,936 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:59:24,932 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:59:24,952 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:59:34,937 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:59:34,942 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:59:44,940 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:59:44,944 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 15:59:54,942 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 15:59:54,946 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:00:04,944 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:00:04,947 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:00:14,948 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:00:14,954 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:00:24,952 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:00:24,956 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:00:34,953 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:00:34,962 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:00:44,965 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:00:44,987 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:00:54,959 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:00:54,962 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:01:04,963 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:01:04,966 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:01:14,968 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:01:14,972 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:01:24,971 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:01:24,975 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:01:34,974 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:01:34,978 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:01:44,978 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:01:44,981 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:01:54,981 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:01:54,985 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:02:04,983 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:02:04,987 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:02:14,987 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:02:14,990 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:02:24,990 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:02:24,993 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:02:34,990 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:02:34,994 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:02:44,992 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:02:44,995 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:02:54,998 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:02:55,002 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:03:04,994 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:03:05,005 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:03:14,998 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:03:15,002 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:03:25,000 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:03:25,004 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:03:35,002 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:03:35,007 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:03:45,012 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:03:45,017 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:03:55,020 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:03:55,024 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:04:05,019 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:04:05,022 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:04:15,020 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:04:15,025 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:04:25,704 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x1db6cc8
+2018-10-15 16:04:25,704 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 16:04:25,704 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 16:04:25,713 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:04:25,725 [ERROR IM] - <zookeeper.cpp>|<218>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80
+2018-10-15 16:05:21,522 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0x77ccc8
+2018-10-15 16:05:21,523 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 16:05:21,523 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 16:05:29,515 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:10:02,984 [ERROR IM] - <serverlinkmgr.cpp>|<236>|<SetAssocSvrId>,Assoc type err 0xed6cc8
+2018-10-15 16:10:02,985 [INFO  IM] - <serverlinkmgr.cpp>|<90>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-10-15 16:10:02,985 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 192.168.1.223:3200
+2018-10-15 16:10:03,014 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-10-15 16:10:03,019 [INFO  IM] - <zookeeper.cpp>|<222>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-11 16:03:58,832 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0x2022c58
+2018-12-11 16:03:58,832 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 16:03:58,832 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 16:03:58,839 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:03:58,844 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-11 16:28:49,800 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0xad7c58
+2018-12-11 16:28:49,800 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 16:28:49,801 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 16:28:49,808 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:28:49,811 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:28:59,812 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:28:59,815 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:29:09,812 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:29:09,816 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:29:19,816 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:29:21,150 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0x18a5c58
+2018-12-11 16:29:21,151 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 16:29:21,151 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 16:29:21,158 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:29:21,160 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:29:31,162 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:29:31,165 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:29:41,163 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:29:41,167 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:29:51,167 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:29:51,171 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-11 16:39:57,822 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0x1f0ec58
+2018-12-11 16:39:57,823 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 16:39:57,823 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 16:39:57,832 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:39:57,836 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-11 16:51:52,477 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0x2040c58
+2018-12-11 16:51:52,478 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 16:51:52,478 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 16:51:52,487 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:51:52,492 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:52:02,489 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:52:02,492 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:52:12,491 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:52:12,495 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 16:52:22,493 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 16:52:22,496 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-11 17:14:05,517 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0xee7c58
+2018-12-11 17:14:05,518 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 17:14:05,518 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 17:14:05,543 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:14:05,546 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:14:15,545 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:14:15,549 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:14:25,546 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:14:25,548 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:14:35,545 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:14:35,548 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:14:45,550 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:14:45,553 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-11 17:20:48,925 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0x772c58
+2018-12-11 17:20:48,926 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-11 17:20:48,926 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-11 17:20:48,958 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:20:48,961 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:20:58,971 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:20:58,974 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:21:08,993 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:21:08,997 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:21:19,007 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:21:19,010 [ERROR IM] - <zookeeper.cpp>|<237>|<RegistService>,Failed to regist service path = /uslogin/node_192.168.1.223:0c80, error = -110
+2018-12-11 17:21:29,020 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-11 17:21:29,024 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.223:0c80
+2018-12-12 09:50:39,101 [ERROR IM] - <serverlinkmgr.cpp>|<244>|<SetAssocSvrId>,Assoc type err 0xc7dc58
+2018-12-12 09:50:39,102 [INFO  IM] - <serverlinkmgr.cpp>|<91>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2018-12-12 09:50:39,102 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200
+2018-12-12 09:50:39,114 [INFO  IM] - <zookeeper.cpp>|<80>|<Event>,Success to connect zookeeper host!
+2018-12-12 09:50:39,117 [INFO  IM] - <zookeeper.cpp>|<241>|<RegistService>,The server has registed successfully to zookeeper host! : /uslogin/node_192.168.1.225:0c80
+2018-12-12 09:50:39,132 [DEBUG IM] - <clientlink.cpp>|<153>|<OnConnect>,Client connecting 192.168.1.225:57342,physical link number=1
+2018-12-12 09:50:39,133 [DEBUG IM] - <clientlink.cpp>|<210>|<OnAssocSvrRegist>,OnAssocSvrRegist,Host is 192.168.1.225:1800
+2018-12-12 09:50:39,135 [INFO  IM] - <clientlink.cpp>|<230>|<OnAssocSvrRegist>,Success to regist from = 192.168.1.225,1800
+2018-12-12 09:50:39,135 [ERROR IM] - <packetmgr.cpp>|<108>|<DispatchPacket>,Can't find the corresponding executor ,cmd is 0x3005
+2018-12-12 09:50:50,507 [ERROR IM] - <loginCache.cpp>|<135>|<GetUserRecord>,User CM_4071467 is not exist or the record is not full!
+2018-12-12 09:50:50,507 [INFO  IM] - <loginHandle.cpp>|<385>|<OnLogin>,user 4071467 is a new login member
+2018-12-12 09:50:50,507 [DEBUG IM] - <loginHandle.cpp>|<101>|<MD5Sign>,md5_str=<C6F6D4EA8DC17332C322849F9E1998F3>
+2018-12-12 09:50:50,513 [WARN  IM] - <loginHandle.cpp>|<388>|<OnLogin>,Failed to new-authorize : 4071467 errcode:33025
+2018-12-12 16:47:27,346 [DEBUG IM] - <clientlink.cpp>|<159>|<OnClose>,remote peer closing : handle=9,ip=192.168.1.225,port=57342, userid=
+2018-12-12 16:47:27,347 [DEBUG IM] - <clientlink.cpp>|<60>|<Close>,Close the unregisted client link! userid  regist 1
+2019-04-10 15:01:21,663 [ERROR IM] - <serverlinkmgr.cpp>|<252>|<SetAssocSvrId>,Assoc type err 0x27760e8
+2019-04-10 15:01:21,674 [INFO  IM] - <serverlinkmgr.cpp>|<92>|<InitAssocSvr>,There is no any of associated server, so need not to initialize associated server list!!!
+2019-04-10 15:01:21,674 [INFO  IM] - <basesocket.cpp>|<94>|<Listen>,CBaseSocket::Listen on 0.0.0.0:3200

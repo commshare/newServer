@@ -170,10 +170,11 @@ int netlib_add_loop(callback_t callback, void* user_data)
 	return 0;
 }
 
-void netlib_eventloop(uint32_t wait_timeout)
+void netlib_eventloop(bool detached, uint32_t wait_timeout)
 {
-	CEventDispatch::Instance()->StartDispatch(wait_timeout);
+    CEventDispatch::Instance()->StartDispatch(wait_timeout ,detached);
 }
+
 
 void netlib_stop_event()
 {

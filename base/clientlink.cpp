@@ -57,7 +57,7 @@ void CClientLink::Close()
 			
 	if(!m_bRegist || m_nLinkType==ASSOC_REGIST_LINKER)
 	{	
-		DbgLog("Close the unregisted client link!");
+		DbgLog("Close the unregisted client link! userid %s regist %d", GetUserId().c_str(), m_bRegist);
 		CloseLink();
 		return;
 	}
@@ -76,9 +76,12 @@ void CClientLink::CloseLink(bool bUserLink)
 
 	CClientLinkMgr::GetInstance()->DelLinkByHost(m_sRegistIp,m_nRegistPort);
 	CClientLinkMgr::GetInstance()->DelLinkBySessionId(m_SessionId); //Delete the link from map since the link is closed . 
+
+	CClientLinkMgr::GetInstance()->delSessionByHost(m_peer_ip, m_peer_port);
+
 	if(bUserLink&&m_sUserId!="")
 	{
-		CClientLinkMgr::GetInstance()->DelLinkByUserId(m_sUserId);	
+		CClientLinkMgr::GetInstance()->DelLinkByUserId(m_sUserId);
 	}
 	
 	m_bRegist = false;
@@ -88,17 +91,30 @@ void CClientLink::CloseLink(bool bUserLink)
 	ReleaseRef();
 }
 
-void CClientLink::AssocSvrRegistAck(UidCode_t sessionId,ErrCode bCode)
-{
-	SYSAssocSvrRegistAck registAck;
-	CImPdu 		registAckPdu;
+//void CClientLink::OnPingAck(UidCode_t sessionId,const string &msgId)
+//{
+//    SystemPingAck pingAck;
+//    CImPdu 		pingAckPdu;
 
-	registAck.set_nerr(bCode);
-	registAckPdu.SetPBMsg(&registAck);
-	registAckPdu.SetCommandId(SYSTEM_ASSOCSVR_REGIST_ACK);
-	registAckPdu.SetSessionId(sessionId);
+//    pingAck.set_msgid(msgId);
+//    pingAckPdu.SetPBMsg(&pingAck);
+//    pingAckPdu.SetCommandId(SYSTEM_PING_ACK);
+//    pingAckPdu.SetSessionId(sessionId);
 	
-	SendPdu(&registAckPdu);
+//    SendPdu(&pingAckPdu);
+//}
+
+void CClientLink::AssocSvrRegistAck(UidCode_t sessionId, ErrCode bCode)
+{
+    SYSAssocSvrRegistAck registAck;
+    CImPdu 		registAckPdu;
+
+    registAck.set_nerr(bCode);
+    registAckPdu.SetPBMsg(&registAck);
+    registAckPdu.SetCommandId(SYSTEM_ASSOCSVR_REGIST_ACK);
+    registAckPdu.SetSessionId(sessionId);
+
+    SendPdu(&registAckPdu);
 }
 
 void CClientLink::UserArrived(string sUserId)
@@ -134,16 +150,14 @@ void CClientLink::OnConnect(net_handle_t handle, int nLinkType,uint64_t nFlowCtr
 	netlib_option(handle, NETLIB_OPT_SET_CALLBACK_DATA, (void*)pLinkMap);
 
 	
-#if 1															//Only for debug.			
-		netlib_get_remotehost(m_handle,m_peer_ip,m_peer_port);
-		DbgLog("Client connecting %s:%d,physical link number=%d",m_peer_ip.c_str(),
-			m_peer_port,pLinkMap->size());
-#endif	
+	netlib_get_remotehost(m_handle,m_peer_ip,m_peer_port);
+	//	DbgLog("Client connecting %s:%d,physical link number=%d",m_peer_ip.c_str(),
+	//		m_peer_port,pLinkMap->size());
 }
 
 void CClientLink::OnClose()
 {
-	DbgLog("remote peer closing : handle=%d,ip=%s,port=%d", m_handle,m_peer_ip.c_str(),m_peer_port);
+	DbgLog("remote peer closing : handle=%d,ip=%s,port=%d, userid=%s", m_handle,m_peer_ip.c_str(),m_peer_port, m_sUserId.c_str());
 
 	if(((m_nLinkType==MOBILE_LOGIN_LINKER)&&!m_bLogining)||(m_nLinkType==ASSOC_REGIST_LINKER))	
 	 	Close();
@@ -157,7 +171,7 @@ void CClientLink::OnClientTimeout()
 
 void CClientLink::OnTimer(uint64_t curr_tick)
 {
-	if(m_nLinkType==ASSOC_REGIST_LINKER)
+	if(m_nLinkType==ASSOC_REGIST_LINKER)//ignore timer in assoc svr
 		return;
 
 	uint64_t nClientTimeout = CClientLinkMgr::GetInstance()->GetClientLinkTimeout()+m_last_recv_tick;
@@ -248,8 +262,16 @@ bool CClientLink::OnLoginPretreat(std::shared_ptr<CImPdu> pPdu)
 		return false;
 	}
 
+	// 删除session管理的链路
+	if(m_peer_ip.empty())
+		netlib_get_remotehost(m_handle,m_peer_ip,m_peer_port);
+	UidCode_t tmpSessionId = CClientLinkMgr::GetInstance()->getSessionByHost(m_peer_ip, m_peer_port);
+	CClientLinkMgr::GetInstance()->DelLinkBySessionId(tmpSessionId);
 	GenerateUId(m_SessionId);					//Builds a new session link at the first receiving login packet. 
 	CClientLinkMgr::GetInstance()->AddLinkBySessionId(m_SessionId,this);
+
+	CClientLinkMgr::GetInstance()->addSessionByHost(m_peer_ip, m_peer_port, m_SessionId);
+	
 	pPdu->SetSessionId(m_SessionId);
 	m_nUnregistPacket = 0; 						// Clear number of unregist packet. 
 	m_bLogining = true;
@@ -266,7 +288,7 @@ bool CClientLink::OnLoginPretreat(std::shared_ptr<CImPdu> pPdu)
 
 void CClientLink::OnPing(std::shared_ptr<CImPdu> pPdu)
 {
-    if(!pPdu || (m_nLinkType==ASSOC_REGIST_LINKER)) //ignore heartbeat in assoc
+    if(!pPdu || (m_nLinkType==ASSOC_REGIST_LINKER)) //ignore ping in assoc
     {
         if(pPdu)
             pPdu.reset();
@@ -274,15 +296,23 @@ void CClientLink::OnPing(std::shared_ptr<CImPdu> pPdu)
         return;
     }
 
-    CImPdu pdu;
+	pPdu->SetCommandId(SYSTEM_PING_ACK);
+	SendPdu(pPdu);
 
-    //DbgLog("heartbeat is sent by user %s,the user host %s : %d",
-    //	m_sUserId.c_str(),m_peer_ip.c_str(),m_peer_port);
+//    SystemPing ping;
+//    uchar_t* pContent = pPdu->GetBodyData();
 
-    pdu.SetPBWithoutMsg(SYSTEM_PING_ACK,m_SessionId);
+//    if(!pContent || !ping.ParseFromArray(pContent,pPdu->GetBodyLength()))
+//    {
+    //	AssocSvrRegistAck(m_SessionId,ERR_SYS_REGIST);
+//        ErrLog("phrase ping error!");
+//        pPdu.reset();
 
-    SendPdu(&pdu);
-    pPdu.reset();
+//        return;
+//    }
+
+//    OnPingAck(m_SessionId, ping.msgid());
+
 }
 
 void CClientLink::OnDispatchPacket(std::shared_ptr<CImPdu> pPdu)
@@ -358,7 +388,8 @@ void CClientLink::HandlePdu(std::shared_ptr<CImPdu> pPdu)
 	}	
 
 	CClientLink* pCurLink = CClientLinkMgr::GetInstance()->GetLinkBySessionId(sessionId);
-	//	
+	//
+#if 0
 	if((m_bRegist && !IsValidUid(sSessionId.c_str(),UID_SIZE*2)) || (!m_bRegist&&(((m_nLinkType==ASSOC_REGIST_LINKER)&&
 	 (nCmdId!=SYSTEM_ASSOCSVR_REGIST)) || ((m_nLinkType==MOBILE_LOGIN_LINKER)&&(nCmdId!=CM_LOGIN)&&(!pCurLink || pCurLink->GetUserId()=="")))))  // Reject to post any packet if no logining . 
 	{
@@ -370,7 +401,7 @@ void CClientLink::HandlePdu(std::shared_ptr<CImPdu> pPdu)
 		if(pCurLink){ pCurLink->ReleaseRef();}
 		return;
 	}
-
+#endif 
 	if(pCurLink){ pCurLink->ReleaseRef();}
 	
 	if(nCmdId==SYSTEM_ASSOCSVR_REGIST) 
@@ -387,9 +418,9 @@ void CClientLink::HandlePdu(std::shared_ptr<CImPdu> pPdu)
 	}
 	else
 	{
-		if(nCmdId==CM_LOGIN)
+		if(nCmdId==CM_LOGIN || nCmdId == PC_LOGIN)
 		{
-			if(!OnLoginPretreat(pPdu))
+			if(!OnLoginPretreat(pPdu)) //allway dispatch ?
 				return;
 		}
 		OnDispatchPacket(pPdu);

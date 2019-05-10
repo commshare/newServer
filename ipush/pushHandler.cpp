@@ -5,7 +5,6 @@ Description: 	用户登录/登出、权限检查、用户信息管理类实现
  *****************************************************************************************/
 
 #include "pushHandler.h"
-#include "apnsclient.h"
 #include "protohandle.h"
 #include "CApnsPostData.h"
 #include "ssl_post_mgr.h"
@@ -32,20 +31,6 @@ CPushHandler::~CPushHandler()
 
 bool CPushHandler::Initialize(void)  
 {
-	//m_pRecvProtoBuf = new CRecvProtoBuf;
-	//if (!m_pRecvProtoBuf)
-	//{
-	//	ErrLog("m_pRecvProtoBuf new retrun null");
-	//	return false;
-	//}
-
-	//if (!m_pRecvProtoBuf->Init())
-	//{
-	//	ErrLog("m_pRecvProtoBuf init failed");
-	//	return false;
-	//}
-	
-	//the source code is not set the return value;
 	RegistPacketExecutor();
 
 	m_pManage =  CAppPushserverManager::GetInstance();
@@ -98,23 +83,22 @@ bool CPushHandler::OnApnsPush(std::shared_ptr<CImPdu> pPdu)
 	
 	ErrCode eCode = NON_ERR;
 
-	if (!m_pManage->GetClient(msg.emsgtype()&im::P2P_CALL ? PUSH_CLIENT_TYPE_VOIP : PUSH_CLIENT_TYPE_APNS) ||
-		!m_pManage->GetClient(msg.emsgtype()&im::P2P_CALL ? PUSH_CLIENT_TYPE_VOIP : PUSH_CLIENT_TYPE_APNS)->AddTask(msg))
-	{
-		WarnLog("###post push to client false");
-		eCode = EXCEPT_ERR;
-		goto toAck;
-	}
-//#if 1		//这里用来测试voip推送的
-//	if (!m_pManage->GetClient(PUSH_CLIENT_TYPE_VOIP) || !m_pManage->GetClient(PUSH_CLIENT_TYPE_VOIP)->AddTask(msg))
-//	{
-//		WarnLog("###post push to voipPushclient false");
-//		eCode = EXCEPT_ERR;
-//		goto toAck;
-//	}
-//#endif
+	DbgLog("ios push vesion_code=%d, devType=%u", msg.versioncode(), msg.edivece_type());
+    if(msg.edivece_type() == APNS) {
+		if(!m_pManage->GetClient(PUSH_CLIENT_TYPE_VOIP_PRODUCTION) || !m_pManage->GetClient(PUSH_CLIENT_TYPE_VOIP_PRODUCTION)->AddTask(msg))
+        {
+            WarnLog("###post push to voip_pro_client false");
+            eCode = EXCEPT_ERR;
+            goto toAck;
+        } 
+   } else if(msg.edivece_type() == APNS_DEV) {
+        if (!m_pManage->GetClient(PUSH_CLIENT_TYPE_VOIP_DEV) || !m_pManage->GetClient(PUSH_CLIENT_TYPE_VOIP_DEV)->AddTask(msg)) {
+            WarnLog("###post push to voip_dev_client false");
+            eCode = EXCEPT_ERR;
+            goto toAck;
+        }
+    }   
 	bRet = true;
-
 toAck:
 	if (eCode == EXCEPT_ERR)
 	{
@@ -133,18 +117,8 @@ void CPushHandler::OnApnsPushAck(string sMsgId,UidCode_t sSessionId,ErrCode bCod
 	{
 		CPushHandler::m_pLockSendResp  = new CLock;
 	}
-
-	//CAutoLock autolock(CPushHandler::m_pLockSendResp);
-/*
-	InfoLog("session=%x%x%x%x%x%x%x%x%x%x%x%x",
-			sSessionId.Uid_Item.code[0],sSessionId.Uid_Item.code[1],
-	sSessionId.Uid_Item.code[2],sSessionId.Uid_Item.code[3],sSessionId.Uid_Item.code[4],
-	sSessionId.Uid_Item.code[5],sSessionId.Uid_Item.code[6],sSessionId.Uid_Item.code[7],
-	sSessionId.Uid_Item.code[8],sSessionId.Uid_Item.code[9],sSessionId.Uid_Item.code[10],
-	sSessionId.Uid_Item.code[11]);
-*/
-
-	PSvrMsgAck 	apnsPushAck;
+	
+    PSvrMsgAck 	apnsPushAck;
 	apnsPushAck.set_smsgid(sMsgId);
 	apnsPushAck.set_nerr(bCode);
 

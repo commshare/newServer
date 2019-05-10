@@ -25,6 +25,7 @@ using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_document;
 
+string CMongoDbColl::m_sAdminDbName = "admin";
 
 CMongoDbColl::CMongoDbColl(const string& dbName, const string& collName)
 	: m_sDbName(dbName), m_sCollName(collName)
@@ -103,6 +104,44 @@ bool CMongoDbColl::CreateIndex(const std::vector<string>& indexNames)
 	return false;
 }
 
+bool CMongoDbColl::CreateCollection(const std::string& collection)
+{
+	std::unique_ptr<CMongoDbConn> pConn =
+		CMongoDbManager::getInstance()->GetDBConn();
+
+	if (!pConn)
+	{
+		WarnLog("conn invalied");
+		return false;
+	}
+
+    string newCollection = m_sAdminDbName + ".";
+    newCollection += collection;
+
+    auto shardcollectionbuilder= bsoncxx::builder::stream::document{};
+    bsoncxx::document::value  createSdCollection = shardcollectionbuilder
+        << "shardCollection"<< newCollection.c_str()
+        <<  "key" << bsoncxx::builder::stream::open_document << "msgId" << "hashed"<< bsoncxx::builder::stream::close_document
+        << bsoncxx::builder::stream::finalize;
+  
+    try
+    {
+        auto database= pConn->GetDatabase(m_sAdminDbName);
+        auto ret =  database.run_command(createSdCollection.view());
+        return true; 
+    }
+	catch (const std::exception& xcp)
+	{
+		WarnLog("exception catched:%s", xcp.what());
+	}
+
+    return false;
+}
+
+//bool CMongoDbColl::CreateCollection(const std::string& collection, bool shard)
+//{
+//
+//}
 
 bool CMongoDbColl::InsertOne(const IMongoDataEntry& mongoData)
 {
@@ -351,9 +390,15 @@ bool CMongoDbColl::DelOne(const IMongoDataDelKeys& key)
 		}
 
 		/*if (pConn->GetCollection(m_sDbName, m_sCollName).delete_many(key.ToDoc().view()))*/
-		if (pConn->GetCollection(m_sDbName, m_sCollName).update_many(key.ToDoc().view(), doc.view()))
+//this fun bsoncxx::to_json(view) couldn't printf large packet???
+//        bsoncxx::document::view v =  key.ToDoc().view();
+//        WarnLog("key == %s", bsoncxx::to_json(v).c_str());
+//        bsoncxx::document::view d = doc.view();
+//        WarnLog("doc == %s", bsoncxx::to_json(d).c_str());
+
+        if (pConn->GetCollection(m_sDbName, m_sCollName).update_many(key.ToDoc().view(), doc.view()))
 		{
-			//DbgLog("delete mongo data %s success", bsoncxx::to_json(key.ToDoc().view()).c_str());
+			DbgLog("delete mongo data %s success", bsoncxx::to_json(key.ToDoc().view()).c_str());
 			return true;
 		}
 		else

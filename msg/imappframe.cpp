@@ -1,17 +1,19 @@
 #include "commonTaskMgr.h"
 #include "configfilereader.h"
 #include "friendhandle.h"
-#include "grphandle.h"
 #include "imappframe.h"
 #include "mongoDbManager.h"
 #include "msghandle.h"
-#include "mysqlPool.h"
+//#include "mysqlPool.h"
 #include "offLineMsgHandle.h"
 #include "offlineMsg.h"
 #include "offlineMsgMgr.h"
 #include "packetmgr.h"
 #include "redisPool.h"
 #include "sighandler.h"
+#include "notify_handle.h"
+#include "groupChatHandle.h"
+#include "exchangeKeyHandle.h"
 
 CIMAppFrame::CIMAppFrame(CConfigFileReader * pReader)
 	: m_pConfigReader(pReader), m_nActualServiceInst(1)
@@ -69,6 +71,7 @@ bool CIMAppFrame::Initialize()
 		return false;
 	}
 
+#if 0
 	CDBManager* pMysqlDbManager = CDBManager::getInstance();
 	if (!pMysqlDbManager)
 	{
@@ -82,6 +85,7 @@ bool CIMAppFrame::Initialize()
 		delete pMysqlDbManager;
 		return false;
 	}
+#endif
 
 	CRedisManager* pRedisDbManager = CRedisManager::getInstance();
 	if (!pRedisDbManager)
@@ -104,17 +108,17 @@ bool CIMAppFrame::StartApp()
 	for (int i = 0; i < m_nActualServiceInst; i++)
 	{
 		// Add your statement to create your application instance.
-		m_pFriendHandler[i] = new CFriendHandler(m_pConfigReader, i);
-		if (!m_pFriendHandler[i])
-		{
-			ErrLog("create friend handle failed");
-			return false;
-		}
-		if (false == m_pFriendHandler[i]->Initialize())
-		{
-			ErrLog("init friend handle failed");
-			return false;
-		}
+//		m_pFriendHandler[i] = new CFriendHandler(m_pConfigReader, i);
+//		if (!m_pFriendHandler[i])
+//		{
+//			ErrLog("create friend handle failed");
+//			return false;
+//		}
+//		if (false == m_pFriendHandler[i]->Initialize())
+//		{
+//			ErrLog("init friend handle failed");
+//			return false;
+//		}
 
 		m_pMsgHandler[i] = new CMsgHandler(m_pConfigReader, i);
 		if (!m_pMsgHandler[i])
@@ -139,19 +143,7 @@ bool CIMAppFrame::StartApp()
 			ErrLog("init offlineMsg handle failed");
 			return false;
 		}
-
-		m_pGrpMsgHandler[i] = new CGrpMsgHandler(m_pConfigReader, i);
-		if (!m_pGrpMsgHandler[i])
-		{
-			ErrLog("create GrpMsg handle failed");
-			return false;
-		}
-		if (false == m_pGrpMsgHandler[i]->Initialize())
-		{
-			ErrLog("init GrpMsg handle failed");
-			return false;
-		}
-
+		
 		m_pSigHandler[i] = new CSigHandler(m_pConfigReader, i);
 		if (!m_pSigHandler[i])
 		{
@@ -163,6 +155,46 @@ bool CIMAppFrame::StartApp()
 			ErrLog("init GrpMsg handle failed");
 			return false;
 		}
+
+		// 通知消息
+		m_pNotifyHandle[i] = new CNotifyHandle(m_pConfigReader, i);
+		if (!m_pNotifyHandle[i])
+		{
+			ErrLog("create notify handle failed");
+			return false;
+		}
+		if (false == m_pNotifyHandle[i]->Initialize())
+		{
+			ErrLog("init notify handle failed");
+			return false;
+		}
+		// 群组消息处理
+		m_pGroupChatHandle[i] = new CGroupChatHandle(m_pConfigReader, i);
+		if (!m_pGroupChatHandle[i])
+		{
+			ErrLog("create group chat handle failed");
+			return false;
+		}
+		if (false == m_pGroupChatHandle[i]->Initialize())
+		{
+			ErrLog("init group chat handle failed");
+			return false;
+		}
+
+		// 密钥交换消息处理
+		m_pExchangeKeyHandle[i] = new CExchangeKeyHandle(m_pConfigReader, i);
+		if (!m_pExchangeKeyHandle[i])
+		{
+			ErrLog("create exchange key handle failed");
+			return false;
+		}
+		if (false == m_pExchangeKeyHandle[i]->Initialize())
+		{
+			ErrLog("init exchange key handle failed");
+			return false;
+		}
+
+		
 	}
 
 	// End 
@@ -179,10 +211,10 @@ void CIMAppFrame::StopApp()
 	}
 	for (int i = 0; i < m_nActualServiceInst; i++)
 	{
-		if (m_pFriendHandler[i])
-		{
-			delete m_pFriendHandler[i];
-		}
+//		if (m_pFriendHandler[i])
+//		{
+//			delete m_pFriendHandler[i];
+//		}
 		if (m_pMsgHandler[i])
 		{
 			delete m_pMsgHandler[i];
@@ -191,13 +223,17 @@ void CIMAppFrame::StopApp()
 		{
 			delete m_pOfflineMsgHandler[i];
 		}
-		if (m_pGrpMsgHandler[i])
-		{
-			delete m_pGrpMsgHandler[i];
-		}
 		if (m_pSigHandler[i])
 		{
 			delete m_pSigHandler[i];
+		}
+		if(m_pGroupChatHandle[i])
+		{
+			delete m_pGroupChatHandle[i];
+		}
+		if(m_pExchangeKeyHandle[i])
+		{
+			delete m_pExchangeKeyHandle[i];
 		}
 	}
 }

@@ -1,16 +1,13 @@
 #include <unistd.h> 
 #include <limits.h>
 #include <string.h>
-
-
 #include <openssl/ssl.h>
 #include <openssl/bio.h>
 #include "mainframe.h"
-
 #include "utility.hpp"
-
-#include "xmpp_fcm_client.h"
+#include "hw_push_client.h"
 #include "jpush_client.h"
+#include "google_push_client.h"
 
 static int SetSysFdLimit(int iRlimMax)
 {
@@ -28,7 +25,6 @@ static int SetSysFdLimit(int iRlimMax)
 	}
 	return 0;
 }
-///////////////////////////////////////////////////
 
 static CIMFrame* gIMFrame = 0;
 
@@ -49,13 +45,8 @@ CIMFrame* CIMFrame::GetInstance(void)
 bool CIMFrame::InitFrame(const char * pConfigFile)
 {
 
-	  /* SSL 库初始化 */
 	SSL_library_init();
-	  /* 载入所有 SSL 算法 */
-	//OpenSSL_add_all_algorithms();
-	  /* 载入所有 SSL 错误消息 */
 	SSL_load_error_strings();
-
 	::init_locks();
 
 	if(!pConfigFile || is_file_exist(pConfigFile))
@@ -68,7 +59,7 @@ bool CIMFrame::InitFrame(const char * pConfigFile)
 		return false;
 	}
 
-	m_pConfigReader = new CConfigFileReader(pConfigFile);
+	m_pConfigReader = CConfigFileReader::GetInstance(pConfigFile);
 	if(!m_pConfigReader)
 	{
 		ErrLog("Err of Confile reader initialization!");
@@ -117,8 +108,6 @@ bool CIMFrame::InitFrame(const char * pConfigFile)
 		}
 	}
 
-
-
 	m_pHWPushClient = new CHWPushClient(m_pConfigReader);
 	if(!m_pConfigReader)
 	{
@@ -136,21 +125,18 @@ bool CIMFrame::InitFrame(const char * pConfigFile)
 }
 
 
-void *CIMFrame::_StartEventLoop(void *)
-{
-	CSslEventDispatch::Instance()->StartDispatch();
-	return NULL;
-}
+//void *CIMFrame::_StartEventLoop(void *)
+//{
+//	CSslEventDispatch::Instance()->StartDispatch();
+//	return NULL;
+//}
 
 
 
 
 bool CIMFrame::StartFrame()
 {
-	//if(!m_pCAppApnsPushserver)
-	//	return false;
-	//new thread to create the socket event loop;
-	(void)pthread_create(&m_thread_id, nullptr, _StartEventLoop, nullptr);
+	//(void)pthread_create(&m_thread_id, nullptr, _StartEventLoop, nullptr);
 
 	signal(SIGPIPE, SIG_IGN);
 
@@ -161,13 +147,18 @@ bool CIMFrame::StartFrame()
 	}
 
 	//1. huawei push
-	m_pHWPushClient->Start();
+    m_pHWPushClient->Start();
 
 	//2. google fcm push
-	CXmppFcmClient *fcmClient = new CXmppFcmClient(m_pConfigReader);
+	CGooglePushClient *fcmClient = new CGooglePushClient(m_pConfigReader);
 	if (!fcmClient)
 	{
-		ErrLog("new CXmppFcmClient");
+		ErrLog("new CHttpFcmClient");
+		return false;
+	}
+	if (!fcmClient->Init())
+	{
+		ErrLog("fcmClient->Init()");
 		return false;
 	}
 
@@ -180,27 +171,27 @@ bool CIMFrame::StartFrame()
 		ErrLog("new miPushClient");
 		return false;
 	}
-    /* //commit templely
+     //commit templely
 	if (!miPushClient->Init())
 	{
 		ErrLog("miPushClient->Init()");
 		return false;
 	}
 	miPushClient->Start();
-    */
-	//4. jpush
-	CJPushClient *jPushCient = new CJPushClient(m_pConfigReader);
-	if (!jPushCient)
-	{
-		ErrLog("new jPushCient");
-		return false;
-	}
-	if (!jPushCient->Init())
-	{
-		ErrLog("miPushClient->Init()");
-		return false;
-	}
-	jPushCient->Start();
+    
+   //4. jpush
+    CJPushClient *jPushCient = new CJPushClient(m_pConfigReader);
+    if (!jPushCient)
+    {
+    	ErrLog("new jPushCient");
+    	return false;
+    }
+    if (!jPushCient->Init())
+    {
+    	ErrLog("miPushClient->Init()");
+    	return false;
+    }
+    jPushCient->Start();
 	
 
 	printf("service started!!");
@@ -266,9 +257,6 @@ int main(int argc, char** argv)
 			ErrLog("Failed to startup server ...");
 			return -1;
 		}
-	//} catch (...)
-	//{
-	//	ErrLog("some excption catched!!");
 	}
 
 	pause();

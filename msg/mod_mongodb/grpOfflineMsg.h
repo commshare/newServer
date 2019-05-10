@@ -9,7 +9,8 @@ Description: 保存群组原始消息内容
 #include <string>
 #include "mongoDbColl.h"
 #include "bsoncxx/builder/basic/document.hpp"
-#include "im.group.pb.h"
+//#include "im.group.pb.h"
+#include "im.mes.pb.h"
 #include "ostype.h"
 
 using std::string;
@@ -25,7 +26,7 @@ class CGrpOfflineMsg : public IMongoDataEntry
 public:
 	CGrpOfflineMsg();
 
-	CGrpOfflineMsg(const im::GroupChat& msg);				
+	CGrpOfflineMsg(const im::MESGrpChat& msg);				
 	CGrpOfflineMsg(const string& grpId, const string& msgId, const string& msgData, uint64_t createTime, const string& fromId = string(""));
 
 	/* msgchat content and offlineMsg createTime readOnly after construct */
@@ -55,5 +56,21 @@ private:
 
 };
 CGrpOfflineMsg viewToGrpOfflineMsg(const view& doc);
+
+class CGrpOfflineMsgKeys :public IMongoDataDelKeys
+{
+public:
+	CGrpOfflineMsgKeys(const CGrpOfflineMsg& msg);
+	CGrpOfflineMsgKeys(const string& grpId, const string& msgId);
+	virtual bsoncxx::builder::basic::document ToDoc()const override;
+
+	virtual std::shared_ptr<IMongoDataDelKeys> Clone()const override;
+
+	virtual unsigned int hashVal() const override;
+
+private:
+	const string m_grpId;
+	const string m_msgId;
+};
 
 #endif // __GRPOFFLINEMSG_H__

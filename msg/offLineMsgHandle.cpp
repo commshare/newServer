@@ -8,13 +8,13 @@ Description:
 #include "offLineMsgHandle.h"
 #include "im_loginInfo.h"
 #include "im.mes.pb.h"
-#include "im.group.pb.h"
+//#include "im.group.pb.h"
 #include "im.pub.pb.h"
 #include "redisLoginInfoMgr.h"
 #include "mysqlFriendMgr.h"
 #include "redisFriendMgr.h"
 #include "util.h"
-#include "commonTaskMgr.h"
+#include "offlineMsgTaskMgr.h"
 
 using namespace im;
 using namespace std;
@@ -142,8 +142,9 @@ static bool _isMaxLenLimitTouched(const MESOfflineMsgAck& offlineMsgAck, int max
 
 void COfflineMsgHandler::GetGrpOfflineMsgContent(MESOfflineMsgAck& offlineMsgAck, CGrpOfflineMsgMgr& grpOfflineMsgMgr, int maxLen)
 {
-    //CUsecElspsedTimer elspedTimer;
-    //elspedTimer.start();
+    CUsecElspsedTimer elspedTimer;
+    elspedTimer.start();
+
     int index = 0;
     std::set<string> msgIds;				//所有群聊天的消息的msgID, 不重复
     std::multimap<string, OfflineMsgData*> grpOfflineMsg;	//<msgId, offlineMsgData>pairs,管理offlineMsgAck中的群聊天离线消息部分，可重复
@@ -223,17 +224,17 @@ void COfflineMsgHandler::GetGrpOfflineMsgContent(MESOfflineMsgAck& offlineMsgAck
                 {
                     iter->second->clear_smsgdata();
                     //这个 std::map<string, OfflineMsgData*>::const_iterator iterator 用于删除msgdata字段为空的offlineMsgData
-                    std::multimap<string, OfflineMsgData*>::const_iterator iterator = grpOfflineMsg.begin();
-//                    while(iterator != grpOfflineMsg.end()&& iterator->second->smsgdata().empty()) {
-//                        iterator->second->Clear();
+//move down                    std::multimap<string, OfflineMsgData*>::const_iterator iterator = grpOfflineMsg.begin();
+////                    while(iterator != grpOfflineMsg.end()&& iterator->second->smsgdata().empty()) {
+////                        iterator->second->Clear();
+////                        ++iterator;
+////                    }
+//                    while(iterator != grpOfflineMsg.end()) {
+//                        if(iterator->second->smsgdata().empty()) {
+//                            iterator->second->Clear();
+//                        }
 //                        ++iterator;
 //                    }
-                      while(iterator != grpOfflineMsg.end()) {
-                        if(iterator->second->smsgdata().empty()) {
-                            iterator->second->Clear();
-                        }
-                        ++iterator;
-                    }
 
                     isLimitTouched = true;
                     DbgLog("------------[offlineMsgAck.size = %d, >= (%d-%d)]-------------", offlineMsgAck.ByteSize(), maxLen,  2000);
@@ -243,17 +244,18 @@ void COfflineMsgHandler::GetGrpOfflineMsgContent(MESOfflineMsgAck& offlineMsgAck
             ++idContentIter;
         }
     }
-    //并重建msglist,保证其不带无内容元素，影响长度
-//    const google::protobuf::RepeatedPtrField<::im::OfflineMsgData> msgDataList = offlineMsgAck.msglist();
-//    DbgLog("<<<<<<<<<<<<<<google::protobuf::RepeatedPtrField<::im::OfflineMsgData> msgDataList size:<%d>>>>>>>>>>>>", msgDataList.size());
-//    offlineMsgAck.clear_msglist();
-//    for (int i = 0; i < msgDataList.size() ;i++) {
-//        if(!msgDataList.Get(i).smsgdata().empty()) {
-//           im::OfflineMsgData* msgdata = offlineMsgAck.add_msglist();
-//           *msgdata = msgDataList.Get(i);
-//        }
-//    }
 
+    //无论超过64K长度还是不超过64K长度, 函数退出前都要把原来grpOfflineMsg为空的结点都删除掉，从"move down"移到这个位置，是为了删除grpOfflineMsg有重复的空结点，但又没满64K就退出程序时也
+    //得处理。但有个问题是，如果没满64K,grpOfflineMsg又没有重结点，那么grpOfflineMsg不会有空结点，这个步骤在这里就浪费操作了。
+    std::multimap<string, OfflineMsgData*>::const_iterator iterator = grpOfflineMsg.begin();
+    while(iterator != grpOfflineMsg.end()) {
+        if(iterator->second->smsgdata().empty()) {
+            iterator->second->Clear();
+        }
+        ++iterator;
+    }
+
+    DbgLog("handle GetGrpOfflineMsgContent %s use %lu useconds", offlineMsgAck.smsgid().c_str() , elspedTimer.elapsed());
     return;
 }
 
@@ -277,6 +279,7 @@ void OnGetOfflineMsgStartUp(const std::shared_ptr<::google::protobuf::MessageLit
 
 void COfflineMsgHandler::HandleGetOfflineMsg(const im::MESOfflineMsg& msg, const UidCode_t& sessionId)
 {
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
     CUsecElspsedTimer elspsedTimer;
     elspsedTimer.start();
 
@@ -286,16 +289,40 @@ void COfflineMsgHandler::HandleGetOfflineMsg(const im::MESOfflineMsg& msg, const
 	{
 		HandleOfflineMsgDelivered(msg);
 	}
+    //这里获取配置里设定的离线消息N天数，用于过滤出N天后的离线消息
+    char *day = m_pConfigReader->GetConfigName("days_befor_offmsg");
+    int64_t createTime = 0;
+    if(day!=NULL && atof(day) >0.0) {
+        uint64_t curtime =  getCurrentTime();
+        createTime = curtime - atof(day)*24*3600*1000;
+        std::cout << "-----------createTime---------" << createTime << std::endl;
+    }
 
+    CUsecElspsedTimer sumTimer;
+    sumTimer.start();
     int totals = 0;
-    totals = m_offlineMsgMgr.GetUserOfflineMsgSummaryBytoId(msg.stoid());
+    totals = m_offlineMsgMgr.GetUserOfflineMsgSummaryBytoId(msg.stoid(), createTime);
+    DbgLog("handle GetUserOfflineMsgSummaryBytoId %s use %lu useconds", msg.smsgid().c_str() , sumTimer.elapsed());
     DbgLog("----------There are totally %d offlineMsgs for %s---------", totals , msg.stoid().c_str());
 
     MESOfflineMsgAck offlineMsgAck;
 
     if (totals > 0) {
 
-        offlineMsgAck = m_offlineMsgMgr.GetUserOfflineMsg(msg.stoid());
+        CUsecElspsedTimer getoffMsgtimer;
+        getoffMsgtimer.start();
+//        char *day = m_pConfigReader->GetConfigName("days_befor_offmsg");
+//        int64_t createTime = 0;
+//        if(day!=NULL && atof(day) >0.0) {
+//            uint64_t curtime =  getCurrentTime();
+//            createTime = curtime - atof(day)*24*3600*1000;
+//            std::cout << "-----------createTime---------" << createTime << endl;
+//        }
+        offlineMsgAck = m_offlineMsgMgr.GetUserOfflineMsg(msg.stoid(), "", 65535, 100, 0, createTime);
+        DbgLog("handle GetUserOfflineMsg %s use %lu useconds", msg.smsgid().c_str() , getoffMsgtimer.elapsed());
+
+
+    	offlineMsgAck.set_smsgid(msg.smsgid());
         GetGrpOfflineMsgContent(offlineMsgAck, m_grpOfflineMsgMgr);
 
         //just for printf log
@@ -305,18 +332,19 @@ void COfflineMsgHandler::HandleGetOfflineMsg(const im::MESOfflineMsg& msg, const
             DbgLog("[offlineMsg to client]<<<<cmdid = %u, sfromid = %s, smsgid = %s, msgdataLen= %d>>>>", data.cmdid(),data.sfromid().c_str(), data.smsgid().c_str(), data.smsgdata().size());
         }
     } else {
+    	offlineMsgAck.set_smsgid(msg.smsgid());
         offlineMsgAck.set_stoid(msg.stoid());
         offlineMsgAck.set_errcode(NON_ERR);
         DbgLog("<<<<<<<<<<<<<[%s] has no offlinemsg>>>>>>>>>>", msg.stoid().c_str());
     }
 
-    offlineMsgAck.set_smsgid(msg.smsgid());
+//    offlineMsgAck.set_smsgid(msg.smsgid());
     offlineMsgAck.set_msgtime(getCurrentTime());
     offlineMsgAck.set_msgtotal(totals);
     sendAck(&offlineMsgAck, MES_OFFLINEMSG_ACK, sessionId);
 
-    DbgLog("****send MESOfflineMsgAck(0x%x)%s to %s,lsSize = %d, byteSize = %d", MES_OFFLINEMSG_ACK, offlineMsgAck.smsgid().c_str(), offlineMsgAck.stoid().c_str(),
-           offlineMsgAck.msglist_size(), offlineMsgAck.ByteSize());
+    DbgLog("****send MESOfflineMsgAck(0x%x)%s to %s,lsSize = %d, byteSize = %d, totally use %lu useconds", MES_OFFLINEMSG_ACK, offlineMsgAck.smsgid().c_str(), offlineMsgAck.stoid().c_str(),
+           offlineMsgAck.msglist_size(), offlineMsgAck.ByteSize(), elspsedTimer.elapsed());
 }
 
 void COfflineMsgHandler::OnGetOfflineMsg(std::shared_ptr<CImPdu> pPdu)
@@ -336,8 +364,8 @@ void COfflineMsgHandler::OnGetOfflineMsg(std::shared_ptr<CImPdu> pPdu)
         ErrLog("!!!lack of required parameter");
         return;
     }
-
-    if (!CCommonTaskMgr::InsertCommonTask(pMsg, OnGetOfflineMsgStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId())))
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
+    if (!COfflineMsgTaskMgr::InsertOfflineMsgTask(pMsg, OnGetOfflineMsgStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId())))
     {
         WarnLog("!!!create thread task failed");
     }
@@ -392,6 +420,7 @@ private:
 
 void COfflineMsgHandler::HandleOfflineMsgDelivered(const im::MESOfflineMsgDelivered& msg, const UidCode_t& sessionId)
 {
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
     CUsecElspsedTimer elspsedTimer;
     elspsedTimer.start();
 
@@ -648,8 +677,7 @@ void COfflineMsgHandler::HandleOfflineMsgDelivered(const im::MESOfflineMsg& msg)
         log("****send MES_OFFLINEMSG_DELIVERED_NOTIFICATION(0x%x) %s to %s,lsSize = %d", MES_OFFLINEMSG_DELIVERED_NOTIFICATION,
             offlineMsgDeliveredNotify.smsgid().c_str(), offlineMsgDeliveredNotify.stoid().c_str(), offlineMsgDeliveredNotify.lsmsgs_size());
     }
-
-    DbgLog("handle OfflineMsgDelivered %s use %lu useconds", msg.smsgid().c_str() , elspsedTimer.elapsed());
+    DbgLog("handle HandleOfflineMsgDelivered %s use %lu useconds", msg.smsgid().c_str() , elspsedTimer.elapsed());
 }
 
 void COfflineMsgHandler::onOfflineMsgDelivered(std::shared_ptr<CImPdu> pPdu)
@@ -670,8 +698,8 @@ void COfflineMsgHandler::onOfflineMsgDelivered(std::shared_ptr<CImPdu> pPdu)
         ErrLog("!!!lack of required parameter");
         return;
     }
-
-    CCommonTaskMgr::InsertCommonTask(pMsg, OnOfflineMsgDeliveredStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()));
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
+    COfflineMsgTaskMgr::InsertOfflineMsgTask(pMsg, OnOfflineMsgDeliveredStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()));
     log("\r\n\r\n\r\nMESOfflineMsgDelivered(0x%x) %s prehandled, dir:%s-->%s",
         pPdu->GetCommandId()/*MES_OFFLINEMSG_DELIVERED*/, msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str());
 }
@@ -695,6 +723,7 @@ void OnOfflineMsgDeliveredNotifyAckStartUp(const std::shared_ptr<::google::proto
 
 void COfflineMsgHandler::HandleOfflineMsgDeliveredNotifyAckTask(const im::MESOfflineMsgDeliveredNotifyAck& msg)
 {
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
     std::multimap<int, string> cmdMsgIdMap;
     for (int index = 0; index < msg.lsmsgs_size(); ++index)
     {
@@ -734,7 +763,8 @@ void COfflineMsgHandler::onOfflineMsgDeliveredNotifyAck(std::shared_ptr<CImPdu> 
     {
         return;
     }
-    CCommonTaskMgr::InsertCommonTask(pMsg, OnOfflineMsgDeliveredNotifyAckStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()), BKDRHash(msg.sfromid().c_str()));
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
+    COfflineMsgTaskMgr::InsertOfflineMsgTask(pMsg, OnOfflineMsgDeliveredNotifyAckStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()), BKDRHash(msg.sfromid().c_str()));
     log("\r\n\r\n\r\nMESOfflineMsgDeliveredNotifyAck(0x%x) %s prehandled,from %s, lsSize = %d",
         pPdu->GetCommandId(), msg.smsgid().c_str(), msg.sfromid().c_str(), msg.lsmsgs_size());
 }

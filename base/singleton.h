@@ -8,27 +8,29 @@
 
 #ifndef BASE_SINGLETON_H_
 #define BASE_SINGLETON_H_
-
+#include<utility>
 template<typename T>
 class Singleton  {
 public:
-    static T& Instance() {
+    template<typename...Args>
+    static T& Instance(Args...args) {
         if(Singleton::s_instance==0) {
-            Singleton::s_instance = CreateInstance();
+            Singleton::s_instance = CreateInstance(std::forward<Args>(args)...);
         }
         return *(Singleton::s_instance);
     }
-    
-    static T* GetInstance() {
+    template<typename...Args>
+    static T* GetInstance(Args...args) {
         if(Singleton::s_instance==0) {
-            Singleton::s_instance = CreateInstance();
+            Singleton::s_instance = CreateInstance(std::forward<Args>(args)...);
         }
         return Singleton::s_instance;
     }
     
-    static T* getInstance() {
+    template<typename...Args>
+    static T* getInstance(Args...args) {
         if(Singleton::s_instance==0) {
-            Singleton::s_instance = CreateInstance();
+            Singleton::s_instance = CreateInstance(std::forward<Args>(args)...);
         }
         return Singleton::s_instance;
     }
@@ -50,8 +52,9 @@ protected:
     }
     
 private:
-    static T* CreateInstance(){
-        return new T();
+    template<typename...Args>
+    static T* CreateInstance(Args...args){
+        return new T(std::forward<Args>(args)...);
     }
     
     static void DestroyInstance(T* p) {

@@ -95,7 +95,7 @@ typedef enum _db_groupmemberstatus
 	MASTER_MEMBER
 } db_groupmemberstatus_t;
 	
-typedef unordered_map<string,uint8_t>  AccessUserMap_t;
+typedef std::tr1::unordered_map<string,uint8_t>  AccessUserMap_t;
 
 
 typedef struct _AccessUserPara
@@ -174,7 +174,8 @@ protected:
 	ErrCode VerifyGroupUserPermission(string sUserId, uint8_t &bGroupPermit);
 	//ErrCode VerifyGroupPermission(string sUserId,string sGroupId);
 	ErrCode VerifyGroupCreatingAuth(string sUserId,uint8_t bRole,uint16_t nGroupLimit);
-	ErrCode VerifyGroupJoiningAuth(string sGroupId, uint8_t bRole, uint16_t nMemberLimit,uint16_t nJoinNum = 1, uint32_t appyType = 0);
+	ErrCode VerifyGroupInviteAuth(string sGroupId, uint16_t nMemberLimit,uint16_t nJoinNum = 1);
+	ErrCode VerifyGroupApplyAuth(const string& sGroupId, const string& sUserId, uint16_t nMemberLimit, uint32_t appyType = 0);
 	ErrCode InsertGroupMember(string sUserId,string sGroupId,uint8_t bStatus,
 								uint8_t bHide=GROUP_NONHIDE_STYLE,
 								db_memberinsertmode_t bMode=COMMON_INSERT_MEMBER); //0: create mode ;1: normal insert;

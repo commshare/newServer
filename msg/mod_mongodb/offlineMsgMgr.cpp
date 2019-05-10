@@ -209,7 +209,7 @@ bool COfflineMsgMgr::UpdateOfflineMsg(const string& toId, const int cmdId, const
 //	return COfflineMsg();
 //}
 
-im::MESOfflineMsgAck COfflineMsgMgr::GetUserOfflineMsg(const string& toId, const string& fromId /*= string("")*/, int maxLen, int limitNum /*= 0*/, int cmdId) throw (int)
+im::MESOfflineMsgAck COfflineMsgMgr::GetUserOfflineMsg(const string& toId, const string& fromId /*= string("")*/, int maxLen, int limitNum /*= 0*/, int cmdId, int64_t createTime) throw (int)
 {
 	std::unique_ptr<CMongoDbConn> pConn =
 		CMongoDbManager::getInstance()->GetDBConn();
@@ -230,6 +230,12 @@ im::MESOfflineMsgAck COfflineMsgMgr::GetUserOfflineMsg(const string& toId, const
 //	{
 //		doc.append(kvp(OFFLINEMSG_FIELD_CMDID_STR, cmdId));
 //	}
+    if (createTime != 0) {
+        doc.append(kvp(OFFLINEMSG_FIELD_CREATETIME_STR,
+            [createTime](sub_document subdoc) {
+            subdoc.append(kvp("$gt", createTime));
+        }));
+    }
 
 	doc.append(kvp(OFFLINEMSG_FIELD_ISPULLED_STR,
 		[](sub_document subdoc) {
@@ -415,7 +421,7 @@ im::MESOfflineSummaryAck COfflineMsgMgr::GetUserOfflineMsgSummaryGrpByFromId(con
 	return summaryAck;
 }
 
-int COfflineMsgMgr::GetUserOfflineMsgSummaryBytoId(const string &toId)
+int COfflineMsgMgr::GetUserOfflineMsgSummaryBytoId(const string &toId, int64_t createTime)
 {
     std::unique_ptr<CMongoDbConn> pConn =
         CMongoDbManager::getInstance()->GetDBConn();
@@ -435,6 +441,13 @@ int COfflineMsgMgr::GetUserOfflineMsgSummaryBytoId(const string &toId)
 //            <<"_id" << "null" <<"summary" << open_document << "$sum"
 //            <<1<< close_document << finalize;
 //    pipeLine.group(groupDoc.view());
+
+    if (createTime != 0) {
+        matchdoc.append(kvp(OFFLINEMSG_FIELD_CREATETIME_STR,
+            [createTime](sub_document subdoc) {
+            subdoc.append(kvp("$gt", createTime));
+        }));
+    }
 
     int sum = 0;
     try
@@ -576,6 +589,40 @@ bool COfflineMsgMgr::updateCallOfflineMsgStatus(const string& toId, const int cm
 	}
 
 	return false;
+}
+
+// 获取消息的状态，是否已推送到客户端
+bool COfflineMsgMgr::getOfflineMsgPullStatus(const string& toId, const int cmdId, const string& msgId)
+{
+	bool bRet = true;
+	std::unique_ptr<CMongoDbConn> pConn =
+		CMongoDbManager::getInstance()->GetDBConn();
+	if (!pConn)
+	{
+		WarnLog("conn invalied");
+		return false;
+	}
+	
+	bsoncxx::builder::basic::document doc{};	
+	doc.append(kvp(OFFLINEMSG_FIELD_TOID_STR, toId));
+	doc.append(kvp(OFFLINEMSG_FIELD_CMDID_STR, cmdId));
+	doc.append(kvp(OFFLINEMSG_FIELD_MSGID_STR, msgId));
+	doc.append(kvp(OFFLINEMSG_FIELD_ISPULLED_STR,
+		[](sub_document subdoc) {
+		subdoc.append(kvp("$exists", false));
+	}));
+
+	try
+	{
+		log("%s", bsoncxx::to_json(doc.view()).c_str());
+		if(pConn->GetCollection(GetDbName(), GetCollName()).find_one(bsoncxx::document::view_or_value(doc)))
+			bRet = false;
+	}
+	catch (const std::exception& xcp)
+	{
+		WarnLog("exception catched:%s", xcp.what());
+	}
+	return bRet;
 }
 
 

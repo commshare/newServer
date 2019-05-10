@@ -299,7 +299,12 @@ bool CRedisHelper::GetUserInfo(acl::redis_hash&     hashRedis,acl::string sUserI
 		{
 			info.sLoginTime= item->second.c_str(); 
 			valid_inx++;
-		}	
+		}
+		else if(item->first.equal(sLoginUserFields[SESSION_ID_FIELD]))			
+		{
+			info.sSessionId= item->second.c_str(); 
+			valid_inx++;
+		}
 	}
 
 	if(valid_inx<LOGIN_FIELDS_COUNT)

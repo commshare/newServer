@@ -1,9 +1,7 @@
 #include "im_push_frame.h"
 #include "configfilereader.h"
 #include "pushHandler.h"
-#include "apnsclient.h"
-#include "voip_push_client.h"
-
+#include "voip_http2_client.h"
 CIMPushFrame::CIMPushFrame(CConfigFileReader * pReader)
 	: m_pConfigReader(pReader), m_nActualServiceInst(0)
 {
@@ -41,33 +39,33 @@ bool CIMPushFrame::Initialize()
 
 bool CIMPushFrame::StartApp()
 {
+	m_pVoipHttp2DevClient = new CVoipHttp2Client(PUSH_CLIENT_TYPE_VOIP_DEV);
 
-	m_pApnsClient = new CApnsClient;
-	if (!m_pApnsClient)
+	if (!m_pVoipHttp2DevClient)
 	{
-		ErrLog("CIMPushFrame StartApp");
+		ErrLog("CVoipHttp2DevClient StartApp");
 		return false;
 	}
 
-	if (!m_pApnsClient->init(m_pConfigReader))
+	if (! m_pVoipHttp2DevClient->init(m_pConfigReader))
 	{
-		ErrLog("CIMPushFrame StartApp");
+		ErrLog("CVoipHttp2DevClient StartApp");
+		return false;
+	}
+    //
+
+	m_pVoipHttp2ProClient = new CVoipHttp2Client(PUSH_CLIENT_TYPE_VOIP_PRODUCTION);
+	if (!m_pVoipHttp2ProClient )
+	{
+		ErrLog("CVoipHttp2ProClient StartApp");
 		return false;
 	}
 
-	m_pVoipPushClient = new CVoipPushClient;
-	if (!m_pVoipPushClient)
+	if (! m_pVoipHttp2ProClient->init(m_pConfigReader))
 	{
-		ErrLog("CVoipPushClient StartApp");
+		ErrLog("CVoipHttp2ProClient StartApp");
 		return false;
 	}
-
-	if (!m_pVoipPushClient->init(m_pConfigReader))
-	{
-		ErrLog("CVoipPushClient StartApp");
-		return false;
-	}
-	
 	for (int i = 0; i < m_nActualServiceInst; i++)
 	{
 
@@ -92,20 +90,15 @@ bool CIMPushFrame::StartApp()
 
 void CIMPushFrame::StopApp()
 {
-	/*
-	if(m_pSvrToLogic)
+	if(m_pVoipHttp2DevClient)
 	{
-		delete m_pSvrToLogic;
-		m_pSvrToLogic = nullptr;
+		delete m_pVoipHttp2DevClient;
+		m_pVoipHttp2DevClient = nullptr;
 	}
-	
-	*/
 
-	if(m_pApnsClient)
-	{
-		delete m_pApnsClient;
-		m_pApnsClient = nullptr;
-	}
+	if(m_pVoipHttp2ProClient)
+		delete m_pVoipHttp2ProClient;
+		m_pVoipHttp2ProClient = nullptr;
 
 	for (int i = 0; i < m_nActualServiceInst; i++)
 	{
@@ -116,7 +109,6 @@ void CIMPushFrame::StopApp()
 		}
 	}
 
-
-	//...
 }
+
 

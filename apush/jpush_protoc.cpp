@@ -7,7 +7,7 @@
 #include "jpush_protoc.h"
 #include "protobuf_phase.h"
 #include "jpush_client.h"
-
+#include "utility.hpp"
 CJsonJPushNotification::CJsonJPushNotification(string body)
 {
 	m_sBody = body;
@@ -48,8 +48,6 @@ Json::Value CJsonAudience::GetJsonAudience()
 }
 
 // Constructor implementation
-
-
 string CJPushProtoc::base64Auth;
 char CJPushProtoc::m_sendBuf[4096];
 CJPushProtoc::CJPushProtoc(im::ANDPushMsg *pPbMsg)
@@ -61,27 +59,6 @@ CJPushProtoc::CJPushProtoc(im::ANDPushMsg *pPbMsg)
 CJPushProtoc::~CJPushProtoc()
 {
 }
-
-//'{
-//	"platform":"android",
-//	"audience":
-//	{
-//		"alias" : [ "liulang1"]
-//	},
-//	"notification": 
-//	{
-// 	 	"alert":"Hi,JPush 111!",
-// 	 	"android":
-//		{
-//			"extras":
-//			{
-//				"android-key1":"android-value1"
-//			}
-//		}
-//	}
-//}
-
-
 string CJPushProtoc::GetSendBuf()
 {
 	if (!m_pPbMsg)
@@ -112,21 +89,36 @@ string CJPushProtoc::GetSendBuf()
 
 	return m_sendBuf;
 }
+string CJPushProtoc::GetHttpUrl() {
+    return "https://api.jpush.cn/v3/push";
+}
 
-// TODO: Uncomment the copy constructor when you need it.
-//inline CJPushProtoc::CJPushProtoc(const CJPushProtoc& src)
-//{
-//   // TODO: copy
-//}
+void CJPushProtoc::GetHttpHeaders(vector<string>& vstr) {
 
-// TODO: Uncomment the assignment operator when you need it.
-//inline CJPushProtoc& CJPushProtoc::operator=(const CJPushProtoc& rhs)
-//{
-//   if (this == &rhs) {
-//      return *this;
-//   }
-//
-//   // TODO: assignment
-//
-//   return *this;
-//}
+	if (CJPushProtoc::base64Auth.empty())
+	{
+		string authorization = CJPushClient::appKey + ":" + CJPushClient::masterSecret;
+		CJPushProtoc::base64Auth = base64_encode(authorization);
+	}
+//只添加一个简单的授权的头部
+    vstr.push_back(string("authorization: Basic ") + CJPushProtoc::base64Auth);
+}
+
+string CJPushProtoc::GetHttpPostData() {
+   
+	if (!m_pPbMsg)
+	{
+		ErrLog("m_pPbMsg is nullptr!");
+		return "";
+	}
+
+	Json::Value jroot;
+	CJsonJPushNotification notify(m_pPbMsg->sbody());
+	CJsonAudience audience(m_pPbMsg->sdivece_token());
+
+	jroot["platform"] = "android";
+	jroot["audience"] = audience.GetJsonAudience();
+	jroot["notification"] = notify.GetJsonNotify(m_pPbMsg);
+
+	return jroot.toStyledString();
+}

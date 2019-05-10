@@ -69,15 +69,15 @@ static void _LoginReq(void*)
 
     char* str_userId = config_file.GetConfigName("userId");
 	char* str_usertoken = config_file.GetConfigName("userToken");
-    char* str_devicetype = config_file.GetConfigName("deviceType");
-	char* str_deviceversion = config_file.GetConfigName("deviceVersion");
+    //char* str_devicetype = config_file.GetConfigName("deviceType");
+	//char* str_deviceversion = config_file.GetConfigName("deviceVersion");
 	char* str_devicetoken = config_file.GetConfigName("deviceToken");
     
     CMLogin loginReqMsg;
     loginReqMsg.set_suserid(str_userId);
-    loginReqMsg.set_susertoken(str_usertoken);
-    loginReqMsg.set_ndevicetype(atoi(str_devicetype));
-   	loginReqMsg.set_sdeviceversion(str_deviceversion);
+    loginReqMsg.set_slogintoken(str_usertoken);
+	//loginReqMsg.set_ndevicetype(atoi(str_devicetype));
+   	//loginReqMsg.set_sdeviceversion(str_deviceversion);
     loginReqMsg.set_sdevicetoken(str_devicetoken);
 
     CImPdu pdu;
@@ -734,7 +734,7 @@ static void _GrpChatMsgCancel(void*)
 		
 }
 
-
+#if 0
 static void _GrpNotify(void*)
 {
     CConfigFileReader config_file(GetConfigFileName().c_str());
@@ -773,6 +773,7 @@ static void _GrpNotify(void*)
 		
 	send_to_all_server(&pdu);
 }
+#endif
 
 static void _JoinGrp(void*)
 {
@@ -1098,7 +1099,7 @@ void init_cmd_map(void)
 	g_cmdMap.insert(make_pair(GROUP_CHAT, &_GrpChatMsg));
 	g_cmdMap.insert(make_pair(GROUP_CHATCANCEL, &_GrpChatMsgCancel));
 	
-	g_cmdMap.insert(make_pair(MES_GRPINTERNOTIFY, &_GrpNotify));
+	//g_cmdMap.insert(make_pair(MES_GRPINTERNOTIFY, &_GrpNotify));
 	g_cmdMap.insert(make_pair(MES_JOINGRP,&_JoinGrp));
 	g_cmdMap.insert(make_pair(MES_EXCHANGE_KEY,&_ExchangeGrpKey));
 	g_cmdMap.insert(make_pair(GROUP_CREATE, &_GroupCreate));	

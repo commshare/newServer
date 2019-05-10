@@ -16,6 +16,10 @@ const AssociatedSvr_t imsvr::assocSvrArray[] =
 	{BPN,"bpn","/usbpn"},
 	{FS, "fs", "/usfs" },		//for freeswitch
 	{CSR, "csr", "/uscsr" },	//for customer service
+	{NOTIFY, "notify", "/usnotify" },	//for notify service
+	{LOGIN, "login", "/uslogin"}, // for login server
+	{CHANNEL, "channel", "/uschannel"}, // for channel server
+	{DESKTOP, "desktop", "/usdesktop"}, // for channel server
 	{-1,"",""}
 };
 
@@ -147,7 +151,35 @@ void CServerLinkMgr::InitAssocSvr(void)
 		sPath = GetServicePath(CSR);
 		m_lsAssocatedPath.push_back(sPath);
 	}
+
+	nId = m_nAssocSvrId & LOGIN;
+	if (LOGIN == nId)
+	{
+		sPath = GetServicePath(LOGIN);
+		m_lsAssocatedPath.push_back(sPath);
+	}
+
+    nId = m_nAssocSvrId & NOTIFY;
+    if (NOTIFY == nId)
+    {
+        sPath = GetServicePath(NOTIFY);
+        m_lsAssocatedPath.push_back(sPath);
+    }
+
+	nId = m_nAssocSvrId & CHANNEL;
+    if (CHANNEL == nId)
+    {
+        sPath = GetServicePath(CHANNEL);
+        m_lsAssocatedPath.push_back(sPath);
+    }
 	
+	nId = m_nAssocSvrId & DESKTOP;
+    if (DESKTOP == nId)
+    {
+        sPath = GetServicePath(DESKTOP);
+        m_lsAssocatedPath.push_back(sPath);
+    }
+
 	CServerLinkMgr::m_nAssocSvrCount = m_lsAssocatedPath.size(); // Allocate associcated server list and initiate. 
 	CServerLinkMgr::m_pAssocSvrInfo = new AssocSvrInfo_t[CServerLinkMgr::m_nAssocSvrCount]; 
 	
@@ -550,6 +582,48 @@ bool CServerLinkMgr::CheckValidLink(serv_info_t* pSvrList,int nServiceCount)
 	}
 
 	return true;
+}
+
+vector<CServerLink*> CServerLinkMgr::GetAssocSvrLinkList(int16_t nServiceId,UidCode_t sessionId)
+{
+    vector<CServerLink*> vecLinks;
+	CServerLink* pLink = 0;
+	serv_info_t* pServerList = 0;
+	int nServerCount = 0;
+	int i;
+
+	CAutoLock autolock(m_pLock);
+	
+	for(i = 0; i < CServerLinkMgr::m_nAssocSvrCount; i++)
+	{
+		if(CServerLinkMgr::m_pAssocSvrInfo[i].nServiceId==nServiceId)
+		{
+			nServerCount = CServerLinkMgr::m_pAssocSvrInfo[i].nServiceCount; //Get the corresponding server list.
+			pServerList = CServerLinkMgr::m_pAssocSvrInfo[i].pServerList;
+			
+		//	pLink = GetRandomLink(pServerList,nServerCount,sessionId);				 // Get a random valid link 
+            for(int j = 0; j < nServerCount; j++) 
+            {
+                if(pLink = (CServerLink*)pServerList[j].serv_conn) 
+                {
+                    if(pLink->IsConnect() && pLink->GetRegistStatus())
+                    {
+                        vecLinks.push_back(pLink);
+                    }
+                }    
+            }
+			break;
+		}
+	}
+   // if(pLink)
+   // 	pLink->AddRef();
+    for(auto it = vecLinks.begin(); it != vecLinks.end(); it++) 
+    {
+        (*it)->AddRef();
+    }
+
+    //	return pLink;
+    return vecLinks;
 }
 
 void CServerLinkMgr::AddLinkBySessionId(UidCode_t sessionId,CServerLink* pLink)

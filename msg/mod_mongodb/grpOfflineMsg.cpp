@@ -30,8 +30,8 @@ CGrpOfflineMsg::CGrpOfflineMsg()
 
 }
 
-CGrpOfflineMsg::CGrpOfflineMsg(const im::GroupChat& msg)
-	: m_nCreateTime(msg.msgtime()), m_sMsgId(msg.smsgid()), m_sFromId(msg.sfromid()), m_sGrpId(msg.sgroupid())
+CGrpOfflineMsg::CGrpOfflineMsg(const im::MESGrpChat& msg)
+	: m_nCreateTime(msg.msgtime()), m_sMsgId(msg.smsgid()), m_sFromId(msg.sfromid()), m_sGrpId(msg.sgrpid())
 {
 	msg.SerializeToString(&m_sMsgData);
 }
@@ -114,4 +114,35 @@ CGrpOfflineMsg viewToGrpOfflineMsg(const view& doc)
 	}
 
 	return CGrpOfflineMsg(grpId, msgId, msgData, createTime, fromId);
+}
+
+CGrpOfflineMsgKeys::CGrpOfflineMsgKeys(const CGrpOfflineMsg& msg)
+	:m_grpId(msg.GetGrpId()), m_msgId(msg.GetMsgId())
+{
+
+}
+
+CGrpOfflineMsgKeys::CGrpOfflineMsgKeys(const string& grpId, const string& msgId)
+	: m_grpId(grpId), m_msgId(msgId)
+{
+
+}
+
+bsoncxx::builder::basic::document CGrpOfflineMsgKeys::ToDoc() const
+{
+	bsoncxx::builder::basic::document doc{};
+	doc.append(kvp(GRPOFFLINEMSG_FIELD_GRPID_STR, m_grpId));
+	doc.append(kvp(GRPOFFLINEMSG_FIELD_MSGID_STR, m_msgId));
+	
+	return doc;
+}
+
+std::shared_ptr<IMongoDataDelKeys> CGrpOfflineMsgKeys::Clone() const
+{
+	return std::shared_ptr<IMongoDataDelKeys>(new CGrpOfflineMsgKeys(*this));
+}
+
+unsigned int CGrpOfflineMsgKeys::hashVal() const
+{
+	return BKDRHash(m_grpId.c_str());
 }

@@ -1,5 +1,7 @@
 #include "jpush_client.h"
-
+#include "apush_server_manager.h"
+#include "configfilereader.h"
+#include "utility.hpp"
 
 string CJPushClient::appKey;
 string CJPushClient::masterSecret;
@@ -25,32 +27,8 @@ bool CJPushClient::Init()
 		InfoLog("jpush_masterSecret_default");
 		CJPushClient::masterSecret = jpush_masterSecret_default;
 	}
-
-	string num = m_pConfigReader->GetConfigName("jSessionNum");
-	if(num.empty())
-	{
-		ErrLog("sessionNum is null use defalut 100 connects");
-		m_uConnectNum = 100;
-	}
-	else
-	{
-		m_uConnectNum = atoi(num.c_str());
-		if(m_uConnectNum< 0 || m_uConnectNum > 2000)
-		{
-			ErrLog("miSessionNum error, use defalut 100 connects");
-			m_uConnectNum = 100;
-			//return false;
-		}
-	}
-
-	m_pPostPoolMgr = new CPostPoolMgr;
-	if (!m_pPostPoolMgr)
-	{
-		ErrLog("m_pPostPoolMgr is null");
-		return false;
-	}
-
-	return Regist();
+	
+    return Regist();
 };
 
 bool CJPushClient::Regist()
@@ -73,18 +51,7 @@ bool CJPushClient::Regist()
 
 void CJPushClient::Start()
 {
-	if (!m_pPostPoolMgr)
-	{
-		ErrLog("m_pPostPoolMgr is nullptr");
-		return;
-	}
-	if (m_uConnectNum < 0 || m_uConnectNum > 2000)
-	{
-		InfoLog("m_uConnectNum < 0 || m_uConnectNum > 2000");
-		m_uConnectNum = 100;
-	}
-
-	m_pPostPoolMgr->Init(m_uConnectNum, CBaseClient::OnNotifyCallBack, this, jpush_webSit.c_str(), 443);
+    httpStart();
 }
 
 void CJPushClient::Stop()
@@ -92,8 +59,9 @@ void CJPushClient::Stop()
 	 
 }
 
-int CJPushClient::AddTask(shared_ptr<APushData> data)
-{
-	return m_pPostPoolMgr->Post(data);
+void CJPushClient::AddTask(shared_ptr<HTTP_REQDATA_> data) {
+    addHttpData(data, [](void* p){
+                cerr << "finished : " << (char*)p << endl;
+    });
 }
 

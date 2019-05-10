@@ -119,3 +119,20 @@ void CMd5::MD5_Calculate(const char *pContent, unsigned int nLen, char *md5)
     md5[32] = 0;
     return;
 }
+
+string MD5Str(const string& str)
+{
+	char md5[64] = {0};
+	uchar_t d[16];
+	MD5_CTX ctx;
+	MD5_Init(&ctx);
+	MD5_Update(&ctx, str.c_str(), str.size());
+	MD5_Final(d, &ctx);
+	for (int i=0; i<16; ++i) 
+	{
+		snprintf(md5+(i*2), 32, "%02x", d[i]);
+	}
+	md5[32] = 0;
+	string strMD5(md5);
+	return strMD5;
+}

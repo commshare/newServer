@@ -26,7 +26,7 @@ public:
 	
 
 	void OnMsgChatCancel(std::shared_ptr<CImPdu> pPdu);						// 初步处理聊天消息
-	void HandleMsgChatCancelTask(const im::MESChatCancel& msg, const UidCode_t& sessionId);											// 实际响应聊天消息
+	void HandleMsgChatCancelTask(im::MESChatCancel& msg, const UidCode_t& sessionId);											// 实际响应聊天消息
 
 	void onMsgChatDeliverAck(std::shared_ptr<CImPdu> pPdu);				// 收到消息接收方聊天消息推送应答
 	void HandleMsgChatDeliverAckTask(const im::MESChatDeliveredAck& msg);	
@@ -47,10 +47,10 @@ public:
 	void OnIPushAck(std::shared_ptr<CImPdu> pPdu);
 	void OnINotify(std::shared_ptr<CImPdu> pPdu);
 	// 通知消息处理 2018-8-16 Abner
-	void OnCommonNotifyMsg(std::shared_ptr<CImPdu> pPdu);
-	void HandleCommonNotifyMsgTask(const im::MSGCommonNotify& msg, const UidCode_t& sessionId);
-	void OnCommonNotifyMsgDeliverAck(std::shared_ptr<CImPdu> pPdu);				// 收到消息接收方聊天消息推送应答
-	void UserInfoModifyNotify(const im::MSGCommonNotify& msg, const UidCode_t& sessionId);
+//	void OnCommonNotifyMsg(std::shared_ptr<CImPdu> pPdu);
+//	void HandleCommonNotifyMsgTask(const im::MSGCommonNotify& msg, const UidCode_t& sessionId);
+//	void OnCommonNotifyMsgDeliverAck(std::shared_ptr<CImPdu> pPdu);				// 收到消息接收方聊天消息推送应答
+//	void UserInfoModifyNotify(const im::MSGCommonNotify& msg, const UidCode_t& sessionId);
 	
 protected:	
 	virtual bool RegistPacketExecutor(void);

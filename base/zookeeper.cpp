@@ -200,22 +200,48 @@ bool CZookeeper::RegistService()				// Register a node information to zookeeper 
 
 	sprintf(str, ":%04x", m_nLocalPort);
 	sPath = m_sServicePath;
+    //check service node
+    if(zoo_exists(m_zHandle, m_sServicePath.c_str(), 1, NULL) != 0) 
+    {
+        InfoLog("node '%s' doesn't exists! we will create this node follow.", m_sServicePath.c_str());
+        int pos = m_sServicePath.find("\/", 0);
+        if (pos != -1) {
+            string znodedata =  m_sServicePath.substr(pos+1, m_sServicePath.length() - pos-1);
+            int rc = zoo_create(
+                                m_zHandle,
+                                sPath.c_str(),
+                                znodedata.c_str(),
+                                znodedata.size(),
+                                &ZOO_OPEN_ACL_UNSAFE,
+                                0,
+                                m_sRegistName,
+                                REGISTNODE_SIZE);
+            if(!rc) {
+                InfoLog("The server has created node '%s' successfully to zookeeper host!",m_sRegistName);
+            }
+        }   
+    } else {
+        InfoLog("node %s exisits, come on", m_sServicePath.c_str());
+    } 
+
+    //create tmp node
 	sPath += "/node_";
 	sPath += m_sLocalIP;
 	sPath += str;
 
-	int rc = zoo_create(
-				m_zHandle,
-				sPath.c_str(),
-				m_sLocalIP.c_str(),
-				m_sLocalIP.size(),
-				&ZOO_OPEN_ACL_UNSAFE,
-				ZOO_EPHEMERAL,
-				m_sRegistName,
-				REGISTNODE_SIZE);
+    int rc = zoo_create(
+                m_zHandle,
+                sPath.c_str(),
+                m_sLocalIP.c_str(),
+                m_sLocalIP.size(),
+                &ZOO_OPEN_ACL_UNSAFE,
+                ZOO_EPHEMERAL,
+                m_sRegistName,
+                REGISTNODE_SIZE);
+
 	if(rc)
 	{
-		ErrLog("Failed to regist service path = %s",sPath.c_str());
+        ErrLog("Failed to regist service path = %s, error = %d",sPath.c_str(), rc);
 		Finalize();
 		return false;
 	}

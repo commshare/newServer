@@ -1,14 +1,6 @@
-
-
-
-//file hw_ssl_get_token.cpp
-
-
 #include <poll.h>
-
 #include "hw_ssl_get_token.h"
-
-
+#include "configfilereader.h"
 CSocket::CSocket()
 {
 	m_iFd = -1;
@@ -325,7 +317,6 @@ int CSslClient::SslConnectTimeout(const char* sHost, const int16_t iPort, int32_
 
 	InfoLog("TLS connect success!");
 
-	//struct cert_st *ce = m_ssl->cert;
 	X509 * serverCertification = SSL_get_peer_certificate(m_ssl); //从SSL套接字中获取对方的证书信息
 	if (NULL != serverCertification)
 	{
@@ -427,8 +418,8 @@ int CSslClient::SslRecvTimeOut(uint16_t mesc, char *bufDesc, int32_t bufSize)
 }
 
 
-uint32_t CHwGetPushTokenClient::uTimeTick = 0;
-uint32_t CHwGetPushTokenClient::m_uExpires = 0;
+//uint32_t CHwGetPushTokenClient::uTimeTick = 0;
+//uint32_t CHwGetPushTokenClient::m_uExpires = 0;
 
 CHwGetPushTokenClient::CHwGetPushTokenClient()
 {
@@ -486,6 +477,7 @@ string CHwGetPushTokenClient::Post_ToGetToken()
 		return "";
 	}
 	int isocket = m_ssllink->SslConnectTimeout(STR_HW_HOST_ADDR.c_str(), HW_HOST_PORT, U16_CONNTIMEOUT);
+	//int isocket = m_ssllink->SslConnectTimeout(STR_HW_HOST_ADDR_V2.c_str(), HW_HOST_PORT, U16_CONNTIMEOUT);
 	if (isocket <= 0)
 	{
 		ErrLog("SslConnectTimeout");
@@ -506,9 +498,11 @@ string CHwGetPushTokenClient::Post_ToGetToken()
 	memset(sendContent, 0, HW_POST_CONTENT_SIZE);
 
 	sprintf(sendContent, STR_HW_POST_HEAD.c_str(), (int)sendBuf.size());
+	//sprintf(sendContent, STR_HW_POST_HEAD_V2.c_str(), (int)sendBuf.size());
 
 	sendBuf = string(sendContent) + sendBuf;
-
+    InfoLog("post request add =%s,  data = %s", STR_HW_HOST_ADDR.c_str(), sendBuf.c_str());
+    //InfoLog("post request add =%s,  data = %s", STR_HW_HOST_ADDR_V2.c_str(), sendBuf.c_str());
 
 	//printf("%s\n", sendBuf.c_str());
 	int iRet = m_ssllink->SslSendTimeout(U16_SENDTIMEOUT, sendBuf.c_str(), sendBuf.size());
@@ -530,12 +524,75 @@ string CHwGetPushTokenClient::Post_ToGetToken()
 	
 	m_ssllink->SslCloseSocket();	
 
+    InfoLog("post get_hw_token respone = %s", recv);
 	PhaseRecvData(recv);
 
 	//printf("%s\n", recv);
 	return m_strToken;
 }
 
+string CHwGetPushTokenClient::Post_ToGetToken(uint32_t& expirtime, uint32_t& ticktime)
+{
+	if (!m_ssllink)
+	{
+		ErrLog("m_ssllink is null");
+		return "";
+	}
+	int isocket = m_ssllink->SslConnectTimeout(STR_HW_HOST_ADDR.c_str(), HW_HOST_PORT, U16_CONNTIMEOUT);
+	//int isocket = m_ssllink->SslConnectTimeout(STR_HW_HOST_ADDR_V2.c_str(), HW_HOST_PORT, U16_CONNTIMEOUT);
+	if (isocket <= 0)
+	{
+		ErrLog("SslConnectTimeout");
+		return "";
+	}
+
+	char sendContent[HW_POST_CONTENT_SIZE] = {0};
+	if (STR_HW_POST_CONTENT.size() + m_strSecret.size() + m_strClientId.size() > HW_POST_CONTENT_SIZE + 3)
+	{
+		ErrLog("SslConnectTimeout HW_POST_CONTENT_SIZE");
+		return "";
+	}
+
+	sprintf(sendContent, STR_HW_POST_CONTENT.c_str(),
+			m_strSecret.c_str(), m_strClientId.c_str());
+
+	string sendBuf = sendContent;
+	memset(sendContent, 0, HW_POST_CONTENT_SIZE);
+
+	sprintf(sendContent, STR_HW_POST_HEAD.c_str(), (int)sendBuf.size());
+	//sprintf(sendContent, STR_HW_POST_HEAD_V2.c_str(), (int)sendBuf.size());
+
+	sendBuf = string(sendContent) + sendBuf;
+    InfoLog("post request add =%s,  data = %s", STR_HW_HOST_ADDR.c_str(), sendBuf.c_str());
+    //InfoLog("post request add =%s,  data = %s", STR_HW_HOST_ADDR_V2.c_str(), sendBuf.c_str());
+
+	//printf("%s\n", sendBuf.c_str());
+	int iRet = m_ssllink->SslSendTimeout(U16_SENDTIMEOUT, sendBuf.c_str(), sendBuf.size());
+
+	if (iRet != 1)
+	{
+		ErrLog("send:%d, SslSendTimeout:%s, %d", iRet, sendBuf.c_str(), sendBuf.size());
+		return "";
+	}
+
+	char recv[HW_POST_RECV_SIZE] = {0};
+
+	iRet = m_ssllink->SslRecvTimeOut(U16_RECVTIMEOUT,(char*)recv, HW_POST_RECV_SIZE);
+	if (iRet <= 0 )
+	{
+		ErrLog("SslRecvTimeOut");
+		return "";
+	}
+	
+	m_ssllink->SslCloseSocket();	
+
+    InfoLog("post get_hw_token respone = %s", recv);
+	PhaseRecvData(recv);
+    expirtime = m_uExpires; 
+    ticktime = uTimeTick;
+	//printf("%s\n", recv);
+	return m_strToken;
+}
 
 //{"access_token":"CFlusjjbIqNC97d69wd9fRsIC8WDy1mX7BI8v0K0j0BBBXFAiGFZ3ajXd+XCHdfCFb9ZGZM+oI\/m4BGmcwP7CQ==","expires_in":604800}
 //const string token = "{\"access_token\":\"";

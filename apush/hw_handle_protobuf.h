@@ -1,14 +1,11 @@
-//file hw_handle_protobuf.h
-//creator by liulang 20170901
-
 #ifndef HW_HANDLE_PROTOBUF_H
 #define HW_HANDLE_PROTOBUF_H
 
 #include "util.h"
 #include "hw_push_client.h"
 #include "im.push.android.pb.h"
-
-
+#include <vector>
+#include <string>
 struct CHwPayloadJson;
 using namespace im;
 
@@ -106,13 +103,16 @@ public:
 
 	string PraseProtocbufToSendBuf(const char *buf, int len, const string &PushSvrToken);
 
+    string HwGetHttpUrl();
+    void HwGetHttpHeaders(vector<string>& vecHeader);
+    string HwGetHttpPostData(const char *buf, int len, const string &PushSvrToken);
 private:
 
 	string _PraseData(const char *buf, int len, const string &PushSvrToken);
 
 	bool _GetExpireTime(string &dataTime);
 
-
+    static string m_strUrl;
 	static string m_strHead;
 
 	string m_strContent;

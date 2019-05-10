@@ -25,7 +25,6 @@
 
 typedef hash_map<net_handle_t, CSslSocket*> SocketMap;
 SocketMap	g_ssl_socket_map;
-//extern CLock gSockLock;
 
 
 
@@ -258,26 +257,6 @@ int CSslSocket::Send(void* buf, int len)
 		return NETLIB_ERROR;
 	}
 	
-//test
-/*	{
-		int t;
-		int value = 0;
-		int size = 0;
-		int iRet = getsockopt(m_socket, SOL_SOCKET, SO_SNDBUF, (void *)&size, (socklen_t *)&t);
-		if (iRet != 0)
-		{
-			printf("getsockopt error\n");
-		}
-
-		iRet = ioctl(m_socket, SIOCOUTQ, &value);
-		if (iRet != 0)
-		{
-			printf("ioctl error\n");
-		}
-
-		printf("totle:%d, cache:%d, send:%d\n", size, size-value, value);
-	}  */          
-
 	//报文
 	int n = SSL_write(m_ssl, (void*)buf, len);
 	if (n <= 0)
@@ -299,7 +278,6 @@ int CSslSocket::Send(void* buf, int len)
 		return n;
 	}
 
-	//printf("\n%s\n", (char*)buf);
 	return n;
 }
 
@@ -369,24 +347,6 @@ int CSslSocket::Close()
 			ErrLog("ssl shutdown not finished, errno: %d.\n", nErrorCode);
 		}
 
-		/*
-		//for SSL_MODE_ASYNC
-		{
-			if (m_ssl)
-			{
-				SSL_free(m_ssl);
-				m_ssl = NULL;
-			}
-
-			if (m_sslCtx)
-			{
-				SSL_CTX_free(m_sslCtx);
-				m_sslCtx = nullptr;
-			}
-
-			m_bInit = false;
-		}
-		*/
 	}
 
 	if (m_socket > 0 && m_pSslEventDispatch)
@@ -408,7 +368,6 @@ int CSslSocket::Close()
 
 void CSslSocket::OnRead()
 {
-	//gSockLock.lock();
 
 	if (m_state == SOCKET_STATE_LISTENING)
 	{

@@ -28,6 +28,65 @@ CEventDispatch::CEventDispatch()
 #endif
 }
 
+void CEventDispatch::OnThreadRun()
+{
+    struct epoll_event *events = NULL;
+    int nfds = 0;
+
+    events = new struct epoll_event[MAX_EVENT_NUMS];
+    if (!events)
+        return;
+    if(running)
+        return;
+    running = true;
+
+    while (running)
+    {
+        nfds = epoll_wait(m_epfd, events, MAX_EVENT_NUMS, m_wait_timeout);
+        for (int i = 0; i < nfds; i++)
+        {
+            int ev_fd = events[i].data.fd;
+            CBaseSocket* pSocket = FindBaseSocket(ev_fd);
+            if (!pSocket)
+                continue;
+
+            //Commit by zhfu @2015-02-28
+            #ifdef EPOLLRDHUP
+            if (events[i].events & EPOLLRDHUP)
+            {
+                //log("On Peer Close, socket=%d, ev_fd);
+                pSocket->OnClose();
+            }
+            #endif
+            // Commit End
+
+            if (events[i].events & EPOLLIN)
+            {
+                //log("OnRead, socket=%d\n", ev_fd);
+                pSocket->OnRead();
+            }
+
+            if (events[i].events & EPOLLOUT)
+            {
+                //log("OnWrite, socket=%d\n", ev_fd);
+                pSocket->OnWrite();
+            }
+
+            if (events[i].events & (EPOLLPRI | EPOLLERR | EPOLLHUP))
+            {
+                //log("OnClose, socket=%d\n", ev_fd);
+                pSocket->OnClose();
+            }
+
+            pSocket->ReleaseRef();
+        }
+
+        _CheckTimer();
+        _CheckLoop();
+    }
+    delete events;
+}
+
 CEventDispatch::~CEventDispatch()
 {
 #ifdef _WIN32
@@ -352,63 +411,14 @@ void CEventDispatch::RemoveEvent(SOCKET fd, uint8_t socket_event)
 	}
 }
 
-void CEventDispatch::StartDispatch(uint32_t wait_timeout)
+void CEventDispatch::StartDispatch(uint32_t wait_timeout, bool detached)
 {
-	struct epoll_event *events = NULL;
-	int nfds = 0;
-
-    events = new struct epoll_event[MAX_EVENT_NUMS];
-    if (!events) 
-        return;
-    if(running)
-        return;
-    running = true;
-    
-	while (running)
-	{
-		nfds = epoll_wait(m_epfd, events, MAX_EVENT_NUMS, wait_timeout);
-		for (int i = 0; i < nfds; i++)
-		{
-			int ev_fd = events[i].data.fd;
-			CBaseSocket* pSocket = FindBaseSocket(ev_fd);
-			if (!pSocket)
-				continue;
-            
-            //Commit by zhfu @2015-02-28
-            #ifdef EPOLLRDHUP
-            if (events[i].events & EPOLLRDHUP)
-            {
-                //log("On Peer Close, socket=%d, ev_fd);
-                pSocket->OnClose();
-            }
-            #endif
-            // Commit End
-
-			if (events[i].events & EPOLLIN)
-			{
-				//log("OnRead, socket=%d\n", ev_fd);
-				pSocket->OnRead();
-			}
-
-			if (events[i].events & EPOLLOUT)
-			{
-				//log("OnWrite, socket=%d\n", ev_fd);
-				pSocket->OnWrite();
-			}
-
-			if (events[i].events & (EPOLLPRI | EPOLLERR | EPOLLHUP))
-			{
-				//log("OnClose, socket=%d\n", ev_fd);
-				pSocket->OnClose();
-			}
-
-			pSocket->ReleaseRef();
-		}
-
-		_CheckTimer();
-        _CheckLoop();
-	}
-    delete events;
+    m_wait_timeout = wait_timeout;
+    if (!detached) {
+        OnThreadRun();
+    } else {
+        StartThread();//run in other thread
+    }
 }
 
 void CEventDispatch::StopDispatch()

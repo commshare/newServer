@@ -7,8 +7,6 @@
 #ifndef __SSL_HTTP2_H__
 #define __SSL_HTTP2_H__
 
-
-
 #include "ssl_event.h"
 #include "ssl_socket.h"
 #include "ssl_post_mgr.h"
@@ -19,21 +17,9 @@ class CApnsPostData;
 
 #include <nghttp2/nghttp2.h>
 
-/*
 enum
 {
-	NETLIB_MSG_CONNECT = 1,
-	NETLIB_MSG_CONFIRM,
-	NETLIB_MSG_READ,
-	NETLIB_MSG_WRITE,
-	NETLIB_MSG_CLOSE,
-	NETLIB_MSG_TIMER,
-    NETLIB_MSG_LOOP
-};*/
-
-
-enum
-{
+    HTTP_PING_RESPONE = 6,
 	HTTP_MSG_RESPONE = 7,
 	HTTP_USEABLE = 8,
 	HTTP_NOT_USEABLE = 9,
@@ -57,7 +43,6 @@ typedef struct _StreamData
 		streamId = -1;
 		iPostStatus = POST_STATUS_INIT;
 
-		//ipostTimeTick = time(NULL);
 	}
 
 	~_StreamData()
@@ -66,7 +51,6 @@ typedef struct _StreamData
 		{
 			//pPostData.reset();
 		}
-		//ipostTimeTick = time(NULL);
 	}
 
 	int iPostStatus;
@@ -124,7 +108,7 @@ public:
 
 	int Submit_request(nghttparr *nva, int navArrayLen, char *body, int len);
 
-	//int Submit_ping();
+	int Submit_ping();
 
 	int ReConnect();
 

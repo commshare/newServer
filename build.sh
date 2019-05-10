@@ -1,57 +1,77 @@
 #!/bin/sh
 
-svn up
+
+function buildProject
+{
+	make clean;
+	rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
+	cmake .;make
+}
 
 
-cd protocol/
-./create.sh
-./sync.sh
-
-cd ../base/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make 
-cp libbase.so ../lib
-cp libbase.so ../../deployment/lib
-
-cd ../database/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp libdatabase.so ../lib 
-cp libdatabase.so ../../deployment/lib
-
-cd ../lib/
+cd lib
 sh createLink.sh
+
+cd ../protocol/
+sh create.sh
 sh sync.sh
 
-cd ../msg/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp msg_server ../../deployment/msg
+cd ../base/
+buildProject
+cp libbase.so ../lib
+cp libbase.so ../deployment/lib
+
+cd ../commongrpc
+buildProject
+cp libcommongrpc.so ../lib
+cp libcommongrpc.so ../deployment/lib
+
+cd ../database/
+buildProject
+cp libdatabase.so ../lib 
+cp libdatabase.so ../deployment/lib
+
+cd ../data_oper/
+buildProject
 
 cd ../cm/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp cm_server ../../deployment/cm
+buildProject
+cp cm_server ../deployment/cm
+
+cd ../login
+buildProject
+cp login_server ../deployment/login
+
+cd ../msg/
+buildProject
+cp msg_server ../deployment/msg
 
 cd ../group/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp group_server ../../deployment/group
+buildProject
+cp group_server ../deployment/group
 
 cd ../apush/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp apush_server ../../deployment/push/apush
+buildProject
+cp apush_server ../deployment/push/apush
 
 cd ../ipush/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp ipush_server ../../deployment/push/ipush
+buildProject
+cp ipush_server ../deployment/push/ipush
 
 cd ../customerService/
-rm -rf CMakeFiles/ CMakeCache.txt Makefile cmake_install.cmake
-cmake .;make clean; make
-cp cust_server ../../deployment/custSvr
+buildProject
+cp cust_server ../deployment/custSvr
 
+cd ../notifyserver
+buildProject
+cp notify_server ../deployment/notify
+
+cd ../channel
+buildProject
+cp channel_server ../deployment/channel
+
+cd ../destopGw
+buildProject
+cp desktop_server ../deployment/desktop_server
 
 

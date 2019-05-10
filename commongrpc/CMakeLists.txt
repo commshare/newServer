@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 2.6)
+PROJECT(commongrpc)
+
+AUX_SOURCE_DIRECTORY(./ SRC_LIST1)
+
+SET(LIBRARY_OUTPUT_PATH ./)
+
+ADD_DEFINITIONS( -g -W -Wall -Wno-unused-parameter -Wno-deprecated -D_REENTRANT 
+-D_FILE_OFFSET_BITS=64 -DAC_HAS_INFO -DAC_HAS_WARNING -DAC_HAS_ERROR 
+-DAC_HAS_CRITICAL -DTIXML_USE_STL -DAC_HAS_DEBUG -DLINUX_DAEMON -std=c++11)
+
+INCLUDE_DIRECTORIES(./ /usr/local/include)
+LINK_DIRECTORIES(./  ../lib)
+
+ADD_LIBRARY(commongrpc  SHARED ${SRC_LIST1}) 
+
+TARGET_LINK_LIBRARIES(commongrpc protobuf  grpc++ grpc)

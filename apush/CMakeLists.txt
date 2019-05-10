@@ -19,7 +19,7 @@ ADD_DEFINITIONS( -g -W -Wall -Wno-deprecated -D_REENTRANT -D_FILE_OFFSET_BITS=64
 -DAC_HAS_WARNING -DAC_HAS_ERROR -DAC_HAS_CRITICAL -DTIXML_USE_STL
 -DAC_HAS_DEBUG -DLINUX_DAEMON -std=c++11)
 
-INCLUDE_DIRECTORIES(./ ../base ../base/pb/protocol ../base/pb/ ../base/security/ ${ACL_DIR})
+INCLUDE_DIRECTORIES(./ ../base ../base/pb/protocol ../base/pb/ ../base/security/ /usr/include/curl/ ${ACL_DIR})
 #LINK_DIRECTORIES(./ ../base ${PB_LIB_DIR} ../base/slog/lib ${SECURITY_LIB_DIR})
 LINK_DIRECTORIES(./ ../lib ../../lib /usr/local/lib /usr/lib64)
 #ADD_XXXX必须在TARGET_LINK_LIBRARIES前面，否则会报错

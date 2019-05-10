@@ -46,7 +46,8 @@ bool CIMFrame::InitFrame(const char * pConfigFile)
 		return false;
 	}
 
-	m_pConfigReader = new CConfigFileReader(pConfigFile);
+	//m_pConfigReader = new CConfigFileReader(pConfigFile);
+    m_pConfigReader = CConfigFileReader::GetInstance(pConfigFile);
 	if(!m_pConfigReader)
 	{
 		ErrLog("Err of Confile reader initialization!");

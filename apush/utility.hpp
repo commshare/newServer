@@ -25,6 +25,7 @@
 //#################################################HW PUSH##############################################################
 
 static const string 	STR_HW_HOST_ADDR		= 	"login.vmall.com";
+static const string 	STR_HW_HOST_ADDR_V2     =   "login.cloud.huawei.com";
 static const string 	str_hw_push_addr		= "api.push.hicloud.com";
 
 /*
@@ -65,6 +66,11 @@ static const string 	STR_HW_POST_HEAD		= 	"POST /oauth2/token HTTP/1.1\r\n"
 													"Content-Type: application/x-www-form-urlencoded\r\n"
 													"Content-Length: %d\r\n\n";
 
+static const string 	STR_HW_POST_HEAD_V2		= 	"POST /oauth2/v2/token HTTP/1.1\r\n"
+													"Host: login.cloud.huawei.com\r\n"
+													"Content-Type: application/x-www-form-urlencoded\r\n"
+													"Content-Length: %d\r\n\n";
+
 static const uint32_t	HW_POST_CONTENT_SIZE 	= 	512;
 static const string		STR_HW_POST_CONTENT 	= 	"grant_type=client_credentials&client_secret=%s&client_id=%s";
 
@@ -97,6 +103,7 @@ static const string postPushHeadStr = "POST /pushsend.do?nsp_ctx=%s HTTP/1.1\r\n
 										"Content-Type: application/x-www-form-urlencoded\r\n"
 										"Content-Length: ";
 //static const string PostContextLen =  	"%d\r\n\n";
+static const string postRequestUrl = "https://api.push.hicloud.com/pushsend.do?nsp_ctx=%s";
 //###############################################HW PUSH##################################################################
 
 
@@ -149,13 +156,21 @@ static const string xmpp_msg_failure = "nack";
 	static const string mi_push_post_head_app_secret_default = "mo1RvQlyn7lCTeGe1i/S+g==";
 	static const string mi_push_post_package_name_default = "com.mosant.mosantim";
 	
-	static const string mi_push_post_form_data = "alias=%s&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&title=%s&description=%s&payload=%s&extra.notify_effect=1";
+//	static const string mi_push_post_form_data = "alias=%s&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1&extra.sound_uri=android.resource://com.onlyy.kimi/raw/voip_call_in";
+//     static const string mi_push_common_post_form_data = "alias=%s&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1";
+//	static const string mi_push_post_form_data = "alias=%s&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&title=%s&description=%s&payload=%s&extra.notify_effect=1&extra.sound_uri=android.resource://com.onlyy.kimi/raw/voip_call_in";
+	static const string mi_push_post_form_data =        "alias=%s&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1";
+	static const string mi_push_common_post_form_data = "alias=%s&restricted_package_name=com.mosant.mosantim&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1";
 
 #else
 	static const string mi_push_post_head_app_secret_default = "2QuNEZ7GxNAlxSHnl1LSZA==";
 	static const string mi_push_post_package_name_default = "com.onlyy.kimi";
 	
-	static const string mi_push_post_form_data = "alias=%s&restricted_package_name=com.onlyy.kimi&pass_through=0&notify_type=7&title=%s&description=%s&payload=%s&extra.notify_effect=1";
+//	static const string mi_push_post_form_data = "alias=%s&restricted_package_name=com.onlyy.kimi&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1&extra.sound_uri=android.resource://com.onlyy.kimi/raw/voip_call_in";
+//	static const string mi_push_common_post_form_data = "alias=%s&restricted_package_name=com.onlyy.kimi&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1";
+//	static const string mi_push_post_form_data = "alias=%s&restricted_package_name=com.onlyy.kimi&pass_through=0&notify_type=7&title=%s&description=%s&payload=%s&extra.notify_effect=1&extra.sound_uri=android.resource://com.onlyy.kimi/raw/voip_call_in";
+	static const string mi_push_post_form_data =        "alias=%s&restricted_package_name=com.onlyy.kimi&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1";
+	static const string mi_push_common_post_form_data = "alias=%s&restricted_package_name=com.onlyy.kimi&pass_through=0&notify_type=7&notify_id=%d&title=%s&description=%s&payload=%s&extra.notify_effect=1";
 #endif
 
 static const string mi_push_post_head = "POST /v2/message/alias HTTP/1.1\r\n"

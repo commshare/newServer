@@ -39,4 +39,5 @@ public:
     static void MD5_Calculate (const char* pContent, unsigned int nLen,char* md5);
 };
 
+string MD5Str(const string& str);
 #endif /*defined(__ENCDEC_H__) */

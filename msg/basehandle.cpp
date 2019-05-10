@@ -6,8 +6,8 @@ Description:
 #include "basehandle.h"
 #include "configfilereader.h"
 #include "im_loginInfo.h"
-#include "im.pushSvrAPNsMsg.pb.h"
 #include "im.push.android.pb.h"
+#include "im.pushSvrAPNsMsg.pb.h"
 #include "im.mes.pb.h"
 //#include "mysqlUserMgr.h"
 #include "redisLoginInfoMgr.h"
@@ -23,7 +23,13 @@ const string NewMsgStr("\344\275\240\346\234\211\344\270\200\346\235\241\346\226
 const string NewRequestStr("\344\275\240\346\234\211\344\270\200\346\235\241\346\226\260\350\257\267\346\261\202");
 
 CBaseHandle::CBaseHandle(CConfigFileReader* pConfigReader)
-	: m_pConfigReader(pConfigReader), m_offlineMsgMgr(OFFLINEMSG_MONGO_DB_NAME, OFFLINEMSG_MONGO_COLL_NAME)
+	: m_pConfigReader(pConfigReader)
+	, m_offlineMsgMgr(OFFLINEMSG_MONGO_DB_NAME, OFFLINEMSG_MONGO_COLL_NAME)
+	, m_grpInfoUrl("")
+	, m_usrInfoUrl("")
+	, m_grpMemberInfoUrl("")
+	, m_friendInfoUrl("")
+	, m_sAppSecret("")
 {
 
 }
@@ -86,52 +92,19 @@ int CBaseHandle::sendReq(const google::protobuf::MessageLite* pMsg, uint16_t com
 	return retCode;
 }
 
-void CBaseHandle::sendPush(std::shared_ptr<CLoginInfo>& pLogin, const string& fromId, const string& toId,
-	const string& msgId, MsgType msgType, const string& content)
+void CBaseHandle::sendPush(const string& fromId, const string& toId, const string& msgId, im::MsgType msgType, 
+							const string& content, int pushType, const string& pushToken, const string& voipToken, int vesionCode)
 {
-	if (pLogin && pLogin->IsLogin()) return;
-
-	uint16_t devType = 0;
-	string devToken = "";
-	if (!pLogin)
-	{
-		return;
-		//try
-		//{
-		//	std::shared_ptr<CUserInfo> pUserInfo = CMysqlUsrMgr::GetUserInfo(toId);
-		//	if (!pUserInfo)
-		//	{
-		//		WarnLog("search push info failed");
-		//		return;
-		//	}
-		//	devType = pUserInfo->GetDevType();
-		//	devToken = pUserInfo->GetDevToken();
-		//}
-		//catch (const std::exception& xcp)
-		//{
-		//	WarnLog("exception catched:%s", xcp.what());
-		//}
-		//catch (...)
-		//{
-		//	return;
-		//}
-	}
-	else
-	{
-		devType = pLogin->GetDevType();
-		if (P2P_CALL == msgType && devType == APNS)  // 只有苹果有voip推送服务
-			devToken = pLogin->GetDevVoipToken();
-		else
-			devToken = pLogin->GetDevToken();
-	}
-
-	if (devToken.empty())
+	string strPushToken = pushToken;
+	if(pushType == APNS || pushType == APNS_DEV)
+		strPushToken = voipToken;
+	if(strPushToken.empty())
 	{
 		WarnLog("!!!get user %s token failed, can't send push\r\n", toId.c_str());
 		return;
 	}
 
-	if (devType != APNS)		//安卓推送
+	if (pushType != APNS && pushType != APNS_DEV)		//安卓推送
 	{
 		ANDPushMsg aPush;
 		aPush.set_emsgtype(msgType);
@@ -139,15 +112,11 @@ void CBaseHandle::sendPush(std::shared_ptr<CLoginInfo>& pLogin, const string& fr
 		aPush.set_stitle(getAppName());
 		aPush.set_sbody(content);
 		aPush.set_stoid(toId);
-		aPush.set_sdivece_token(devToken);
-		aPush.set_edivece_type(im::DiveceType(devType));
-	/*	ANDPersonList* pPerson = aPush.add_to_vec();
-		pPerson->set_stoid(userId);
-		pPerson->set_sdivece_token(devToken);
-		pPerson->set_udivece_type(devType);*/
+		aPush.set_sdivece_token(strPushToken);
+		aPush.set_edivece_type(im::DiveceType(pushType));
 
 		DbgLog("****send request 0x%x to andpush for use %s to %s, devToken = %s, msgId = %s, msgType = %d",
-			ANDROID_PUSH, fromId.c_str(), toId.c_str(), devToken.c_str(), msgId.c_str(), msgType);
+			ANDROID_PUSH, fromId.c_str(), toId.c_str(), strPushToken.c_str(), msgId.c_str(), msgType);
 		sendReq(&aPush, ANDROID_PUSH, imsvr::APUSH);
 	}
 	else						//苹果推送
@@ -155,20 +124,67 @@ void CBaseHandle::sendPush(std::shared_ptr<CLoginInfo>& pLogin, const string& fr
 		PSvrMsg iPush;
 		iPush.set_emsgtype((MsgType)msgType);
 		iPush.set_smsgid(msgId);
-		//iPush.set_stitle(getAppName());
 		iPush.set_sbody(content);
 		iPush.set_sfromid(fromId);
 		iPush.set_stoid(toId);
-		//iPush.set_stitle(getAppName());
-		iPush.set_stotoken(devToken);
+		iPush.set_stotoken(strPushToken);
 		iPush.set_nunreadnotifymsgcount(m_offlineMsgMgr.GetUserUnreadPushMsgCount(toId));
-
+		iPush.set_versioncode(vesionCode);
+		iPush.set_edivece_type(im::DiveceType(pushType));
 		sendReq(&iPush, APNS_PUSH, imsvr::IPUSH);
 
-		DbgLog("****send request to ipush for use %s to %s, devToken = %s, msgId = %s, msgType = %d",
-			fromId.c_str(), toId.c_str(), devToken.c_str(), msgId.c_str(), msgType);
+		DbgLog("****send request to ipush for use %s to %s, devToken = %s, msgId = %s, msgType = %d appVersion=%d",
+			fromId.c_str(), toId.c_str(), strPushToken.c_str(), msgId.c_str(), msgType, vesionCode);
 	}
 }
+
+void CBaseHandle::sendAndroidPush(const string& fromId, const string& toId, const string& msgId, im::MsgType msgType, 
+																const string& content, const string& pushToken, int pushType)
+{
+	if(pushToken.empty())
+	{
+		WarnLog("!!!get user %s token failed, can't send push\r\n", toId.c_str());
+		return;
+	}
+	ANDPushMsg aPush;
+	aPush.set_emsgtype(msgType);
+	aPush.set_smsgid(msgId);
+	aPush.set_stitle(getAppName());
+	aPush.set_sbody(content);
+	aPush.set_stoid(toId);
+	aPush.set_sdivece_token(pushToken);
+	aPush.set_edivece_type(im::DiveceType(pushType));
+
+	DbgLog("****send request 0x%x to andpush for use %s to %s, devToken = %s, msgId = %s, msgType = %d",
+		ANDROID_PUSH, fromId.c_str(), toId.c_str(), pushToken.c_str(), msgId.c_str(), msgType);
+	sendReq(&aPush, ANDROID_PUSH, imsvr::APUSH);
+}
+
+void CBaseHandle::sendiOSPush(const string& fromId, const string& toId, const string& msgId, im::MsgType msgType, const string& content, 
+															const string& pushToken, int pushType, int callType, const std::string& callId)
+{
+	if(pushToken.empty())
+	{
+		WarnLog("!!!get user %s token failed, can't send push\r\n", toId.c_str());
+		return;
+	}
+	PSvrMsg iPush;
+	iPush.set_emsgtype((MsgType)msgType);
+	iPush.set_smsgid(msgId);
+	iPush.set_sbody(content);
+	iPush.set_sfromid(fromId);
+	iPush.set_stoid(toId);
+	iPush.set_stotoken(pushToken);
+	iPush.set_nunreadnotifymsgcount(0);
+	iPush.set_edivece_type(im::DiveceType(pushType));
+	iPush.set_calltype(callType);
+	iPush.set_scallid(callId);
+	sendReq(&iPush, APNS_PUSH, imsvr::IPUSH);
+
+	DbgLog("****send request to ipush for use %s to %s, devToken = %s, msgId = %s, msgType = %d",
+		fromId.c_str(), toId.c_str(), pushToken.c_str(), msgId.c_str(), msgType);
+}
+
 
 string CBaseHandle::getAppName() const
 {
@@ -191,7 +207,7 @@ bool CBaseHandle::Initialize(void)
 	bool retcode = RegistPacketExecutor();
 	if(retcode)
 		StartThread();
-
+	getConfigData();
 	return retcode;
 }
 const char* getofflineTypeStr(unsigned int cmdId)
@@ -225,3 +241,32 @@ const char* getofflineTypeStr(unsigned int cmdId)
 	}
 	return "no specified";
 }
+
+void CBaseHandle::getConfigData()
+{
+	if(nullptr == m_pConfigReader)
+		return;
+	char* pData = m_pConfigReader->GetConfigName("grpInfoUrl");
+	if(pData)
+		m_grpInfoUrl = pData;
+	pData = m_pConfigReader->GetConfigName("usrInfoUrl");
+	if(pData)
+		m_usrInfoUrl = pData;
+	pData = m_pConfigReader->GetConfigName("grpMemberInfoUrl");
+	if(pData)
+		m_grpMemberInfoUrl = pData;
+	pData = m_pConfigReader->GetConfigName("friendInfoUrl");
+	if(pData)
+		m_friendInfoUrl = pData;
+	pData = m_pConfigReader->GetConfigName("check_appsecret");
+	if(pData)
+		m_sAppSecret = pData;
+}
+
+bool CBaseHandle::checkDeviceLastUser(const std::string& strUserId, const std::string& strDeviceToken)
+{
+	std::string lastUserId = CLoginInfoMgr::getDeviceLastUserID(strDeviceToken);
+	DbgLog("check device last user. userid=%s lastUserId=%s", strUserId.c_str(), lastUserId.c_str());
+	return strUserId.compare(lastUserId) == 0;
+}
+

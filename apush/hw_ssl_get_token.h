@@ -1,9 +1,5 @@
-//file hw_ssl_get_token.h
-
 #ifndef HW_SSL_GET_TOKEN_H
 #define	HW_SSL_GET_TOKEN_H
-
-
 #include "util.h"
 #include "hw_push_client.h"
 
@@ -54,9 +50,6 @@ public:
 	}
 
 private:
-	
-	//CEvent 		m_CEvent;
-
 	bool 		m_bInit;
 	int32_t 	m_iSocket;
 	SSL_CTX* 	m_sslCtx;
@@ -73,9 +66,9 @@ public:
 	bool Init(CConfigFileReader* pConfigReader);
 
 	string Post_ToGetToken();
-
-	static uint32_t uTimeTick;
-	static uint32_t m_uExpires;	
+    string Post_ToGetToken(uint32_t& expirtime, uint32_t& ticktime);
+	uint32_t uTimeTick;
+	uint32_t m_uExpires;	
 private:
 	void PhaseRecvData(string recvBuf);
 
@@ -87,8 +80,5 @@ private:
 	string	 m_strToken;
 
 };
-
-
-
 #endif
 

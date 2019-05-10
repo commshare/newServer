@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package im;
+option optimize_for = LITE_RUNTIME;
+
+//Syn Message
+//接口：GwSynMessageToApp  gw ->cm ->app
+//cmdid : 0xb0d8
+message GwSynMessageToApp  
+{
+    string  sfromid         = 1; //发送者
+    string  stoid           = 2;//同步给app，所以与发送者一样
+    uint32   synctype	   = 3;
+    string  msgid		   = 4;
+    string  synmsg	       = 5; // 同json的synmessage
+    string 	extended		= 6;
+}
+
+//接口：GwSynMessageToAppAck  app ->cm ->gw
+//cmdid:0xb0d9
+message GwSynMessageToAppAck  
+{
+	string  sfromid          = 1;
+	string  msgid           = 2;
+}
+
+//接口：AppSynMessageToGw   app ->cm-> gw   
+//cmdid: 0xb0db
+//结构同GwSynMessageToApp  
+message AppSynMessageToGw   
+{
+    string  sfromid         = 1; //发送者
+    string  stoid           = 2;//同步给app，所以与发送者一样
+    uint32   synctype	   = 3;
+    string  msgid		   = 4;
+    string  synmsg	       = 5; // 同json的synmessage
+    string 	extended	   = 6;
+}
+
+//接口：AppSynMessageToGwAck   gw ->cm->app
+//cmdid: 0xb0de
+// 结构同GwSynMessageToAppAck  
+message AppSynMessageToGwAck   
+{
+	string  sfromid          = 1;
+	string  msgid           = 2;
+}
+//Check Heatbeat
+//接口：CheckAppActive        gw->cm->app
+//cmdid: 0xb0e2
+message  CheckAppActive     
+{
+	string  msgid   =1;
+	string  sfromid  = 2;
+	uint64   time    = 3;
+}
+//接口：CheckAppActiveAck    app->cm->gw
+//cmdid :0xb0e3
+message  CheckAppActiveAck
+{
+    string  msgid   =1;
+    string  sfromid  =2;
+    uint64  time    =3;
+}
+

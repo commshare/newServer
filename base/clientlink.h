@@ -39,8 +39,8 @@ public:
 	void CloseLink(bool bUserLink = true);
 	void SetLinkLock(CLock* pLock) { m_pLinkMgrLock = pLock; }
 	void ResetLogin() { m_bLogining = false; }
-    string GetUserId(){return m_sUserId;}
-protected:
+	string GetUserId(){return m_sUserId;}
+protected:	
 	bool OnLoginPretreat(std::shared_ptr<CImPdu> pPdu);
 	bool UnFlowCtrl(uint16_t nCmdId);
 	void OnAssocSvrRegist(std::shared_ptr<CImPdu> pPdu);
@@ -48,6 +48,7 @@ protected:
     void OnPing(std::shared_ptr<CImPdu> pPdu);
 	void OnDispatchPacket(std::shared_ptr<CImPdu> pPdu);
 	void AssocSvrRegistAck(UidCode_t sessionId,ErrCode bCode);
+    //void OnPingAck(UidCode_t sessionId,const string& msgId);
 
 		
 	//void RleaseClientLink(void);

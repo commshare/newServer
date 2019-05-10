@@ -83,6 +83,21 @@ struct UidCode_t
     	return memcmp(Uid_Item.code,uid.Uid_Item.code,UID_SIZE) == 0;
     	
     }
+
+    string toString() const
+    {
+       char *buf = new char[UID_SIZE*2 +1]{0};
+       char *tmp = buf;
+       for(int i =0 ; i < UID_SIZE; i++)
+       {
+           sprintf(buf, "%02X", Uid_Item.code[i]);
+           buf += strlen(buf);
+       }
+
+       string str(tmp);
+       delete[] tmp;
+       return str;
+    }
 };
 class SecurityRand 
 {

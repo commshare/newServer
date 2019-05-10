@@ -388,6 +388,8 @@ class PostDataGenerator
 public:
 	static std::shared_ptr<CApnsPostData> GenerateAPNsPostData(const PSvrMsg& msg);
 	static std::shared_ptr<CApnsPostData> GenerateVoipPostData(const PSvrMsg& msg);
+	static std::shared_ptr<CApnsPostData> GenerateVoipHttp2PostData(const PSvrMsg& msg);
+
 };
 
 #endif // __PROTOHANDLE_H__

@@ -1,7 +1,7 @@
 #include "postDataSender.h"
 #include "pushHandler.h"
 //#include "CApnsPostData.h"
-#include "app_pushserver_manager.hpp"
+#include "pushserver_manager.hpp"
 
 CPostDataSender::CPostDataSender(CPostMgr *pPostMgr, CPostPduCacheMgr *pPostPduCacheMgr)
 	:m_pPostMgr(pPostMgr), m_pPostPduCacheMgr(pPostPduCacheMgr)

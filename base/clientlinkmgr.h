@@ -7,6 +7,7 @@ Description:     		客户端链路管理类定义，链路侦听、链路增删�
 #ifndef __CLIENTLINKMGR_H__
 #define __CLIENTLINKMGR_H__
 #include <string.h>
+#include <mutex>
 #include <tr1/unordered_map>
 #include "singleton.h"
 #include "configfilereader.h"
@@ -19,8 +20,10 @@ using namespace std;
 using namespace std::tr1;
 using namespace imsvr;
  
-typedef unordered_map<string, CClientLink*>  ClientLinkMap_t;
-typedef unordered_map<UidCode_t, CClientLink*,hash_func>  SessionClientLinkMap_t;
+typedef std::tr1::unordered_map<string, CClientLink*>  ClientLinkMap_t;
+typedef std::tr1::unordered_map<UidCode_t, CClientLink*,hash_func>  SessionClientLinkMap_t;
+typedef std::tr1::unordered_map<string, UidCode_t>  ClientHostSessionMap_t;
+
 class CClientLinkMgr : public Singleton<CClientLinkMgr>
 {
 public:
@@ -57,6 +60,11 @@ public:
 	void AddLinkByHost(string sIp, uint16_t nPort,CClientLink* pLink);
 	void DelLinkByHost(string sIp, uint16_t nPort);
 	CClientLink* GetLinkByHost(string sIp, uint16_t nPort);	
+
+	void addSessionByHost(const string& sIp, uint16_t nPort, const UidCode_t& sessionId);
+	void delSessionByHost(const string& sIp, uint16_t nPort);
+	UidCode_t getSessionByHost(const string& sIp, uint16_t nPort);
+	UidCode_t getSessionByHost(const string& strHost);
 protected:
 	virtual bool SetListenIPs(void);
 	virtual bool SetServiceId(void);
@@ -69,6 +77,7 @@ private:
 	SessionClientLinkMap_t m_mapSessionLink;
 	ClientLinkMap_t m_mapUserLink;
 	ClientLinkMap_t m_mapHostLink;
+	ClientHostSessionMap_t m_mapHostSession;
 	string m_sListenIp;
 	uint16_t m_nListenPort;
 	int16_t m_nServiceId;
@@ -76,7 +85,8 @@ private:
 	uint64_t m_nClientLinkTimeout;
 	uint8_t m_bAssocHeartbeatEnabled;
 	uint64_t m_nAssocLinkTimeout;	//To manage hearbeat communication between associated .
-	uint64_t m_nFlowCtrlInterval; 	// to limit packet received , uses for flow ctrolling . 
+	uint64_t m_nFlowCtrlInterval; 	// to limit packet received , uses for flow ctrolling .
+	std::mutex m_mtxHostSession; 
 };
 
 #endif

@@ -1,0 +1,192 @@
+#include "clientlinkmgr.h"
+#include "configfilereader.h"
+#include "imappframe.h"
+#include "imframe.h"
+#include "util.h"
+#include "zookeeper.h"
+#include "im_ver.h"
+
+//static CIMFrame* gIMFrame = 0;
+
+
+#define IMFRAME_VERSION MAJOR_VERSION"." MINOR_VERSION
+
+using namespace std;
+
+CIMFrame::CIMFrame()
+{
+
+}
+CIMFrame::~CIMFrame()
+{
+
+}
+
+CIMFrame* CIMFrame::GetInstance(void)
+{
+	static CIMFrame* gIMFrame = NULL;
+	if (NULL == gIMFrame)
+	{
+		gIMFrame = new CIMFrame();
+	}
+	return gIMFrame;
+	//return (gIMFrame==0) ? new CIMFrame() : gIMFrame;
+}
+
+bool CIMFrame::InitFrame(const char * pConfigFile)
+{
+	if(!pConfigFile || is_file_exist(pConfigFile))
+	{
+		ErrLog("Err of config file or the file is not exist!");
+		return false;
+	}
+	
+	if (netlib_init() == NETLIB_ERROR){
+		return false;
+	}
+
+	m_pConfigReader = new CConfigFileReader(pConfigFile);
+	if(!m_pConfigReader)
+	{
+		ErrLog("Err of Confile reader initialization!");
+		return false;
+	}
+
+	
+	if(false == CZookeeper::GetInstance()->Initialize(m_pConfigReader)) // server link and zookeeper host initialize 
+	{
+		ErrLog("Err of CZookeeper initialization");
+		return false;
+	}
+	
+	
+	if(false == CClientLinkMgr::GetInstance()->Initialize(m_pConfigReader)) //client link and creating listen port for client . 
+	{
+		ErrLog("Err of CClientLinkMgr initialization");
+		return false;
+	}
+
+	m_pIMAppFrame = CIMAppFrame::GetInstance();			// create application framework  and initialize it .
+	if(!m_pIMAppFrame)
+	{
+		ErrLog("Err of app frame definition");
+		return false;
+	}
+
+	if (!m_pIMAppFrame->Initialize(m_pConfigReader))
+	{
+		ErrLog("Err of init app frame");
+		return false;
+	}
+
+	
+	return true;
+}
+
+
+bool CIMFrame::StartFrame()
+{
+	if(!m_pIMAppFrame)
+		return false;
+
+	signal(SIGPIPE, SIG_IGN);
+
+	CZookeeper::GetInstance()->StartThread();
+
+	if (!m_pIMAppFrame->StartApp())									// Start application framework . 
+	{
+		ErrLog("start IMAppFrame failed");
+		return false;
+	}
+	writePid();
+	netlib_eventloop();			//Enter eventloop
+	
+	return true;
+}
+
+void CIMFrame::StopFrame()
+{
+	netlib_stop_event();
+	if (m_pIMAppFrame)
+	{
+		m_pIMAppFrame->StopApp();
+	}
+}
+
+void SignHandler(int iSignNo)
+{
+	static bool sigIntTriggered = false;
+	if (sigIntTriggered)
+	{
+		return;
+	}
+	sigIntTriggered = true;
+	printf("Enter SignHandler,signo:%d\r\n", iSignNo);
+	CIMFrame* pImFrame = CIMFrame::GetInstance();
+	if (pImFrame)
+	{
+			pImFrame->StopFrame();	//结束主线程的循环
+	}
+	printf("Leave SignHandler,signo:%d \r\n", iSignNo);
+}
+
+int main(int argc, char** argv)
+{
+	if ((argc == 2) && (strcmp(argv[1], "-v") == 0)) 
+	{
+		printf("Current verison of IMFrame: %s\r\n", IMFRAME_VERSION);
+		printf("Revision : %s\r\n", REVISION);
+		printf("Compile datatime: %s %s\r\n", __DATE__, __TIME__);
+		return -1;
+	}
+	//else if (IsPidExist(argv[0])) // Exit directly if the IMFrame is exist.
+	//{
+	//	ErrLog("Warning: MSG SVR aleady startup,pid=%d", getpid());
+	//	return -1;
+	//}
+	
+	WarnLog("start customerService %s_R%s now", IMFRAME_VERSION, REVISION);
+
+
+	//int policy;
+	//struct sched_param param;
+	//pthread_getschedparam(pthread_self(), &policy, &param);
+	//if (policy == SCHED_OTHER)
+	//	printf("%lu policy:SCHED_OTHER with priority %d\n", pthread_self(), param.__sched_priority);
+	//else if (policy == SCHED_RR)
+	//	printf("%lu SCHED_RR with priority %d\n", pthread_self(), param.__sched_priority);
+	//else if (policy == SCHED_FIFO)
+	//	printf("%lu SCHED_FIFO with priority  %d\n", pthread_self(), param.__sched_priority);
+
+	//param.sched_priority = sched_get_priority_max(SCHED_RR);;
+	//pthread_setschedparam(pthread_self(), SCHED_RR, &param);
+
+	//pthread_getschedparam(pthread_self(), &policy, &param);
+	//if (policy == SCHED_OTHER)
+	//	printf("%lu policy:SCHED_OTHER with priority %d\n", pthread_self(), param.__sched_priority);
+	//else if (policy == SCHED_RR)
+	//	printf("%lu SCHED_RR with priority %d\n", pthread_self(), param.__sched_priority);
+	//else if (policy == SCHED_FIFO)
+	//	printf("%lu SCHED_FIFO with priority  %d\n", pthread_self(), param.__sched_priority);
+
+	//CIMFrame* pIMFrame =  CIMFrame::GetInstance();
+	if (NULL == CIMFrame::GetInstance())
+	{
+		ErrLog("Failed to define server instance!");
+		return -1;
+	}
+	
+	if (false == CIMFrame::GetInstance()->InitFrame(CONFIG_FILE))
+	{
+		ErrLog("Failed to initialize server ...");
+		return -1;
+	}
+	signal(SIGINT, SignHandler);
+
+	if (false == CIMFrame::GetInstance()->StartFrame())							// start server now . 
+	{
+		ErrLog("Failed to startup server ...");
+		return -1;
+	}
+}
+

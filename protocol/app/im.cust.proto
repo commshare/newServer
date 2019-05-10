@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package im;
+import "im.pub.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+
+////////////////////////////////////////////////////////////////////////
+//CUST_CHAT						= 0xe001;
+////////////////////////////////////////////////////////////////////////
+message CustChat
+{
+	string 	sFromId		  		= 1;  // 发送方Id
+	string	sSvcId				= 2;  // 客服号id
+	string  sMsgId       		= 3;  // 消息id
+	uint32  msgType 			= 4;  // 消息类型
+	uint64  msgTime 			= 5;  // 服务器消息时间
+	uint32	encrypt				= 6;  // 加密模式
+	string  sContent			= 7;  // 消息内容
+	string	extend				= 8;  // 扩展字段
+}
+
+////////////////////////////////////////////////////////////////////////
+//CUST_CHAT_ACK					= 0xe002;
+////////////////////////////////////////////////////////////////////////
+message CustChatAck
+{
+  	string  sUserId   			= 1; // telephone number or any other number binded. point to sFromId,tell cmSvr which client send to
+  	string  sMsgId       		= 2; // uuid , to identify unique message. 
+  	string	sSvcId				= 3;
+  	uint64  msgTime 			= 4; // server time,precision millisecond,user can use to sort the message.
+	ErrCode errcode    			= 5; // return 200 if no error.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_DELIVER_ACK ： 0xb003 		移动接收端回应MES消息服务器消息送达
+////////////////////////////////////////////////////////////////////////
+message CustChatDeliveredAck
+{
+	string 	sFromId		  		= 1;  // telephone number or any other number binded.
+	string 	sToId		    	= 2;  // telephone number or any other number binded.
+	string	sSvcId				= 3;  // 客服号ID
+	string  sMsgId  			= 4;  // 消息ID
+}
+
+////////////////////////////////////////////////////////////////////////
+//CUST_CHAT_DELIVER				= 0xe004;
+////////////////////////////////////////////////////////////////////////
+//share with CustChat message structure;
+
+////////////////////////////////////////////////////////////////////////
+//CUST_CHAT_DELIVER_NOTIFY_ACK			= 0xe005;
+////////////////////////////////////////////////////////////////////////
+message CustChatDeliveredNotificationAck
+{
+	string sUserId				= 1;		//required，消息的发送方
+	string sMsgId				= 2;		//required
+}
+
+////////////////////////////////////////////////////////////////////////
+//CUST_CHAT_DELIVER_NOTIFY				= 0xe006;
+////////////////////////////////////////////////////////////////////////
+//share with CustChatDeliveredAck message structure;
+

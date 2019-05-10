@@ -80,6 +80,7 @@ public:
     void Write(uchar_t* buf, uint32_t len) { m_buf.Write((void*)buf, len); } 
     int ReadPduHeader(uchar_t* buf, uint32_t len);
     void SetPBMsg(const google::protobuf::MessageLite* msg);		//Allocate buffer to fill with pb header and body.
+    void SetPBMsg(const char buf[], size_t len);
 	void SetPBWithoutMsg(uint16_t nCmdId,UidCode_t sessionId);		//Allocate buffer to fill pb with no body.
     
 protected:

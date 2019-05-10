@@ -219,6 +219,7 @@ string CHwPayloadJson::GetJson()
 }
 
 string CHwPostSendBuf::m_strHead = "";
+string CHwPostSendBuf::m_strUrl = "";
 /**
  * @author root (7/18/17)
  * 
@@ -280,30 +281,14 @@ string CHwPostSendBuf::_PraseData(const char *buf, int len, const string &PushSv
 	appdata.stype = appType;
 	
 	string listDeviceToken;
-	//listToken.clear();
-
-	/*
-	if (pbMsg.emsgtype() == GROUP_TALK)
-	{
-		appdata.sid = pbMsg.ngroupid();
-		for (int i=0; i<pbMsg.to_vec_size(); i++)
-		{
-			//["efgh7800", "abcef1234"]
-			listDeviceToken += rfc1738_encode(pbMsg.to_vec(i).sdivece_token());
-		}
-	}
-	else //the first data
-	*/
-
-	{
-		//["efgh7800", "abcef1234"]
+	
+    {
 		static const string letfBracket = "[\"";
 		static const string rightBracket = "\"]";
 
 		string tmpToken =  pbMsg.sdivece_token();
 		tmpToken = letfBracket + tmpToken + rightBracket;
 
-		//printf("\n%s\n", tmpToken.c_str());
 		listDeviceToken = rfc1738_encode(tmpToken);
 		appdata.sid = pbMsg.stoid();
 	}
@@ -389,7 +374,6 @@ string CHwPostSendBuf::PraseProtocbufToSendBuf(const char *buf, int len, const s
 	char contextLen[32];
 	sprintf(contextLen, "%lu\r\n\n", m_strContent.size());
 
-	//printf("post:%s%s%s\n", m_strHead.c_str(), contextLen, m_strContent.c_str());
 	return m_strHead + contextLen + m_strContent;
 }
 
@@ -413,8 +397,31 @@ bool CHwPostSendBuf::Init(const char* sVer, const char *sAppId)
 
 	char shead[max_head_size];
 	sprintf(shead, postPushHeadStr.c_str(), rfc1738_encode(strVerAppId).c_str());
-
 	m_strHead = shead;
+    
+    char strurl[max_head_size];
+    sprintf(strurl, postRequestUrl.c_str(), rfc1738_encode(strVerAppId).c_str());
+    m_strUrl = strurl;
+
 	return true;
 }
 
+string CHwPostSendBuf::HwGetHttpUrl()
+{
+    return m_strUrl;
+}
+
+void CHwPostSendBuf::HwGetHttpHeaders(vector<string>& vecHeader) {
+    vecHeader.push_back("");
+}
+
+string CHwPostSendBuf::HwGetHttpPostData(const char *buf, int len, const string &PushSvrToken) {
+
+	if (!buf || len <= 0 || PushSvrToken.empty())
+	{
+		ErrLog("PraseProtocbufToSendBuf");
+		return "";
+	}
+	
+	return _PraseData(buf, len, PushSvrToken);
+}

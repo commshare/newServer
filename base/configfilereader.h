@@ -9,11 +9,11 @@
 #define CONFIGFILEREADER_H_
 
 #include "util.h"
-
-class CConfigFileReader
+#include "singleton.h"
+class CConfigFileReader : public Singleton<CConfigFileReader>
 {
 public:
-	CConfigFileReader(const char* filename);
+    CConfigFileReader(const char* filename);
 	~CConfigFileReader();
 
     char* GetConfigName(const char* name);

@@ -26,4 +26,4 @@ LINK_DIRECTORIES(./ ${PB_LIB_DIR} ./slog/lib ../lib)
 ADD_LIBRARY(base SHARED ${SRC_LIST1} ${SRC_LIST2} ${SRC_LIST3} ${SRC_LIST4})
 #ADD_XXXX必须在TARGET_LINK_LIBRARIES前面，否则会报错
 
-TARGET_LINK_LIBRARIES(base pthread slog crypto uuid)
+TARGET_LINK_LIBRARIES(base pthread slog crypto uuid protobuf-lite )

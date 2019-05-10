@@ -1,21 +1,8 @@
-/**
- * apush_server_manager.h 
- *  
- * app manager 
- * hold the apushclient and apushserver 
- *  
- * add by liulang 
- *  
- * 2017-07-01 
- */
-
 #ifndef apush_server_manager_hpp
 #define apush_server_manager_hpp
 
 #include "push_provide_server.h"
-//#include "hw_push_client.h"
-#include "base_client.h"
-
+#include "http_base.h"
 
 class CApushLocalSvr;
 class CBaseClient;
@@ -50,7 +37,7 @@ public:
 	CApushLocalSvr *GetServer();
 
 
-	bool RegistClient(CBaseClient *Client, int iType)
+	bool RegistClient(CHttpBase *Client, int iType)
 	{
 		if (!Client || iType < 0)
 		{
@@ -66,7 +53,7 @@ public:
 	}
 
 
-	CBaseClient *GetClient(int iType)
+	CHttpBase *GetClient(int iType)
 	{
 		if (iType < 0)
 		{
@@ -75,9 +62,8 @@ public:
 			return nullptr;
 		}
 
-		CBaseClient *client = nullptr;
-
-		map<int, CBaseClient *>::iterator it = m_clientMap.find(iType);
+        CHttpBase *client = nullptr;
+		map<int, CHttpBase *>::iterator it = m_clientMap.find(iType);
 		if (it != m_clientMap.end())
 		{
 			client = it->second;
@@ -94,7 +80,7 @@ public:
 private:
 	CApushLocalSvr	*m_apushLocalSvr;
 	CLock			m_mapMutex;
-	map<int, CBaseClient*> m_clientMap;
+    map<int, CHttpBase*>m_clientMap;
 
 };
 

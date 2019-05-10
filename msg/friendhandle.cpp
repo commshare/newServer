@@ -9,7 +9,7 @@ Description:
 #include "im.cm.pb.h"
 #include "im.mes.pb.h"
 #include "im.pub.pb.h"
-#include "im.group.pb.h"
+//#include "im.group.pb.h"
 #include "im.pushSvrAPNsMsg.pb.h"
 #include "mysqlFriendMgr.h"
 #include "redisFriendMgr.h"
@@ -169,6 +169,7 @@ im::ErrCode GetErrorCodeForUnblockFriend(const string& userId, const string& fri
 	return ERR_CHAT_FORBIDDEN;
 }
 
+/*
 void AddFriendDeliverInsertedCallBack(const std::shared_ptr<IMongoDataEntry>& pOfflineMsg, unsigned short result, void* paras)
 {
 	if (NULL == paras) return;
@@ -195,7 +196,7 @@ void CFriendHandler::OnAddFriend(std::shared_ptr<CImPdu> pPdu)
 	{
 		return;
 	}
-	log("addfriend(0x%x) %s received %s:%s, %s", pPdu->GetCommandId()/* MES_ADDFRIEND*/, msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str(), msg.sselfintroduce().c_str());
+	log("addfriend(0x%x) %s received %s:%s, %s", pPdu->GetCommandId(), msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str(), msg.sselfintroduce().c_str());
 
 	if (msg.sfromid().empty() || msg.stoid().empty() || msg.smsgid().empty())
 	{
@@ -203,8 +204,8 @@ void CFriendHandler::OnAddFriend(std::shared_ptr<CImPdu> pPdu)
 		return;
 	}
 
-    msg.set_msgtime(getCurrentTime());//set server time
-
+	msg.set_msgtime(getCurrentTime());//set server time
+	
 	im::ErrCode retCode = ERR_CHAT_FRIEND_ADDING;
 	const string& userId = msg.sfromid();
 	const string& friendId = msg.stoid();
@@ -222,11 +223,11 @@ void CFriendHandler::OnAddFriend(std::shared_ptr<CImPdu> pPdu)
 		{
 			if (it->GetUserId() == userId && it->GetFriendId() == friendId)		//查看本端当前状态 user --> friend
 			{
-				/*if (it->IsFlagSet(CFriendRelation::FRIEND_RELATION_STATE_ADDING))
-				{
-					retCode = ERR_CHAT_FRIEND_ADDING;
-					break;
-				}*/
+				//if (it->IsFlagSet(CFriendRelation::FRIEND_RELATION_STATE_ADDING))
+				//{
+				//	retCode = ERR_CHAT_FRIEND_ADDING;
+				//	break;
+				//}
 				if (it->IsFlagSet(CFriendRelation::FRIEND_RELATION_STATE_NORMAL))
 				{
 					bLocateAdd = true;
@@ -282,7 +283,7 @@ void CFriendHandler::OnAddFriend(std::shared_ptr<CImPdu> pPdu)
 		retCode = insertFriendShip(CFriendRelation(msg.stoid(), msg.sfromid(), CFriendRelation::FRIEND_RELATION_STATE_VERIFYING, 1,0,0, msg.sselfintroduce())) ? retCode : EXCEPT_ERR;
 	}
 
-	/*if can't add friend , return */
+	// if can't add friend , return 
 	if (retCode != ERR_CHAT_FRIEND_ADDING)
 	{
 		//send addFriendAck to sender
@@ -327,18 +328,17 @@ void CFriendHandler::OnAddFriendDeliverInserted(const COfflineMsg& Msg, unsigned
 	log("****send MESAddFriendAck(0x%x) %s to %s sent error 0x%x", MES_ADDFRIEND_ACK,
 		addFndAck.smsgid().c_str(), addFndAck.suserid().c_str(), addFndAck.errcode());
 
-    //bNeedSendPush /*offline need push*/
-    //(bInsertSuccess & MONGO_OPERATION_SUCCESS) /*insert mongo success*/
-    //!(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE) /*inserted msg is not replace, first time recieve*/
-    bNeedSendPush = bNeedSendPush &&
-            ((bInsertSuccess & MONGO_OPERATION_SUCCESS) &&
-             !(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE));
+    //bNeedSendPush 
+    //(bInsertSuccess & MONGO_OPERATION_SUCCESS) 
+    //!(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE) 
+    bNeedSendPush = bNeedSendPush && ((bInsertSuccess & MONGO_OPERATION_SUCCESS) && !(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE));
 
     if (bNeedSendPush)
 	{
 		std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(Msg.GetToId());
 		if (pLogin)
 		{
+			// 需要修改，调PHP接口
 			const std::shared_ptr<CUserCfg> pUserCfg = CUserCfgMgr::GetUserCfg(Msg.GetToId());
 			if (!pUserCfg->IsGlobalNoInterruption())
 			{
@@ -357,7 +357,7 @@ void CFriendHandler::OnAddFriendDeliverAck(std::shared_ptr<CImPdu> pPdu)
 	{
 		return;
 	}
-	log("addFriendDeliverAck(0x%x) %s received", pPdu->GetCommandId()/*MES_ADDFRIEND_DELIVER_ACK*/, msg.smsgid().c_str());
+	log("addFriendDeliverAck(0x%x) %s received", pPdu->GetCommandId(), msg.smsgid().c_str());
 	if (msg.suserid().empty() || msg.smsgid().empty())
 	{
 		ErrLog("!!!lack of required parameter");
@@ -393,7 +393,7 @@ void CFriendHandler::OnAddFriendAns(std::shared_ptr<CImPdu> pPdu)
 	{
 		return;
 	}
-	log("addfriendAns(0x%x) %s received, dir(%s-->%s),ans = %s, code = 0x%x", pPdu->GetCommandId()/*MES_ADDFRIEND_ANS*/,
+	log("addfriendAns(0x%x) %s received, dir(%s-->%s),ans = %s, code = 0x%x", pPdu->GetCommandId(),
 		msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str(), msg.sans().c_str(), msg.errcode());
 
 	if (msg.sfromid().empty() || msg.stoid().empty() || msg.smsgid().empty())
@@ -408,6 +408,7 @@ void CFriendHandler::OnAddFriendAns(std::shared_ptr<CImPdu> pPdu)
 //	}
     //以服务器时间为准
     msg.set_msgtime(getCurrentTime());//set server time
+
 	//获取之前的记录
 	std::vector<CFriendRelation> relationShips;
 	try
@@ -451,7 +452,7 @@ void CFriendHandler::OnAddFriendAns(std::shared_ptr<CImPdu> pPdu)
 		if(retCode == NON_ERR)
 		{
 			const bool bAgree = (NON_ERR == msg.errcode());
-			/* update new state to db(mysql and redis) */
+			//update new state to db(mysql and redis)
 			if (bAgree)
 			{
 				const int32_t state = CFriendRelation::FRIEND_RELATION_STATE_NORMAL;
@@ -516,7 +517,7 @@ void CFriendHandler::OnAddFriendAns(std::shared_ptr<CImPdu> pPdu)
 
 	if (retCode != NON_ERR)
 	{
-		/*send addFriendAnsAck to sender*/
+		//send addFriendAnsAck to sender
 		MESAddFriendAnsAck addFndAnsAck;
 		addFndAnsAck.set_smsgid(msg.smsgid());
 		addFndAnsAck.set_suserid(msg.sfromid());
@@ -539,7 +540,6 @@ void CFriendHandler::OnAddFriendAns(std::shared_ptr<CImPdu> pPdu)
 
 	m_offlineMsgMgr.InsertOfflineMsg(COfflineMsg(msg), AddFriendAnsDeliverInsertedCallBack, 
 		new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId(), bneedSendPush));
-
 }
 
 
@@ -553,14 +553,13 @@ void CFriendHandler::OnAddFriendAnsDeliverInserted(const COfflineMsg& Msg, unsig
 	log("****send MESAddFriendAnsAck(0x%x) %s to %s sent", MES_ADDFRIEND_ANS_ACK,
 		addFndAnsAck.smsgid().c_str(), addFndAnsAck.suserid().c_str());
 
-    bNeedSendPush = bNeedSendPush &&
-            ((bInsertSuccess & MONGO_OPERATION_SUCCESS) &&
-             !(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE));
+		bNeedSendPush = bNeedSendPush && ((bInsertSuccess & MONGO_OPERATION_SUCCESS) && !(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE));
     if (bNeedSendPush)
 	{
 		std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(Msg.GetToId());
 		if (pLogin)
 		{
+			// 需要修改，调PHP接口
 			const std::shared_ptr<CUserCfg> pUserCfg = CUserCfgMgr::GetUserCfg(Msg.GetToId());
 			if (!pUserCfg->IsGlobalNoInterruption())
 			{
@@ -578,7 +577,7 @@ void CFriendHandler::OnAddFriendAnsDeliverAck(std::shared_ptr<CImPdu> pPdu)
 	{
 		return;
 	}
-	log("addFriendAnsDeliverAck(0x%x) %s received", pPdu->GetCommandId()/*MES_ADDFRIEND_ANS_DELIVER_ACK*/, msg.smsgid().c_str());
+	log("addFriendAnsDeliverAck(0x%x) %s received", pPdu->GetCommandId(), msg.smsgid().c_str());
 
 	if (msg.suserid().empty() || msg.smsgid().empty() )
 	{
@@ -598,7 +597,7 @@ void CFriendHandler::OnDelFriend(std::shared_ptr<CImPdu> pPdu)
 	{
 		return;
 	}
-	log("delfriend(0x%x) %s received, %s delfriend %s\r\n", pPdu->GetCommandId()/*MES_DELFRIEND*/,
+	log("delfriend(0x%x) %s received, %s delfriend %s\r\n", pPdu->GetCommandId(),
 		msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str());
 
 	if (msg.sfromid().empty() || msg.stoid().empty() || msg.smsgid().empty())
@@ -629,7 +628,7 @@ void CFriendHandler::OnBlockFriend(std::shared_ptr<CImPdu> pPdu)
 	{
 		return;
 	}
-	log("blockfriend(0x%x) %s received, %s block %s", pPdu->GetCommandId()/*MES_INCBLACKLIST*/,
+	log("blockfriend(0x%x) %s received, %s block %s", pPdu->GetCommandId(),
 		msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str());
 
 	if (msg.sfromid().empty() || msg.stoid().empty() || msg.smsgid().empty())
@@ -687,27 +686,29 @@ void CFriendHandler::OnUnblockFriend(std::shared_ptr<CImPdu> pPdu)
 		unblockFndAck.smsgid().c_str(), unblockFndAck.suserid().c_str(), unblockFndAck.errcode());
 
 }
+*/
 
 bool CFriendHandler::RegistPacketExecutor(void)	 //Regist command process function to network frame. 
 {
-	CmdRegist(MES_ADDFRIEND,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriend));
-	CmdRegist(MES_ADDFRIEND_DELIVER_ACK,	m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriendDeliverAck));
-	CmdRegist(MES_ADDFRIEND_ANS,			m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriendAns));
-	CmdRegist(MES_ADDFRIEND_ANS_DELIVER_ACK,m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriendAnsDeliverAck));
-	CmdRegist(MES_DELFRIEND,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnDelFriend));
-	CmdRegist(MES_INCBLACKLIST,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnBlockFriend));
-	CmdRegist(MES_DECBLACKLIST,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnUnblockFriend));
+//	CmdRegist(MES_ADDFRIEND,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriend));
+//	CmdRegist(MES_ADDFRIEND_DELIVER_ACK,	m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriendDeliverAck));
+//	CmdRegist(MES_ADDFRIEND_ANS,			m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriendAns));
+//	CmdRegist(MES_ADDFRIEND_ANS_DELIVER_ACK,m_nNumberOfInst,  CommandProc(&CFriendHandler::OnAddFriendAnsDeliverAck));
+//	CmdRegist(MES_DELFRIEND,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnDelFriend));
+//	CmdRegist(MES_INCBLACKLIST,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnBlockFriend));
+//	CmdRegist(MES_DECBLACKLIST,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnUnblockFriend));
 
-	CmdRegist(MES_JOINGRP,					m_nNumberOfInst,  CommandProc(&CFriendHandler::OnJoinGrp));
-	CmdRegist(MES_JOINGRP_DELIVER_ACK,		m_nNumberOfInst,  CommandProc(&CFriendHandler::OnJoinGrpDeliverAck));
+//	CmdRegist(MES_JOINGRP,					m_nNumberOfInst,  CommandProc(&CFriendHandler::OnJoinGrp));
+//	CmdRegist(MES_JOINGRP_DELIVER_ACK,		m_nNumberOfInst,  CommandProc(&CFriendHandler::OnJoinGrpDeliverAck));
+	
 	//CmdRegist(MES_JOINGRP_ANS,			m_nNumberOfInst,  CommandProc(&CFriendHandler::OnJoinGrpAns));
 	//CmdRegist(GROUP_PERMIT_ACK,			m_nNumberOfInst,  CommandProc(&CFriendHandler::OnGroupPermitAck));
 
-	CmdRegist(MES_EXCHANGE_KEY,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnExchangeKey));
-	CmdRegist(MES_EXCHANGE_KEY_DELIVER_ACK, m_nNumberOfInst,  CommandProc(&CFriendHandler::OnExchangeKeyDeliverAck));
-	CmdRegist(MES_EXCHANGE_KEY_DELIVERD_NOTIFY_ACK, m_nNumberOfInst,  CommandProc(&CFriendHandler::OnExchangeKeyDeliverNotifyAck));
+//	CmdRegist(MES_EXCHANGE_KEY,				m_nNumberOfInst,  CommandProc(&CFriendHandler::OnExchangeKey));
+//	CmdRegist(MES_EXCHANGE_KEY_DELIVER_ACK, m_nNumberOfInst,  CommandProc(&CFriendHandler::OnExchangeKeyDeliverAck));
+//	CmdRegist(MES_EXCHANGE_KEY_DELIVERD_NOTIFY_ACK, m_nNumberOfInst,  CommandProc(&CFriendHandler::OnExchangeKeyDeliverNotifyAck));
 
-	CmdRegist(CM_KICKOUT_NOTIFICATION,		m_nNumberOfInst,  CommandProc(&CFriendHandler::OnKickOut));
+//	CmdRegist(CM_KICKOUT_NOTIFICATION,		m_nNumberOfInst,  CommandProc(&CFriendHandler::OnKickOut));
 	return true;
 }
 
@@ -749,103 +750,103 @@ void CFriendHandler::OnKickOut(std::shared_ptr<CImPdu> pPdu)
 	}
 }
 
-void JoinGrpDeliverInsertedCallBack(const std::shared_ptr<IMongoDataEntry>& pOfflineMsg, unsigned short result, void* paras)
-{
-	if (NULL == paras) return;
-	OfflineMsgInsertCallBackParas_t* pCallBackPara = (OfflineMsgInsertCallBackParas_t*)paras;
+//void JoinGrpDeliverInsertedCallBack(const std::shared_ptr<IMongoDataEntry>& pOfflineMsg, unsigned short result, void* paras)
+//{
+//	if (NULL == paras) return;
+//	OfflineMsgInsertCallBackParas_t* pCallBackPara = (OfflineMsgInsertCallBackParas_t*)paras;
 
-	CFriendHandler* pHandle = (CFriendHandler*)pCallBackPara->m_handle;
-	if (NULL == pHandle)
-	{
-		delete pCallBackPara;
-		return;
-	}
-	const std::shared_ptr<COfflineMsg> pMsg = dynamic_pointer_cast<COfflineMsg>(pOfflineMsg);
-	pHandle->OnJoinGrpDeliverInserted(*pMsg, result, pCallBackPara->m_sessionID, pCallBackPara->m_bNeedSendPush);
+//	CFriendHandler* pHandle = (CFriendHandler*)pCallBackPara->m_handle;
+//	if (NULL == pHandle)
+//	{
+//		delete pCallBackPara;
+//		return;
+//	}
+//	const std::shared_ptr<COfflineMsg> pMsg = dynamic_pointer_cast<COfflineMsg>(pOfflineMsg);
+//	pHandle->OnJoinGrpDeliverInserted(*pMsg, result, pCallBackPara->m_sessionID, pCallBackPara->m_bNeedSendPush);
 
-	delete pCallBackPara;		//回调函数负责释放资源
-}
+//	delete pCallBackPara;		//回调函数负责释放资源
+//}
 
 
-void CFriendHandler::OnJoinGrp(std::shared_ptr<CImPdu> pPdu)
-{
-	assert(NULL != pPdu);
-	MESJoinGrp msg;
+//void CFriendHandler::OnJoinGrp(std::shared_ptr<CImPdu> pPdu)
+//{
+//	assert(NULL != pPdu);
+//	MESJoinGrp msg;
 
-	if (!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
-	{
-		return;
-	}
-    log("joinGrp(0x%x) %s received %s(%s)-->%s", pPdu->GetCommandId() /*MES_JOINGRP*/, msg.smsgid().c_str(), msg.sgrpid().c_str(),
-			msg.sfromid().c_str(), msg.stoid().c_str(), msg.sselfintroduce().c_str());
+//	if (!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+//	{
+//		return;
+//	}
+//	log("joinGrp(0x%x) %s received %s(%s)-->%s", pPdu->GetCommandId() /*MES_JOINGRP*/, msg.smsgid().c_str(), msg.sgrpid().c_str(),
+//			msg.sfromid().c_str(), msg.stoid().c_str(), msg.sselfintroduce().c_str());
 
-	//if receiver was online, send addFriendDeliver to receiver
-	bool bneedSendPush = true;
-	std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(msg.stoid());
-	if (pLogin && pLogin->IsLogin())
-	{
-		sendReq(&msg, MES_JOINGRP_DELIVER, pLogin->GetCmIp(), atoi(pLogin->GetCmPort().c_str()));
-		bneedSendPush = false;
-		log("****send MES_JOINGRP_DELIVER(0x%x) %s to %s", MES_JOINGRP_DELIVER,
-			msg.smsgid().c_str(), msg.stoid().c_str());
-	}
+//	//if receiver was online, send addFriendDeliver to receiver
+//	bool bneedSendPush = true;
+//	std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(msg.stoid());
+//	if (pLogin && pLogin->IsLogin())
+//	{
+//		sendReq(&msg, MES_JOINGRP_DELIVER, pLogin->GetCmIp(), atoi(pLogin->GetCmPort().c_str()));
+//		bneedSendPush = false;
+//		log("****send MES_JOINGRP_DELIVER(0x%x) %s to %s", MES_JOINGRP_DELIVER,
+//			msg.smsgid().c_str(), msg.stoid().c_str());
+//	}
 
 	//save addFriendDeliver msg to mongodb, if insert failed ,can try to send deliver
-	m_offlineMsgMgr.InsertOfflineMsg(COfflineMsg(msg), JoinGrpDeliverInsertedCallBack,
-		new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId(), bneedSendPush));
-}
+//	m_offlineMsgMgr.InsertOfflineMsg(COfflineMsg(msg), JoinGrpDeliverInsertedCallBack,
+//		new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId(), bneedSendPush));
+//}
 
-void CFriendHandler::OnJoinGrpDeliverInserted(const COfflineMsg& Msg, unsigned short bInsertSuccess, const UidCode_t& sessionID, bool bNeedSendPush)
-{
-	MESJoinGrpAck joinGrpAck;
-	joinGrpAck.set_smsgid(Msg.GetMsgId());
-	joinGrpAck.set_suserid(Msg.GetFromGrpUserId());
-	joinGrpAck.set_sgrpid(Msg.GetFromId());
+//void CFriendHandler::OnJoinGrpDeliverInserted(const COfflineMsg& Msg, unsigned short bInsertSuccess, const UidCode_t& sessionID, bool bNeedSendPush)
+//{
+//	MESJoinGrpAck joinGrpAck;
+//	joinGrpAck.set_smsgid(Msg.GetMsgId());
+//	joinGrpAck.set_suserid(Msg.GetFromGrpUserId());
+//	joinGrpAck.set_sgrpid(Msg.GetFromId());
 
-    joinGrpAck.set_errcode((bInsertSuccess & MONGO_OPERATION_SUCCESS) ? NON_ERR : EXCEPT_ERR);
-	sendAck(&joinGrpAck, MES_JOINGRP_ACK, sessionID);
+//	joinGrpAck.set_errcode((bInsertSuccess & MONGO_OPERATION_SUCCESS) ? NON_ERR : EXCEPT_ERR);
+//	sendAck(&joinGrpAck, MES_JOINGRP_ACK, sessionID);
 
-	if (joinGrpAck.errcode() != NON_ERR)
-	{
-		WarnLog("****send MESAddFriendAck(0x%x) %s to %s sent, errorCode = %d", MES_JOINGRP_ACK,
-			joinGrpAck.smsgid().c_str(), joinGrpAck.suserid().c_str(), joinGrpAck.errcode());
-    }
+//	if (joinGrpAck.errcode() != NON_ERR)
+//	{
+//		WarnLog("****send MESAddFriendAck(0x%x) %s to %s sent, errorCode = %d", MES_JOINGRP_ACK,
+//			joinGrpAck.smsgid().c_str(), joinGrpAck.suserid().c_str(), joinGrpAck.errcode());
+//	}
 
-    bNeedSendPush = bNeedSendPush &&
-            ((bInsertSuccess & MONGO_OPERATION_SUCCESS) &&
-             !(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE));
+//	bNeedSendPush = bNeedSendPush &&
+//			((bInsertSuccess & MONGO_OPERATION_SUCCESS) &&
+//			!(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE));
 
-    if (bNeedSendPush)
-	{
-		std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(Msg.GetToId());
-		if (pLogin)
-		{
-			const std::shared_ptr<CUserCfg> pUserCfg = CUserCfgMgr::GetUserCfg(Msg.GetToId());
-			if (!pUserCfg->IsGlobalNoInterruption())
-			{
-				sendPush(pLogin, Msg.GetFromId(), Msg.GetToId(), Msg.GetMsgId(), GRP_CONTACTS, NewRequestStr);
-			}
-		}
-		
-	}
-}
+//	if (bNeedSendPush)
+//	{
+//		std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(Msg.GetToId());
+//		if (pLogin)
+//		{
+//			const std::shared_ptr<CUserCfg> pUserCfg = CUserCfgMgr::GetUserCfg(Msg.GetToId());
+//			if (!pUserCfg->IsGlobalNoInterruption())
+//			{
+//				sendPush(pLogin, Msg.GetFromId(), Msg.GetToId(), Msg.GetMsgId(), GRP_CONTACTS, NewRequestStr);
+//			}
+//		}
+//		
+//	}
+//}
 
-void CFriendHandler::OnJoinGrpDeliverAck(std::shared_ptr<CImPdu> pPdu)
-{
-	assert(NULL != pPdu);
-	MESJoinGrpDeliverAck msg;
-	if (!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
-	{
-		return;
-	}
-	DbgLog("JoinGrpDeliverAck(0x%x) %s received", pPdu->GetCommandId()/*MES_JOINGRP_DELIVER_ACK*/, msg.smsgid().c_str());
+//void CFriendHandler::OnJoinGrpDeliverAck(std::shared_ptr<CImPdu> pPdu)
+//{
+//	assert(NULL != pPdu);
+//	MESJoinGrpDeliverAck msg;
+//	if (!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+//	{
+//		return;
+//	}
+//	DbgLog("JoinGrpDeliverAck(0x%x) %s received", pPdu->GetCommandId()/*MES_JOINGRP_DELIVER_ACK*/, msg.smsgid().c_str());
 
 	//delete addfriendDeliver msg from mongo 
 	//COfflineMsgMgr offlineMsgMgr;
-	m_offlineMsgMgr.DelOfflineMsg(msg.suserid(), MES_JOINGRP_DELIVER, msg.smsgid());
-}
+//	m_offlineMsgMgr.DelOfflineMsg(msg.suserid(), MES_JOINGRP_DELIVER, msg.smsgid());
+//}
 
-
+#if 0
 void ExchangeKeyInsertedCallBack(const std::vector<std::shared_ptr<IMongoDataEntry> >& msgs, bool result, void* paras)
 {
 	if (NULL == paras) return;
@@ -1044,3 +1045,5 @@ void CFriendHandler::OnExchangeKeyDeliverNotifyAck(std::shared_ptr<CImPdu> pPdu)
 	//COfflineMsgMgr offlineMsgMgr;
 	m_offlineMsgMgr.DelOfflineMsg(msg.suserid(), MES_EXCHANGE_KEY_DELIVERD_NOTIFY, msg.smsgid());
 }
+#endif
+

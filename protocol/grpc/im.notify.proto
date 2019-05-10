@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+package imnotify;
+
+service NotifyService {
+	rpc OnGroupRelation (GroupRelationNotify) returns (GroupRelationNotifyACK) {};
+	rpc OnFriendRelation (FriendRelationNotify) returns (FriendRelationNotifyACK) {};
+	rpc OnLoginOperation (LoginOperationNotify) returns (LoginOperationNotifyACK) {};
+	rpc OnCommonMsgNotify (CommonMsgNotify) returns (CommonMsgNotifyACK) {};
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+// 群组操作通知
+////////////////////////////////////////////////////////////////////////
+message GroupRelationNotify
+{
+	string 	sGrpId		  		= 1;  // 群组id
+	string  sMsgId       		= 2;  // 消息Id
+	repeated string sToIds		= 3;  // 被通知的人
+	uint64  msgTime 			= 4;  // 消息时间
+	string	sOprUserId 			= 5;  // 操作者Id
+	repeated string	sMnpledUserId = 6;  // 被操作者id
+	string  sContent			= 7;  // 消息内容
+	NotifyType  notifyType		= 8;  // 群通知类型
+	string sOperId				= 9;  // 操作id，NOTIFY_TYPE_MASTER_ANS_APPLY和NOTIFY_TYPE_MASTER_ANS_INVITE 需要此字段
+	string  extend				= 10;  // expand field
+}
+
+message GroupRelationNotifyACK
+{
+	string  sMsgId = 1;
+	uint64  msgTime = 2;
+	ExceptionCode expcode = 3;
+}
+
+enum NotifyType
+{
+	NOTIFY_TYPE_UNKNOWN 			= 0;
+	NOTIFY_TYPE_GRPINFO_CHANGED 	= 1;		//群资料修改 包含修改 群名称 群昵称 群头像 群公告，通知群成员
+	NOTIFY_TYPE_GRPMEM_QUIT 		= 2;		//退群通知，发送给群成员
+	NOTIFY_TYPE_GRPMEM_REMOVE 		= 3;		//踢人通知，发送给被移除人及群成员
+	NOTIFY_TYPE_GRPAPPLY_RESULT	  	= 4;		//申请加群成功通知，发送给群成员
+	NOTIFY_TYPE_GRPINVITE_RESULT 	= 5;		//邀请加群成功通知，发送给群成员	
+	NOTIFY_TYPE_GRPMASTER_CHANGED  = 6;			//群管理员变更，发送给群成员
+	NOTIFY_TYPE_GRP_ACTIVE  		= 7;		//群激活（发送给群管理员）
+	NOTIFY_TYPE_MASTER_ANS_APPLY	= 8;		// 加群请求需要验证(发送给群管理员)
+	NOTIFY_TYPE_MASTER_ANS_INVITE	= 9;		// 拉人进群操作需要验证(被拉人开启入群验证)
+}
+
+////////////////////////////////////////////////////////////////////////
+// 好友操作通知
+////////////////////////////////////////////////////////////////////////
+message FriendRelationNotify
+{
+	string 	sFromId 				= 1;  // 发起者Id
+	string 	sToId					= 2;  // 接收者Id 
+	string  sMsgId       			= 3;  // 消息Id
+	string 	sMemoName				= 4;  // 备注昵称
+	FriendNotifyType  notifyType	= 5;  // 类型
+	string  sSelfIntroduce			= 6;  // 说明
+	uint64  msgTime 				= 7;  // 消息时间
+	string sOperId					= 8;  // 操作id，FRIEND_NOTIFY_TYPE_ADD需要此字段
+	string  extend					= 9;  // expand field
+}
+
+message FriendRelationNotifyACK
+{
+	string  sMsgId = 1;
+	uint64  msgTime = 2;
+	ExceptionCode expcode = 3;
+}
+
+enum FriendNotifyType
+{
+	FRIEND_NOTIFY_TYPE_UNKNOWN = 0;
+	FRIEND_NOTIFY_TYPE_ADD = 1;		// 对方需要验证
+	FRIEND_NOTIFY_TYPE_ANS = 2;		// 对方同意
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 登陆操作通知
+//////////////////////////////////////////////////////////////////////////
+message LoginOperationNotify
+{
+	string  sUserId = 1;
+	string	sDeviceToken=2;					// 设备唯一标识
+	uint64  msgTime = 3;
+	LoginNotifyType loginType = 4;
+	string  extend = 5;
+	LoginNotifySubType loginSubType = 6;	// 登陆类型
+}
+
+message LoginOperationNotifyACK
+{
+	string  sUserId = 1;
+	uint64  msgTime = 2;
+	ExceptionCode expcode = 3;
+}
+
+enum LoginNotifyType
+{
+	LOGIN_NOTIFY_TYPE_UNKNOWN = 0;
+	LOGIN_NOTIFY_TYPE_LOGIN = 1;		// 登陆
+	LOGIN_NOTIFY_TYPE_LOGOUT = 2;		// 退出
+}
+
+enum LoginNotifySubType
+{
+	LOGIN_NOTIFY_SUBTYPE_OK = 0;							// 直接登陆
+	LOGIN_NOTIFY_SUBTYPE_NOCAPTCHA = 1;					// 未输验证码登陆
+	LOGIN_NOTIFY_SUBTYPE_CAPTCHA = 2;					// 验证码验证成功登陆
+}
+
+/////////////////////////////////////////////////////////////////////////
+// 公用消息通知
+/////////////////////////////////////////////////////////////////////////
+message CommonMsgNotify
+{
+	string sFromId 					= 1;		// 发送者id
+	repeated string sToIds			= 2;		// 被通知的人
+	string sMsgId					= 3;		// 通知消息ID
+	CommonNotifyType notifyType		= 4;		// 通知类型
+	string sContent					= 5;		// 通知内容
+	uint64  msgTime					= 6;		// 消息时间
+	string extend					= 7;		// 扩展字段
+}
+
+message CommonMsgNotifyACK
+{
+	string sMsgId = 1;
+	uint64  msgTime = 2;
+	ExceptionCode expcode = 3;
+}
+
+enum CommonNotifyType
+{
+	Notify_ModifyUserInfo			= 0;		// 个人信息更新
+	Notify_ModifyPublicKey			= 1;		// 个人公钥更新
+}
+
+////////////////////////////////////////////////////
+// 错误码
+////////////////////////////////////////////////////
+enum ExceptionCode
+{
+	NO_EXP = 0;		// 无异常
+	EXP_ERR = 1;	// 异常
+}

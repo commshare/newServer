@@ -5,14 +5,15 @@
 **/
 
 #include "lock.h"
-#include "xmpp_google_fcm_protoc.h"
 #include "im.push.android.pb.h"
 #include "util.h"
 #include "protobuf_phase.h"
 #include "hw_handle_protobuf.h"
 #include "mi_protoc.h"
 #include "jpush_protoc.h"
-
+#include "google_fcm_protoc.h"
+#include "configfilereader.h"
+#define CONFIG_FILE  "server.conf"
 
 int CSendDataMapMgrSharedPtr::Insert(shared_ptr<APushData> Shared_pushData, const int index)
 {
@@ -168,131 +169,163 @@ CProtoHandele::CProtoHandele()
 	
 }
 
-shared_ptr<APushData> CProtoHandele::GetaPushData(const char *buf, int len, string &hwToken)
+vector<shared_ptr<HTTP_REQDATA_>> CProtoHandele::GetAndroidPushData(const char *buf , int len , string &hwToken)
 {
+    vector<shared_ptr<HTTP_REQDATA_>> vecHttpData;
 
 	if (!buf && len <= 0)
 	{
-		return nullptr;
+		return vecHttpData;
 	}
 
 	m_pbMsg.Clear();
 	m_pbMsg.ParseFromArray(buf, len);
 
-	shared_ptr<APushData> shared_APushData(new APushData);
+	shared_ptr<HTTP_REQDATA_> shared_APushData(new HTTP_REQDATA_);
 
-	PaPushData data = shared_APushData.get();
-
-	if (!data)
+	if (!shared_APushData)
 	{
 		ErrLog("new APushData");
-		return nullptr;
+		return vecHttpData;
 	}
 	if (!m_pbMsg.IsInitialized())
 	{
 		ErrLog("not IsInitialized");
-		return nullptr;
+		return vecHttpData;
 	}
 
-	data->toId = m_pbMsg.stoid();
-	data->msgId = m_pbMsg.smsgid();
+	shared_APushData->toId = m_pbMsg.stoid();
+	shared_APushData->msgId = m_pbMsg.smsgid();
 
 	switch (m_pbMsg.edivece_type())
 	{
 		case HW_PUSH:
 			{
 				InfoLog("HW_PUSH");
-				data->diveceType = HW_PUSH;
+				shared_APushData->diveceType = HW_PUSH;
 
 				if (hwToken.empty())
 				{
 					ErrLog("hwToken.empty()");
-					return nullptr;
+					return vecHttpData;
 				}
 
 				CHwPostSendBuf postbuf;
-				data->sendBuf = postbuf.PraseProtocbufToSendBuf(buf, len, hwToken);
-
-				if (data->sendBuf.empty())
-				{
-					ErrLog("data->sendBuf.empty()");
-					return nullptr;
-				}
+				//data->sendBuf = postbuf.PraseProtocbufToSendBuf(buf, len, hwToken);
+                shared_APushData->strUrl_ =  postbuf.HwGetHttpUrl();
+                postbuf.HwGetHttpHeaders(shared_APushData->vecHeader);
+                shared_APushData->strPost_ = postbuf.HwGetHttpPostData(buf, len, hwToken);
+                vecHttpData.push_back(shared_APushData);
+			   // if (data->sendBuf.empty())
+			   // {
+			   // 	ErrLog("data->sendBuf.empty()");
+			   // 	return nullptr;
+			   // }
 				break;
 			}
 		case XM_PUSH:
 			{
 				InfoLog("XM_PUSH");
-				data->diveceType = XM_PUSH;
-
+				shared_APushData->diveceType = XM_PUSH;
 				CMiProtoc miProto(&m_pbMsg);
-				data->sendBuf = miProto.GetSendBuf();
+                shared_APushData->strUrl_ =  miProto.GetHttpUrl();
+                miProto.GetHttpHeaders(shared_APushData->vecHeader);
+                shared_APushData->strPost_ = miProto.GetHttpPostData(m_pbMsg.emsgtype() == im::P2P_CALL);
+                vecHttpData.push_back(shared_APushData);
 
-				if (data->sendBuf.empty())
-				{
-					ErrLog("data->sendBuf.empty()");
-					return nullptr;
-				}
+                //小米推送同时构造海外的推送数据，两个平台一起推，跟国内推送不一样的只是url
+                shared_ptr<HTTP_REQDATA_> foreignPlaform_SharedData(new HTTP_REQDATA_);
+                //P_HTTP_REQDATA_  pdata = foreignPlaform_SharedData.get();
+                if (!foreignPlaform_SharedData)
+                {
+                    ErrLog("new foreignPlaform_SharedData");
+                    return vecHttpData;
+                }
+                foreignPlaform_SharedData->toId = m_pbMsg.stoid();
+                foreignPlaform_SharedData->msgId = m_pbMsg.smsgid();
+				foreignPlaform_SharedData->diveceType = XM_PUSH;
+                //pdata->strUrl_ =  miProto.GetHttpUrl();
+                foreignPlaform_SharedData->strUrl_ =  CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("miForeignUrl") ? 
+                    CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("miForeignUrl"):
+                    "https://api.xmpush.global.xiaomi.com/v2/message/alias";
+                miProto.GetHttpHeaders(foreignPlaform_SharedData->vecHeader);
+                foreignPlaform_SharedData->strPost_ = miProto.GetHttpPostData(m_pbMsg.emsgtype() == im::P2P_CALL);
+                vecHttpData.push_back(foreignPlaform_SharedData);
+//				if (data->sendBuf.empty())
+//				{
+//					ErrLog("data->sendBuf.empty()");
+//					return nullptr;
+//				}
 				break;
 			}
 		case JPUSH:
 			{
 				InfoLog("JPUSH");
-				data->diveceType = JPUSH;
+				shared_APushData->diveceType = JPUSH;
 
 				CJPushProtoc jPushProtoc(&m_pbMsg);
-				data->sendBuf = jPushProtoc.GetSendBuf();
-
-				if (data->sendBuf.empty())
-				{
-					ErrLog("data->sendBuf.empty()");
-					return nullptr;
-				}
+//				data->sendBuf = jPushProtoc.GetSendBuf();
+//
+//				if (data->sendBuf.empty())
+//				{
+//					ErrLog("data->sendBuf.empty()");
+//					return nullptr;
+//				}
+                shared_APushData->strUrl_ = jPushProtoc.GetHttpUrl();
+                jPushProtoc.GetHttpHeaders(shared_APushData->vecHeader);
+                shared_APushData->strPost_ = jPushProtoc.GetHttpPostData();
+                vecHttpData.push_back(shared_APushData);
 				break;
 			}
 		case GOOGLE_FCM:
 			{
 
-				InfoLog("GOOGLE_FCM");
-				m_CurMapIndex++;
-				if (m_CurMapIndex == 0x7fffffff)
-				{
-					m_CurMapIndex = 1;
-				}
-
-				data->mapIndex = m_CurMapIndex;
-
-				char indexStr[12];
-				sprintf(indexStr, "%d", data->mapIndex);
-
-				//组合msgid + mapIndex,传给xmpp的消息id
-				string msgIdCombination = m_pbMsg.smsgid() + "--" + string(indexStr);
-
-				data->diveceType = GOOGLE_FCM;
-
-				m_pbMsg.set_smsgid(msgIdCombination);
-				CXmppFcmProtoc xmpp_fcm(&m_pbMsg);
-
-				data->sendBuf = xmpp_fcm.GetSendBuf();
-				if (data->sendBuf.empty())
-				{
-					ErrLog("xmpp_fcm.GetSendBuf()");
-					return nullptr;
-				}
-
+//				InfoLog("GOOGLE_FCM");
+//				m_CurMapIndex++;
+//				if (m_CurMapIndex == 0x7fffffff)
+//				{
+//					m_CurMapIndex = 1;
+//				}
+//
+//				data->mapIndex = m_CurMapIndex;
+//
+//				char indexStr[12];
+//				sprintf(indexStr, "%d", data->mapIndex);
+//
+//				//组合msgid + mapIndex,传给xmpp的消息id
+//				string msgIdCombination = m_pbMsg.smsgid() + "--" + string(indexStr);
+//
+//				data->diveceType = GOOGLE_FCM;
+//
+//				m_pbMsg.set_smsgid(msgIdCombination);
+//				CXmppFcmProtoc xmpp_fcm(&m_pbMsg);
+//
+//				data->sendBuf = xmpp_fcm.GetSendBuf();
+//				if (data->sendBuf.empty())
+//				{
+//					ErrLog("xmpp_fcm.GetSendBuf()");
+//					return nullptr;
+//				}
+                InfoLog("GOOGLE_FCM");
+                shared_APushData->diveceType = GOOGLE_FCM;
+//				m_pbMsg.set_smsgid(msgIdCombination);
+                CHttpFcmProtoc http_fcm(&m_pbMsg);
+                shared_APushData->strUrl_ = http_fcm.GetFcmPushUrl();
+                http_fcm.GetFcmHeaders(shared_APushData->vecHeader);
+                shared_APushData->strPost_= http_fcm.GetFcmPostData();
+                vecHttpData.push_back(shared_APushData);
 				break;
 			}
 		default:
 			{
 				ErrLog("m_pbMsg.edivece_type : %d", m_pbMsg.edivece_type());
-				return nullptr;
+				return vecHttpData;
 			}
 	}
 
-	return shared_APushData;
+//	return shared_APushData;
+	return vecHttpData;
 }
-
-
 
 const char CAppOpenJson::type[12] = "notify_type";
 const char CAppOpenJson::id[3] = "id";

@@ -1,0 +1,411 @@
+﻿syntax = "proto3";
+package im;
+
+option optimize_for = LITE_RUNTIME;
+
+//命令字：奇数表示移动端到服务器，偶数表示服务器到移动端
+enum CmdId{
+	EXCEPT_CMDID					= 0x0;
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	//系统类消息接口，
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	SYSTEM_HEARTBEAT							= 0x3001;						//客户端主动发起心跳包，策略默认为每20秒一个心跳，
+																							//服务端则会每40秒收不到包认定客户端链路断，此值可设置。
+																							//如果客户端在20秒内有发其他协议包，则无需发此心跳包。
+																	
+	SYSTEM_HEARTBEAT_ACK					= 0x3002;				//服务端心跳ACK
+	SYSTEM_TIMEOUT_NOTIFICATION		= 0x3004;				//服务器内部通知信令，在发生心跳超时是网络底层通知
+																								//业务层处理消息。客户端无需用
+  SYSTEM_ASSOCSVR_REGIST        = 0x3005;       //关联服务间内部的信息注册，并携带IP、端口信息
+  SYSTEM_ASSOCSVR_REGIST_ACK    = 0x3006;       //关联服务间内部的信息注册回复
+	SYSTEM_PING 				= 0x3007;       //用于发起语音，视频前检测网络延时
+	SYSTEM_PING_ACK 			= 0x3008;	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//CM接入服务协议命令字定义
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	CM_LOGIN							= 0xa001;						//移动端登录CM接入服务器
+	CM_LOGIN_ACK						= 0xa002;					//CM回应移动端登录
+	CM_LOGOUT							= 0xa003;						//移动端登出CM接入服务器
+	CM_LOGOUT_ACK						= 0xa004;					//CM回应移动端登出
+	CM_DEVICETOKENSYNC					= 0xa005;					//设备信息同步
+	CM_DEVICETOKENSYNC_ACK				= 0xa006;					//设备信息同步ACK
+	CM_LOGOUT_CONFIRM					= 0xa007;					//移动端登出CM接入服务器确认
+	CM_LOGOUT_CONFIRM_ACK				= 0xa008;					//CM回应移动端登出确认
+	CM_KICKOUT_NOTIFICATION				= 0xa010;		//同一账号不同设备登录CM服务器，CM服务强制另一设备下线，并发出踢出通知。
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// 服務器之間内部協議
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	CM_LOGIN_NOTIFY						= 0xa011;		// cm_server 通知 login_server
+	CM_LOGIN_NOTIFY_ACK					= 0xa012;
+	LOGIN_CM_NOTIFY						= 0xa013;		// login_server 通知 cm_server			
+	LOGIN_CM_NOTIFY_ACK					= 0xa014;
+	CM_LOGIN_TRANS						= 0xa015;		//登陆消息 交换
+	
+	CM_PHP_LOGIN_NOTIFY					= 0xa017;		// php登陆通知
+	CM_PHP_LOGIN_NOTIFY_ACK				= 0xa018;		// php登陆通知确认
+	SVR_GROUP_RELATIN_NOTIFY			= 0xa019;		// 群操作通知
+	SVR_GROUP_RELATIN_NOTIFY_ACK		= 0xa020;
+	SVR_FRIEND_RELATION_NOTIFY			= 0xa021;		// 好友操作通知
+	SVR_FRIEND_RELATION_NOTIFY_ACK		= 0xa022;
+	SVR_COMMON_MSG_NOTIFY				= 0xa023;		// 外部通用消息接入
+	SVR_COMMON_MSG_NOTIFY_ACK			= 0xa024;
+	SVR_LOGIN_RESULT					= 0xa025;		// 内部登陆结果
+	SVR_LOGIN_RESULT_ACK				= 0xa026;
+	SVR_RADIO_RELATIN_NOTIFY			= 0xa027;		// 频道操作通知
+	SVR_RADIO_RELATIN_NOTIFY_ACK		= 0xa028;
+	SVR_USER_PUSHSET_NOTIFY				= 0xa029;		// 用户推送设置开关通知
+	SVR_USER_PUSHSET_NOTIFY_ACK			= 0xa030;
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//MES消息服务协议命令字定义
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	MES_CHAT											= 0xb001;						//移动发送端发聊天消息给MES消息服务器 (通过CM接入服务透传，下同)
+	MES_CHAT_ACK									= 0xb002;					  	//MES消息服务器回应移动发送端聊天消息
+	MES_CHAT_DELIVER_ACK					= 0xb003;						//移动接收端回应MES消息服务器消息送达，0xb003,0xb004是反向协议，先有0xb004,才有0xb003
+	MES_CHAT_DELIVER							= 0xb004;						//MES消息服务器中转聊天消息给移动接收端
+	MES_CHAT_DELIVERED_NOTIFICATION_ACK = 0xb005;					//移动发送端接收MES消息服务器消息已送达通知确认,	
+	MES_CHAT_DELIVERED_NOTIFICATION = 0xb006;						//MES消息服务器通知移动发送端消息已送达,此为单向通知协议，视业务需求而定，非必需。
+	MES_CHAT_READ									= 0xb007;						//移动接收端发消息已读给MES消息服务
+	MES_CHAT_READ_ACK							= 0xb008;						//MES消息服务器回应移动接收端消息已读
+	MES_CHAT_READ_DELIVER_ACK			= 0xb009;						//移动接收端回应MES消息服务器接收端已读送达，0xb009,0xb00a是反向协议，先有0xb00a,才有0xb009
+	MES_CHAT_READ_DELIVER					= 0xb00a;						//MES消息服务器通知消息接收端已读给消息发送端
+	
+	MES_OFFLINESUMMARY						= 0xb011;						//移动端拉取离线消息概要汇总，不分消息类型。
+	MES_OFFLINESUMMARY_ACK				= 0xb012;						//服务端离线消息概要汇总回应。
+	MES_OFFLINETOTAL							= 0xb013;						//移动端定向拉取指定类型和数目的未读离线消息
+	MES_OFFLINETOTAL_ACK					= 0xb014;						//服务端回应移动端、携带该用户指定消息类型的未读消息总数.
+	
+	MES_OFFLINEMSG								= 0xb015;						//移动端拉取未读消息列表
+	MES_OFFLINEMSG_ACK						= 0xb016;						//移动端拉取未读消息列表ACK
+	MES_OFFLINEMSG_DELIVERED			= 0xb017;						//移动端离线消息送达，携带所有已送达离线消息ID列表
+	MES_OFFLINEMSG_DELIVERED_ACK	= 0xb018;						//服务端回应离线消息送达、已读
+	MES_OFFLINEMSG_DELIVERED_NOTIFICATION_ACK	= 0xb019;			//消息发送方发送离线消息送达通知确认
+	MES_OFFLINEMSG_DELIVERED_NOTIFICATION			= 0xb01a;				//MES服务器通知发送方消息已送达
+	
+//	MES_SECURITYSYNC				= 0xb021;						//移动端向服务器发送公私钥同步，服务端有权按规则拒绝同步:
+																	//1. 参数错； 2. 对方移动端已拉黑或屏蔽联系人关系。
+//	MES_SECURITYSYNC_ACK			= 0xb022;
+	
+	MES_ADDFRIEND									= 0xb031;						//移动发送端发送添加好友请求给MES消息服务器 (通过CM接入服务透传，下同)
+	MES_ADDFRIEND_ACK							= 0xb032;					  	//MES消息服务器回应移动发送端添加好友请求
+	MES_ADDFRIEND_DELIVER_ACK			= 0xb033;						//移动接收端回应MES消息服务器添加好友请求送达，0xb033,0xb034是反向协议，先有0xb034,才有0xb033
+	MES_ADDFRIEND_DELIVER					= 0xb034;						//MES消息服务器中转添加好友请求给移动接收端
+	
+	MES_ADDFRIEND_ANS							= 0xb035;						//移动接收端发送好友添加应答给MES消息服务器
+	MES_ADDFRIEND_ANS_ACK					= 0xb036;						//MES消息服务器回应移动接收端添加好友应答
+	MES_ADDFRIEND_ANS_DELIVER_ACK	= 0xb037;						//移动接收端回应MES消息服务器添加好友应答送达，0xb037,0xb038是反向协议，先有0xb038,才有0xb037
+	MES_ADDFRIEND_ANS_DELIVER			= 0xb038;						//MES消息服务器中转添加好友应答给移动接收端
+	
+	MES_DELFRIEND									= 0xb039;						//移动发送端发送删除好友请求给MES消息服务器 (通过CM接入服务透传，下同)
+	MES_DELFRIEND_ACK							= 0xb03a;					  	//MES消息服务器回应移动发送端删除好友请求
+	
+
+	MES_INCBLACKLIST							= 0xb041;						//移动发送端发送拉黑请求给MES消息服务器
+	MES_INCBLACKLIST_ACK					= 0xb042;						//MES消息服务器回应移动发送端拉黑请求	
+	
+	MES_DECBLACKLIST							= 0xb043;						//移动发送端发送拉出黑名单请求给MES消息服务器
+	MES_DECBLACKLIST_ACK					= 0xb044;						//MES消息服务器回应移动发送端拉出黑名单请求
+	
+	MES_JOINGRP										= 0xb051;				//GRP服务器发送加群申请或邀请加群 消息给MSG服务器
+	MES_JOINGRP_ACK								= 0xb052;					//MSG服务器响应GRP服务器加群申请	
+	MES_JOINGRP_DELIVER_ACK 			= 0xb053;							//移动接收端响应MSG服务器加群申请推送
+	MES_JOINGRP_DELIVER						= 0xb054;						//MSG服务器推送加群申请（邀请）到移动接收端
+
+	
+	MES_EXCHANGE_KEY							= 0xb059;						//移动发送端发起群密钥交换流程给MSG服务器
+	MES_EXCHANGE_KEY_ACK					= 0xb060;							//MSG服务器响应移动发送端密钥交换请求
+	MES_EXCHANGE_KEY_DELIVER_ACK	= 0xb061;						//移动接收端响应（包含本端密钥）MSG服务器密钥交换请求推送
+	MES_EXCHANGE_KEY_DELIVER			= 0xb062;						//MSG服务器推送密钥交换请求到移动接收端
+	MES_EXCHANGE_KEY_DELIVERD_NOTIFY_ACK = 0xb063;					//移动发送端响应MSG服务器密钥交换送达通知
+	MES_EXCHANGE_KEY_DELIVERD_NOTIFY		= 0xb064;					//MSG服务器推送密钥交换结果到移动发送端
+	
+	MES_GRPINTERNOTIFY									= 0xb065;						//GRP服务器发起群通知给MSG服务器
+	MES_GRPINTERNOTIFY_ACK							= 0xb066;				//MSG服务器响应GRP服务器群通知消息
+	MES_GRPNOTIFY_DELIVER_ACK			= 0xb067;						//移动接收端响应MSG服务器群通知
+	MES_GRPNOTIFY_DELIVER					= 0xb068;						//MSG服务器推送群通知到移动接收端
+	
+	MES_GRPINTERCHAT										= 0xb071;						//GRP服务器发送群聊天消息到MSG服务器
+	MES_GRPINTERCHAT_ACK								= 0xb072;							//MSG服务器响应GRP服务器群聊天消息
+	MES_GRPCHAT_DELIVER_ACK				= 0xb073;							//移动接收端响应MSG服务器群聊天消息
+	MES_GRPCHAT_DELIVER					= 0xb074;						//MSG服务器推送聊天消息到移动接收端
+	MES_GRPINTER_CHATCANCLE 			= 0xb075;							//GRP服务器转发群组撤销聊天消息给MSG消息服务器
+	MES_GRPINTER_CHATCANCLE_ACK 		= 0xb076;							//MSG消息服务器回应GRP服务器群组撤销聊天消息
+	MES_CHATCANCEL 						= 0xb077;							//移动发送端向msg消息服务器向发送消息撤回请求
+	MES_CHATCANCEL_ACK 					= 0xb078;							//msg消息服务器回应撤销聊天消息
+	MES_CHATCANCEL_DELIVER 				= 0xb082;							//MSG消息服务器向移动发送端向发送消息撤回请求推动
+	MES_CHATCANCEL_DELIVER_ACK			= 0xb081;							//移动发送端回应撤销聊天推送消息
+	
+	SIG_SPONSORP2PCALL					= 0xb091;
+	SIG_SPONSORP2PCALL_ACK				= 0xb092;	
+	SIG_SPONSORP2PCALL_DELIVER_ACK		= 0xb093;	
+	SIG_SPONSORP2PCALL_DELIVER			= 0xb094;	
+	SIG_SPONSORP2PCALL_ANS 				= 0xb095;	
+	SIG_SPONSORP2PCALL_ANS_ACK			= 0xb096;	
+	SIG_SPONSORP2PCALL_ANS_DELIVER_ACK 	= 0xb097;	
+	SIG_SPONSORP2PCALL_ANS_DELIVER		= 0xb098;	
+	SIG_P2PCALL_EXCHANGE_NATINFO	 	= 0xb099;
+	SIG_P2PCALL_EXCHANGE_NATINFO_ACK	= 0xb0a0;	
+	SIG_P2PCALL_EXCHANGE_NATINFO_DELIVER_ACK			= 0xb0a1;	
+	SIG_P2PCALL_EXCHANGE_NATINFO_DELIVER				= 0xb0a2;
+	SIG_P2PCALLHANGUP 									= 0xb0a5;
+	SIG_P2PCALLHANGUP_ACK 								= 0xb0a6;
+	SIG_P2PCALLHANGUPDElIVER_ACK 						= 0xb0a7;		
+	SIG_P2PCALLHANGUPDElIVER 							= 0xb0a8;	
+	
+	SIG_P2PCALLSTATENOTIFY 								= 0xb0b1;
+	SIG_P2PCALLSTATENOTIFY_ACK 							= 0xb0b2;
+	SIG_P2PCALLSTATENOTIFYDElIVER_ACK 					= 0xb0b3;		
+	SIG_P2PCALLSTATENOTIFYDElIVER 						= 0xb0b4;	
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 通知消息类型 例如：个人信息更新通知最近联系人
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	MS_COMMONNOTIFY							= 0xb0c1;			// 移动端发起 通知消息
+	MS_COMMONNOTIFY_ACK						= 0xb0c2;			// msg消息服务器回应 通知消息
+	MS_COMMONNOTIFY_DELIVER_ACK				= 0xb0c3;			// 移动端回应 通知消息
+	MS_COMMONNOTIFY_DELIVER					= 0xb0c4;			// MSG消息服务器向移动发送端向发送个 通知消息 推送
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//PC Syn Server
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //接入
+    PC_LOGIN       = 0xb0d1;
+    PC_LOGINACK    = 0xb0d2;
+    PC_KITOUT      = 0xb0d4;
+    PC_LOGOUT      = 0xb0d5;
+    //消息同步
+    PC_PCSYNMESSAGETOGW      = 0xb0d7;
+    PC_GWSYNMESSAGETOAPP     = 0xb0d8;
+    PC_GWSYNMESSAGETOAPPACK  = 0xb0d9;
+    PC_PCSYNMESSAGETOGWACK   = 0xb0da;
+
+    PC_APPSYNMESSAGETOGW      = 0xb0db;
+    PC_GWSYNMESSAGETOPC       = 0xb0dc;
+    PC_GWSYNMESSAGETOPCACK    = 0xb0dd;
+    PC_APPSYNMESSAGETOGWACK   = 0xb0de;
+
+    //心跳检测
+    PC_HEARTBEART        = 0xb0e0;
+    PC_HEARTBEARTACK     = 0xb0e1;
+    PC_CHECKAPPACTIVE    = 0xb0e2;
+    PC_CHECKAPPACTIVEACK = 0xb0e3;
+    PC_REPORTAPPACTIVE   = 0xb0e4;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//MES消息服务协议命令字定义
+////////////////////////////////////////////////////////////////////////////////////////////////		
+	GROUP_CHAT										= 0xc001;						//移动发送端发聊天消息给Group群组服务器
+	GROUP_CHAT_ACK								= 0xc002;						//Group群组服务器回应移动发送端聊天消息
+	GROUP_CREATE									= 0xc003;						//移动端发起群组创建
+	GROUP_CREATE_ACK							= 0xc004;						//Group群组向移动端回应群组创建
+	GROUP_APPLY										= 0xc007;						//移动端向Group群组服务发送加群申请		
+	GROUP_APPLY_ACK								= 0xc008;						//Group群组服务向移动端回应加群申请
+	GROUP_INVITE									= 0xc009;						//移动端向Group群组发起群组邀请，邀请别人入群
+	GROUP_INVITE_ACK							= 0xc010;						//Group群组服务回应移动端邀请
+	GROUP_KICKOUT									= 0xc013;						//向Group群组服务发出群移除申请
+	GROUP_KICKOUT_ACK							= 0xc014;						//Group群组服务向移动端回应群移除
+	GROUP_QUIT										= 0xc015;						//向Group群组服务群退出请求
+	GROUP_QUIT_ACK								= 0xc016;						//Group群组服务回应群退出
+	GROUP_MODIFY									= 0xc017;						//向Group群组服务发起修改群资料请求
+	GROUP_MODIFY_ACK							= 0xc018;						//Group群组服务回应修改群资料请求
+	GROUP_PERMIT									= 0xc021;						// 客户端向Group群组发起应答（同意或拒绝）
+	GROUP_PERMIT_ACK							= 0xc022;						//Group群组服务回应客户端应答 ,并携带应答处理结果
+	GROUP_CHATCANCEL							= 0xc023;						//移动发送端向Group群组服务器发送消息撤回请求
+	GROUP_CHATCANCEL_ACK 						= 0xc024;						// Group群组服务器回应移动发送端聊天消息
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 频道
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	RADIO_CHAT								= 0xc101;								// 移动端向channel服务发消息
+	RADIO_CHAT_ACK							= 0xc102;								// channel服务器向移动端回复消息
+	RADIO_CHAT_DELIVER_ACK					= 0xc103;								// 接收者回复channel服务器
+	RADIO_CHAT_DELIVER						= 0xc104;								// channel服务器发消息到接收者
+	RADIO_ADMIN_CANCEL_CHAT					= 0xc105;								// 移动端向channel服务发“频道管理员”撤回消息
+	RADIO_ADMIN_CANCEL_CHAT_ACK				= 0xc106;								// channel服务器向移动端回复“频道管理员”撤回消息确认
+	RADIO_ADMIN_CANCEL_CHAT_DELIVER_ACK		= 0xc107;								// 接收者回复channel服务器“频道管理员”撤回消息确认
+	RADIO_ADMIN_CANCEL_CHAT_DELIVER			= 0xc108;								// channel服务器发“频道管理员”撤回消息到接收者
+	RADIO_NOTIFY_DELIVER_ACK				= 0xc109;								// 接收者回复channel服务器通知消息
+	RADIO_NOTIFY_DELIVER					= 0xc110;								// channel服务器发通知消息到接收者
+	RADIO_CANCEL_CHAT						= 0xc111;								// 撤回消息
+	RADIO_CANCEL_CHAT_ACK					= 0xc112;								// channel服务器回复撤回结果
+	RADIO_CANCEL_CHAT_DELIVER_ACK			= 0xc113;								// 接收者回复channel服务器撤回消息确认
+	RADIO_CANCEL_CHAT_DELIVER				= 0xc114;								// channel服务器发撤回消息到接收者
+	
+////////////////////////////////////////////////////////////////////////////////////////////////
+//APNS-IF 苹果推送接口服务协议命令字定义
+////////////////////////////////////////////////////////////////////////////////////////////////
+	APNS_PUSH											= 0xd001;						//推送消息,Communicate between mes (or group) and apns-if server.
+	APNS_PUSH_ACK									= 0xd002;						//
+	APNS_NOTIFY										= 0xd004;						//pushServer(APNS)通知消息推送状态
+	APNS_NOTIFY_ACK								= 0xd005;						//业务服务器应答
+	
+	ANDROID_PUSH									= 0xd007;						//ANDROID消息推送
+	ANDROID_PUSH_ACK							= 0xd008;						//ANDROID消息推送应答
+	ANDROID_NOTIFY					= 0xd00a;						//pushServer(ANDROID_NOTIFY)通知消息推送状态
+	ANDROID_NOTIFY_ACK				= 0xd00b;						//业务服务器应答
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//	客服号
+/////////////////////////////////////////////////////////////////////////////////////////////////
+	CUST_CHAT								= 0xe001;
+	CUST_CHAT_ACK							= 0xe002;
+	CUST_CHAT_DELIVER_ACK					= 0xe003;
+	CUST_CHAT_DELIVER						= 0xe004;
+	CUST_CHAT_DELIVER_NOTIFY_ACK			= 0xe005;
+	CUST_CHAT_DELIVER_NOTIFY				= 0xe006;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
+//IM系统各子服务错误（状态）码定义，规则如下：
+//0x80xx: IM系统公共错误（状态）码
+//0x81xx: CM接入子服务错误（状态）码
+//0x82xx: MSG消息子服务错误（状态）码
+//0x83xx: GROUP群组子服务错误（状态）码
+//0x84xx: APNS推送接口子服务错误（状态）码
+//0x85xx: IM系统其他子服务错误（状态）码
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+enum ErrCode{
+		EXCEPT_ERR									= 0;
+		NON_ERR											= 0x8000;							//无错，成功。 
+    	ERR_SYS_REGIST      				= 0x8001;            				//关联网间注册错
+		ERR_LOGIN_AUTH							= 0x8101;							//移动端登录失败时，返回的错误码
+		ERR_LOGIN_FORBIDDEN					= 0x8102;							//移动端登录参数错，返回禁止登录码	
+		ERR_LOGOUT									= 0x8103;							//移动端登出失败时，返回的错误码
+		ERR_DEVICESYNC_PARAMETER 		= 0x8104;							//设备信息参数错
+		ERR_DEVICESYNC_FORBIDDEN 		= 0x8105;							//设备信息禁止同步，一般因相对应的用户不在线，或参数错。
+		ERR_DEVICESYNC_EXCEPTION 		= 0x8106;							//设备信息禁止同步，一般因网络问题操作内部网元失败
+		ERR_TRANSMISSION_FORBIDDEN  = 0x8107;							//消息接入禁止，一般因设备登录鉴权错
+		ERR_TRANSMISSION_SESSION	  = 0x8108;							//消息接入中转会话失败，一般因填错sessionid 或没填sessionid
+		ERR_CM_EXCEPTION						= 0x8109;							//接入服务内部网络异常，如redis连接失败等
+		ERR_CM_AUTH_KICKEDOUT         = 0X8110;                         //移动端登录时，token因kickout而超时返回的错误码 
+		ERR_CM_PHP_AUTH					= 0x8111;						// php鉴权请求失败
+		////////////CHAT SVR/////////////////
+//		ERR_CHAT_COMM_SUCCESS		= 0x8200;							//消息发送成功， 好友添加成功等,使用通用的0x8000 NON_ERR
+		ERR_CHAT_FORBIDDEN			= 0x8201;							//无聊天权限(双方不是好友)
+		ERR_CHAT_UNHEALTHY			= 0x8202;							//不良聊天信息
+		ERR_CHAT_PARAMETER			= 0x8203;							//消息参数错误
+		
+		ERR_CHAT_CANCEL_OUTTIME		= 0x8204;							//消息撤回已超出时间限制
+		
+		ERR_CHAT_FRIEND_REFUSE		= 0x8211;							//拒绝添加为好友
+		ERR_CHAT_FRIEND_BLOCK		= 0x8212;							//已经被拉黑
+		ERR_CHAT_FRIEND_DEL			= 0x8213;							//已经被删除
+		ERR_CHAT_FRIEND_ADDED		= 0x8214;							//已经是好友(正常模式)
+		ERR_CHAT_FRIEND_ADDING		= 0x8215;							//已申请添加，等待对方验证 
+		
+		ERR_CHAT_FRIEND_HIDENADDED 	= 0x8216;							//已经是好友(隐藏模式)
+		 		
+		
+		ERR_CHAT_DEENCRY_FAILED		= 0x8223;							//解密失败
+		
+		INFO_GROUP_PENDING				= 0x8300;							//群组业务处理中
+		ERR_GROUP_PARAMETER			  = 0x8301;							//参数填错
+		ERR_GROUP_OVERCREATION		= 0x8302;							//超过建群总数限制，
+		ERR_GROUP_OVERJOIN				= 0x8303;							//超过群成员限制
+		ERR_GROUP_NETWORKEXCEPTION= 0x8304;							//群组业务网络异常错误（总称）
+		ERR_GROUP_FORBIDDEN				= 0x8305;							//用户没有权限，返回禁止操作码
+		ERR_GROUP_INTEREXCEPTION  = 0x8306;							//建立群组时内部信息处理异常。
+		ERR_GROUP_MEMBEREXIST			= 0x8307;							//群成员已存在(正常模式)
+		ERR_GROUP_MEMBERNONEXIST  = 0x8308;							//群成员不存在；
+		ERR_GROUP_INTERPERMISSION = 0x8309;							//需要内部同意确认；
+		ERR_GROUP_NONPERMISSION 	= 0x8310;							//无需内部同意确认；
+		ERR_GROUP_MASTER					= 0x8311;							//群主身份
+		ERR_GROUP_NOTMASTER				= 0x8312;							//非群主身份
+		ERR_GROUP_INVITEEXCEPTION = 0x8313;							//服务器内部发起邀请异常
+		ERR_GROUP_INVITESUCCESS 	= 0x8314;							//服务器内部发起邀请部分成功（指不需要对方确认的部分）
+		
+		ERR_GROUP_DISMISSED			= 0x8315;						// 群已解散或不存在
+		
+		ERR_GROUP_MEMBEREXIST_HIDE			= 0x8316;				//群成员已存在(隐藏模式)
+		
+		
+		ERR_GROUP_JOIN_REJECT			= 0x8320;							//群邀请拒绝的应答。 
+		ERR_GROUP_NOTIFY_REJECT 	= 0x8321;							//通知发起方， 邀请拒绝。
+		ERR_GROUP_MASTER_QUIT				= 0x8322;						//群主退群失败，请转让群主后再退群
+		
+		//通话被接受使用NON_ERROR
+		ERR_CALL_REFUSE				= 0x8400;							// 通话被拒绝,
+		ERR_CALL_BUSY				= 0x8401;							// 通话忙
+		ERR_CALL_PEER_OFFLINE		= 0x8402;							// 对端不在线
+
+		// 频道返回错误码
+		ERR_RADIO_DISMISS			= 0x8501;						// 频道已解散
+		ERR_RADIO_NOSPEAK			= 0x8502;						// 频道禁言
+		ERR_RADIO_ISDELETE			= 0x8503;						// 不在频道内
+		ERR_RADIO_ADMIN				= 0x8504;						// 不是管理员
+}
+
+message SYSAssocSvrRegist{
+        string  ip            = 1;                 //服务从机IP
+        uint32  port          = 2;                 //服务从机端口
+}
+
+message SYSAssocSvrRegistAck {
+        ErrCode nErr          = 1;             	  //注册错误码
+}
+
+////////////////////////////////////////
+// SYSTEM_PING 				= 0x3007;       //用于发起语音，视频前检测网络延时
+// SYSTEM_PING_ACK 			= 0x3008;
+////////////////////////////////////////
+message SystemPing {
+        string msgId = 1;
+}
+
+//消息类型
+enum MsgType{
+	DEFAULT						= 0;				 	//0=默认进入应用后拉取离线消息后进入会话列表页 
+	PERSONAL_TALK				= 1;					//1=去个人聊天页面 
+	GROUP_TALK					= 2;					//2=去群聊页面 
+	CONTACTS					= 3;					//3=去联系人页面
+	
+	SYS_MSG						= 4;					//系统消息
+	ADVERTISMENT_MSG			= 5;					//广告消息	
+	GRP_CONTACTS				= 6;					//群联系人申请/邀请
+	CHNN_TALK					= 7;					// 频道聊天
+	CHNN_NOTIFY					= 8;					// 频道一些系统通知
+	
+	P2P_CALL					= 16;					//P2P呼叫
+	REFERENCE_CALL				= 17;					//会议呼叫
+
+    APP_WAKEUP                   =18;                    //app wakeup
+}
+
+//pushServer的设备推送类型,走不同的推送服务器
+//消息类型
+///**
+//unsigned char，
+//Android 华为手机：   0x10；
+//Android 小米手机：　 0x11；
+//Android 未知：       0x00;
+//IOS手机：　　　　　 	0xff；
+//Google推送fcm:      	0x12
+//*/
+enum DiveceType{
+	UNKNOW						= 0x00;					//未知状态
+	HW_PUSH						= 0x10;					//华为推送 
+	XM_PUSH						= 0x11;					//小米推送
+	GOOGLE_FCM					= 0x12;					//google推送
+	JPUSH						= 0x13;					//极光推送
+	APNS_DEV					= 0xfe;					//苹果开发
+	APNS						= 0xff;					//苹果推送
+}
+
+enum NotifyType
+{
+	NOTIFY_TYPE_UNKNOWN 			= 0;
+	NOTIFY_TYPE_GRP_INFO_CHANGED 	= 1;		//群资料修改 包含修改 群名称 群昵称 群头像 群公告
+	NOTIFY_TYPE_GRPMEM_QUIT 		= 2;		//退群通知，发送给管理员及群成员
+	NOTIFY_TYPE_GRPMEM_REMOVE 		= 3;		//踢人通知，发送给被移除人及群成员
+	NOTIFY_TYPE_GRPAPPLY_RESULT	  	= 4;		//申请加群成功通知
+	NOTIFY_TYPE_GRPINVITE_RESULT 	= 5;		//邀请加群成功通知		
+	NOTIFY_TYPE_GRPMASTER_CHANGED  	= 6;		//群管理员变更
+	NOTIFY_TYPE_GRP_ACTIVE  		= 7;		//群激活（发送给群管理员）
+}
+
+enum CommonNotifyType
+{
+	Notify_ModifyUserInfo			= 0;		// 个人信息更新通知最近联系人
+}

@@ -1,15 +1,3 @@
-/**
- * hw_sslpushserver.cpp 
- *  
- * create by liulang 
- * desc: 
- * class :Get hw pushServer teoken
- * class : push the message to hw push Server 
- *  
- * 2017-07-11 
- * datuhao@foxmail.com 
- */
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -31,14 +19,11 @@
 
 #include "jsoncpp/json/json.h"
 #include "hw_push_client.h"
-#include "ssl_event.h"
-
 
 #include "hw_handle_protobuf.h"
 #include "hw_ssl_get_token.h"
-#include "ssl_socket.h"
+#include "apush_server_manager.h"
 
-#include "ssl_post_mgr.h"
 
 void CHWPushClient::OnNotifyCallBack(void *usrData, shared_ptr<APushData> shared_APushData)
 {
@@ -49,16 +34,10 @@ void CHWPushClient::OnNotifyCallBack(void *usrData, shared_ptr<APushData> shared
 CHWPushClient::CHWPushClient(CConfigFileReader* pConfigReader)
 {
 	m_pConfigReader = pConfigReader;
-	m_uConnectNum = 0;
-	m_uMaxConnectNum = 0;
 }
 
 CHWPushClient::~CHWPushClient()
 {
-	if (m_pPostPoolMgr)
-	{
-		delete m_pPostPoolMgr;
-	}
 }
 
 bool CHWPushClient::Regist()
@@ -88,30 +67,6 @@ bool CHWPushClient::Init()
 		return false;
 	}
 
-	m_pPostPoolMgr = new CPostPoolMgr;
-	if (!m_pPostPoolMgr)
-	{
-		ErrLog("new CPostPoolMgr is null");
-		return false;
-	}
-
-	char* numStr = m_pConfigReader->GetConfigName("hwSessionNum");
-	if (NULL == numStr)
-	{
-		ErrLog("hwSessionNum config item is null use defalut 100 connects");
-		m_uConnectNum = 10;
-	}
-	else
-	{
-		m_uConnectNum = atoi(numStr);
-		if(m_uConnectNum< 0 || m_uConnectNum > 2000)
-		{
-			ErrLog("hwSessionNum %d not rational, use defalut 10 connects", m_uConnectNum);
-			m_uConnectNum = 10;
-			//return false;
-		}
-	}
-	
 	return Regist();
 }
 
@@ -124,26 +79,16 @@ static int hwTask = 0;
 //3. some error occured of the network
 //
 //the server will be blocking there 
-int CHWPushClient::AddTask(shared_ptr<APushData> ptrData)
+
+void CHWPushClient::AddTask(std::shared_ptr<HTTP_REQDATA_> prtData) 
 {
-
 	DbgLog("CHWPushClient::AddTask %d", ++hwTask);
-	//int iRet = -1;
+   addHttpData(prtData, [](void* p){cerr << (char*)p << endl;} );
 
-	
-	return m_pPostPoolMgr->Post(ptrData);
 }
-
 
 void CHWPushClient::Start()
 {
-	//uMaxConnections - uMaxConnections % m_uPerThreadConns;
-
-	if (m_uConnectNum < 0 || m_uConnectNum > 2000)
-	{
-		m_uConnectNum = 200;
-	}
-	m_pPostPoolMgr->Init(m_uConnectNum, this->OnNotifyCallBack, this, "api.push.hicloud.com", 443);
+    httpStart();
 }
-
 

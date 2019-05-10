@@ -263,7 +263,7 @@ void  CGroupJoin::OnJoinStartup(CPacket* pAccessPack,AccessUserPara_t* pAccessUs
 	switch(bMode)
 	{
 		case APPLY_JOIN_MODE:
-			if(errCode==ERR_GROUP_INTERPERMISSION)
+			if(errCode == im::ERR_GROUP_INTERPERMISSION)
 			{
 				sFromId = ((GroupApply*)pUserData)->suserid();
 				sToId = pAccessUserPara->sMasterId;
@@ -272,7 +272,7 @@ void  CGroupJoin::OnJoinStartup(CPacket* pAccessPack,AccessUserPara_t* pAccessUs
 						((GroupApply*)pUserData)->sgroupid(),
 						((GroupApply*)pUserData)->smsgid(),APPLY_JOIN_MODE, ((GroupApply*)pUserData)->extend());
 				
-				errCode = INFO_GROUP_PENDING;
+				errCode = im::INFO_GROUP_PENDING;
 				DbgLog("the user %s applied group %s is pending ,waiting for group master permission... ",
 					sFromId.c_str(),((GroupApply*)pUserData)->sgroupid().c_str());
 			}
@@ -377,7 +377,7 @@ bool CGroupJoin::InviteProc(GroupInvite* pInviteInst,UidCode_t sessionId)
 		return false;
 	}
 	InfoLog("Startup user %s invite group joining ...",pInviteInst->sinviterid().c_str());
-	InviteRsp(pInviteInst,sessionId,INFO_GROUP_PENDING);
+	InviteRsp(pInviteInst,sessionId,im::INFO_GROUP_PENDING);
 	
 	return true;	
 

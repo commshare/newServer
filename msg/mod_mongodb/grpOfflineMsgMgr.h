@@ -36,6 +36,12 @@ public:
 	bool InsertGrpOfflineMsg(const CGrpOfflineMsg& offlineMsg);
 	/* 返回值表示生成任务是否成功*/
 	bool InsertGrpOfflineMsg(const CGrpOfflineMsg& offlineMsg, mongoInsertCallBack callBack, void* para);	//执行后回调
+	bool InsertGrpOfflineMsg(const CGrpOfflineMsg& offlineMsg, void* para, mongoInsertCallBack__ callBack);
+
+	bool DelOfflineMsg(const string& grpId, const string& msgId);
+	bool DelOfflineMsg(const string& grpId, const string& msgId, mongoDelCallBack callBack, void* para);
+
+	//bool InsertGrpNoMongoOperTask(const std::shared_ptr<::google::protobuf::MessageLite>& pGrpTask, mongoNoOperCallBack callBack, void* para);			//添加非mongo的任务，主要是复用线程
 
 	CGrpOfflineMsg GetGrpOfflineMsg(const string& grpId, const string& msgId);
 	string GetGrpOfflineMsgData(const string& grpId, const string& msgId);

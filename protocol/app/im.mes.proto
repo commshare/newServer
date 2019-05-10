@@ -1,0 +1,770 @@
+﻿syntax = "proto3";
+
+package im;
+import "im.pub.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT ： 0xb001				移动发送端发聊天消息给MES消息服务器
+////////////////////////////////////////////////////////////////////////
+message MESChat
+{
+	string 	sFromId		  		= 1;  // telephone number or any other number binded.
+	string 	sToId		    	= 2;  // telephone number or any other number binded.
+	string  sMsgId       		= 3;  // Generated uuid by APP Id;
+	uint32  msgType 			= 4;  // 1: P2P chat normal; 2: P2P chat with burning after read;
+									  // 3: p2p hide ; 4: p2p hide with burning after read;
+									  // 5: Group chat; 6: Group with burning after read;
+									  // 7: Group hide; 8: Group with burning after read;
+									  // 9: add friend 10:customer msg,In case sToId is serviceId
+	uint64  msgTime 			= 5;  //server time,precision millisecond
+	uint32	encrypt				= 6;  // whether encrypt chat contents
+	string  sContent			= 7;  //chat contents
+	string	extend				= 10;  // 扩展字段
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_ACK ： 0xb002			MES消息服务器回应移动发送端聊天消息
+////////////////////////////////////////////////////////////////////////
+message MESChatAck
+{
+  	string  sUserId   			= 1; // telephone number or any other number binded. point to sFromId,tell cmSvr which client send to
+  	string  sMsgId       		= 2; // uuid , to identify unique message. 
+  	uint64  sendtime 			= 3; // server time,precision millisecond,user can use to sort the message.
+	ErrCode errcode    			= 4; // return 200 if no error.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_DELIVER_ACK ： 0xb003 		移动接收端回应MES消息服务器消息送达
+////////////////////////////////////////////////////////////////////////
+message MESChatDeliveredAck
+{
+	string 	sFromId		  		= 1;  // telephone number or any other number binded.
+	string 	sToId		    	= 2;  // telephone number or any other number binded.
+	string  sMsgId  			= 3; // 
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_DELIVER	 ： 0xb004		MES消息服务器中转聊天消息给移动接收端
+////////////////////////////////////////////////////////////////////////
+//share with MESChat message structure;
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_DELIVERED_NOTIFICATION_ACK ： 0xb005 			移动发送端接收MES消息服务器消息已送达通知确认,
+////////////////////////////////////////////////////////////////////////
+message MESChatDeliveredNotificationAck
+{
+	string sUserId				= 1;		//required，消息的发送方
+	string sMsgId				= 2;		//required
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_DELIVERED_NOTIFICATION ： 0xb006 MES消息服务器通知移动发送端消息已送达,
+////////////////////////////////////////////////////////////////////////
+//share with MESChatDeliveredAck message structure;
+
+
+////////////////////////////////////////////////////////////////////////
+//消息读结果
+////////////////////////////////////////////////////////////////////////
+message MsgReadResult
+{
+	string sMsgId  				= 1;	
+	ErrCode errcode    			= 2; // return 200 if no error.	
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_READ ： 0xb007		移动接收端发消息已读给MES消息服务
+////////////////////////////////////////////////////////////////////////
+message MESChatRead
+{
+	string 	sFromId		  		= 1;  // telephone number or any other number binded.
+	string 	sToId		    	= 2;  // telephone number or any other number binded.
+  	string 	sMsgId  				= 3;  //本条消息自身消息ID
+  	repeated MsgReadResult readResults  = 4;
+  	uint32  readReceiptOff		= 5;	//default 0 means readReceiptOn, 1 means readReceiptOff
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_READ_ACK ： 0xb008
+////////////////////////////////////////////////////////////////////////
+message MESChatReadAck
+{	
+	string 		sUserId 		= 1;		//移动接收端ID
+	string 		sMsgId			= 2;		//已读消息的消息ID	
+	ErrCode errcode    			= 3; 		// return 200 if no error.	
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_READ_DELIVER_ACK ： 0xb009			
+////////////////////////////////////////////////////////////////////////
+message MESChatReadDelivereAck
+{	
+	string 		sUserId 		= 1;		
+	string 		sMsgId			= 2;		
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHAT_READ_DELIVER ： 0xb00a			//MES消息服务器通知发送方对方消息已读		
+////////////////////////////////////////////////////////////////////////
+//share with MESChatRead message structure;
+
+
+////////////////////////////////////////////////////////////////////////
+//离线消息汇总条目
+////////////////////////////////////////////////////////////////////////
+message OfflineTotal
+{
+	uint32	cmdId				= 1; // 
+  	string 	sFromId 			= 2; // 
+	string 	sToId	 			= 3; // telephone number or any other number binded.
+	int32  	unreadTotal 		= 4; // total unread message. 
+	int32   unreadChatCount		= 5; // chat msg count
+	bytes 	sRecentcontent 		= 6; // the recent message content
+	uint64 	recenttimestamp 	= 7; // message timestamp of last one
+	string  sRecentMsgId		= 8;
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINESUMMARY ： 0xb011		//请求离线消息汇总
+////////////////////////////////////////////////////////////////////////
+message MESOfflineSummary
+{
+	string 	sUserId	 			= 1; // telephone number or any other number binded.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINESUMMARY_ACK ： 0xb012
+////////////////////////////////////////////////////////////////////////
+message MESOfflineSummaryAck
+{
+	string 	sUserId 			= 1; // 
+	repeated OfflineTotal offlineTotals 	= 2; // message list 
+	ErrCode errcode 			= 3; 
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINETOTAL ： 0xb013
+////////////////////////////////////////////////////////////////////////
+message MESOfflineTotal
+{
+	uint32	cmdId				= 1;	// 
+	string 	sFromId 			= 2; 	// 
+	string 	sToId	 			= 3; 	// telephone number or any other number binded.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINETOTAL_ACK ： 0xb014
+////////////////////////////////////////////////////////////////////////
+// share with MESOfflineSummaryAck struct
+
+
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINEMSG ： 0xb015
+////////////////////////////////////////////////////////////////////////
+message MESOfflineMsg
+{    
+	uint32	cmdId				= 1; // 填0
+	string 	sFromId 			= 2; // form who the offlineMsg came from, refer to MESChat's sFromId、frpId and so on, 填null
+	string 	sToId				= 3; // which user get offlineMsg, refer to MESChat's sToId and so on    
+    int32  	count				= 4; //  one time capture message count.填0 
+    string 	sMsgId  			= 5; 
+    repeated OfflineDeliveredMsg lsMsgs 	= 6; // the delivered messages list
+}
+
+////////////////////////////////////////////////////////////////////////
+//单条离线消息数据
+////////////////////////////////////////////////////////////////////////
+message OfflineMsgData
+{
+	uint32	cmdId				= 1; // msg cmd id
+  	bytes 	sMsgData 			= 2; // original msg serialize bytes
+  	string 	sMsgId  			= 3; 
+  	string 	sFromId  			= 4;
+	uint32  status				= 5;  // 离线消息的状态（主要用于通话呼叫）
+	uint64	uCreateTime			= 6;
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINEMSG_ACK ： 0xb016
+////////////////////////////////////////////////////////////////////////		
+message MESOfflineMsgAck
+{
+	string 	sFromId				= 1;		// refer to MESOfflineMsg's sFromId
+	string 	sToId				= 2; 		// to who this ack send to
+	ErrCode errcode 			= 4; 
+	string 	sMsgId  			= 5; 
+	uint64  msgTime 			= 6;  		//server time,precision millisecond
+	repeated OfflineMsgData msglist 	= 13; // message list ,repeated 部分索引值从3改为13便于查看其它域信息,从这个成员可以知道当前返回的信息条数
+	uint32  msgTotal			= 14;				//这次离线消息请求总共要返回的信息条数
+}
+
+////////////////////////////////////////////////////////////////////////
+//已经送达的消息
+////////////////////////////////////////////////////////////////////////
+message OfflineDeliveredMsg
+{
+	uint32	cmdId				= 1; // 	
+	string 	sFromId		  		= 2;  // 原始聊天消息的FromId,例如：msgChat中的FromId
+	string 	sToId		    	= 3;  // 原始聊天消息的ToId,例如：msgChat中的ToId
+	string 	sMsgId  			= 4; // 
+}
+
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINEMSG_DELIVERED ： 0xb017	//通知发送方消息已收到
+////////////////////////////////////////////////////////////////////////		
+message MESOfflineMsgDelivered
+{
+	string 	sFromId		  		= 1;  // the user who send this delivered msg
+	string 	sToId		    	= 2;  // telephone number or any other number binded.
+	string  sMsgId				= 3;  // 本条消息的msgID
+	repeated OfflineDeliveredMsg lsMsgs 	= 4; // the delivered messages list
+}	
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINEMSG_DELIVERED_ACK ： 0xb018
+////////////////////////////////////////////////////////////////////////	
+message MESOfflineMsgDelivereddAck
+{
+	string		sUserId 			= 1; 			// telephone number or any other number binded.
+	string 		sMsgId 				= 2; 			// 
+	ErrCode 	errcode 			= 3;
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINEMSG_DELIVERED_NOTIFICATION_ACK ： 0xb019
+////////////////////////////////////////////////////////////////////////	
+message MESOfflineMsgDeliveredNotifyAck
+{
+	string 		sMsgId 				= 1; 			// 
+	string 		sFromId		  		= 2;  			// telephone number or any other number binded.	
+	repeated	OfflineDeliveredMsg lsMsgs = 3; 	// the delivered messages list
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_OFFLINEMSG_DELIVERED_NOTIFICATION ： 0xb01a	//通知发送方消息已收到
+////////////////////////////////////////////////////////////////////////		
+//share with MESOfflineMsgDelivered message structure;
+	
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND ： 0xb031
+////////////////////////////////////////////////////////////////////////
+message MESAddFriend
+{
+	string 	sFromId 			= 1;  // telephone number or any other number binded.
+	string 	sToId				= 2;  // telephone number or any other number binded. 
+	string  sMsgId       		= 3;  // Generated uuid by APP Id;	used for distingulish requests
+	string 	sDesc				= 4;  // desc
+	string 	sMemoName			= 5;  // nick name
+	uint32  packetId			= 6;
+	string  sSelfIntroduce		= 7;  //
+	uint64  msgTime 			= 8;  //server time,precision millisecond
+	string sOperId				= 9;  // 操作id
+	string  extend				= 10;  // expand field
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND_ACK ： 0xb032;					  	
+////////////////////////////////////////////////////////////////////////
+message MESAddFriendAck
+{
+	string 	sUserId 			= 1; 	// telephone number or any other number binded.
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+	ErrCode errcode	 			= 3;	// such as same request(with same fromId&toId) already sent  
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND_DELIVER_ACK ： 0xb033;						
+////////////////////////////////////////////////////////////////////////
+message MESAddFriendDeliverAck
+{
+	string		sUserId 			= 1;
+	string  	sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND_DELIVER ： 0xb034;						
+////////////////////////////////////////////////////////////////////////
+//share with MESAddFriend message structure; but set memoName and packetid to null
+
+
+////////////////////////////////////////////////////////////////////////	
+//MES_ADDFRIEND_ANS ： 0xb035;						
+////////////////////////////////////////////////////////////////////////
+message MESAddFriendAns
+{
+	string 	sFromId 			= 1; 	// telephone number or any other number binded.
+	string 	sToId				= 2;  	// telephone number or any other number binded. 
+	string  sMsgId       		= 3;  	// addfriendMsg's id
+	string  sAns				= 4;	//
+	ErrCode errcode	 			= 5;	// 
+	string 	sMemoName			= 6;	// use if agree to add
+	uint32  packetId			= 7;	// use if agree to add
+	uint64  msgTime				= 8;  // time--required
+	string  extend				= 9;  // expand field
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND_ANS_ACK ： 0xb036;						
+////////////////////////////////////////////////////////////////////////
+message MESAddFriendAnsAck
+{
+	string 	sUserId 			= 1; 	// telephone number or any other number binded.
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;	
+	ErrCode errcode    			= 3; 	// 
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND_ANS_DELIVER_ACK ： 0xb037;						
+////////////////////////////////////////////////////////////////////////
+message MESAddFriendAnsDeliverACK
+{
+	string	sUserId 			= 1;
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_ADDFRIEND_ANS_DELIVER	 ： 0xb038;						
+////////////////////////////////////////////////////////////////////////
+//share with  MESAddFriendAns construct
+
+
+////////////////////////////////////////////////////////////////////////
+//MES_DELFRIEND ： 0xb039;					
+////////////////////////////////////////////////////////////////////////
+message MESDelFriend
+{
+	string 	sFromId 			= 1;  // telephone number or any other number binded.
+	string 	sToId				= 2;  // telephone number or any other number binded. 
+	string  sMsgId       		= 3;  // Generated uuid by APP Id;	used for distingulish requests
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_DELFRIEND_ACK ： 0xb03a;					  
+////////////////////////////////////////////////////////////////////////
+message MESDelFriendAck
+{
+	string 	sUserId 			= 1;  // telephone number or any other number binded.
+	string  sMsgId       		= 2;  // Generated uuid by APP Id;
+	ErrCode errcode 			= 3;  	  
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_INCBLACKLIST ： 0xb041;						
+////////////////////////////////////////////////////////////////////////
+message MESIncBlacklist
+{
+	string 	sFromId 			= 1;  // telephone number or any other number binded.
+	string 	sToId				= 2;  // telephone number or any other number binded. 
+	string  sMsgId       		= 3;  // Generated uuid by APP Id;	used for distingulish requests
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_INCBLACKLIST_ACK ： 0xb042;							
+////////////////////////////////////////////////////////////////////////
+message MESIncBlacklistAck
+{
+	string 	sUserId 			= 1;  // telephone number or any other number binded.
+	string  sMsgId       		= 2;  // Generated uuid by APP Id;
+	ErrCode errcode 			= 3; 	  
+}
+
+////////////////////////////////////////////////////////////////////////	
+//MES_DECBLACKLIST ： 0xb043;						
+////////////////////////////////////////////////////////////////////////
+message MESDecBlacklist
+{
+	string 	sFromId 			= 1;  // telephone number or any other number binded.
+	string 	sToId				= 2;  // telephone number or any other number binded. 
+	string  sMsgId       		= 3;  // Generated uuid by APP Id;	used for distingulish requests
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_DECBLACKLIST_ACK ： 0xb044;						
+////////////////////////////////////////////////////////////////////////
+message MESDecBlacklistAck
+{
+	string 	sUserId 			= 1;  // telephone number or any other number binded.
+	string  sMsgId       		= 2;  // Generated uuid by APP Id;
+	ErrCode errcode 			= 3; 	  
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////
+//MES_JOINGRP ： 0xb051				 grp服务器转发加群申请或邀请给MSG消息服务器
+////////////////////////////////////////////////////////////////////////
+message MESJoinGrp
+{
+	string 	sFromId		  		= 1;  // 
+	string 	sToId		    	= 2;  // 
+	string 	sGrpId		  		= 3;  // 
+	string  sMsgId       		= 4;  // 
+	uint32  reqType				= 5;  // 0:request, 1:invite 
+	string  sSelfIntroduce		= 6;  // *optional* self introduction--reserve
+	string 	sDesc				= 7;  // *optional* desc--reserve
+	uint64  msgTime				= 8;  // time--required
+	string sOperId				= 9;  // 操作id
+	string  extend				= 10;  // expand field
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_JOINGRP_ACK ： 0xb052;		MSG服务器响应GRP服务器加群（申请，邀请）请求			  	
+////////////////////////////////////////////////////////////////////////
+message MESJoinGrpAck
+{
+	string 	sUserId 			= 1; 	// telephone number or any other number binded.
+	string 	sGrpId				= 2;	//  
+	string  sMsgId       		= 3;  	// Generated uuid by APP Id;
+	ErrCode errcode	 			= 4;	// such as same request(with same fromId&toId) already sent  
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_JOINGRP_DELIVER_ACK ： 0xb053;	client客户端发送加群响应给MSG服务器				
+////////////////////////////////////////////////////////////////////////
+message MESJoinGrpDeliverAck
+{
+	string 	sUserId		  		= 1;  // the user'Id who send this ack 
+	string 	sGrpId		    	= 2;  // 
+	string  sMsgId  			= 3;  // 
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_JOINGRP_DELIVER ： 0xb054;		MSG服务器转发加群申请到client客户端			
+////////////////////////////////////////////////////////////////////////
+//share with MESJoinGrp message structure;
+
+
+////////////////////////////////////////////////////////////////////////
+//MES_JOINGRP_ANS_DELIVER_ACK ： 0xb057;-->replace with 0xc021						
+////////////////////////////////////////////////////////////////////////
+//message MESJoinGrpAnsDeliverACK
+//{
+//	string	sUserId 			= 1;
+//	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+//}
+
+////////////////////////////////////////////////////////////////////////
+//MES_JOINGRP_ANS_DELIVER	 ： 0xb058;	;-->replace with 0xc022					
+////////////////////////////////////////////////////////////////////////
+//share with MESJoinGrpAns construct
+
+
+
+////////////////////////////////////////////////////////////////////////
+//key交换信息
+////////////////////////////////////////////////////////////////////////
+message UserKey
+{
+	string 	sUserId		    	= 1;  // telephone number or any other number binded.
+	string 	sKey  				= 2; // 
+}
+
+
+////////////////////////////////////////////////////////////////////////
+//MES_EXCHANGE_KEY ： 0xb059			client客户端发送 群成员交换key请求到MSG服务器
+////////////////////////////////////////////////////////////////////////
+message MESExchangeKey
+{
+	string 	sFromId		  		= 1;  // 
+	string 	sGrpId		  		= 3;  // 
+	string  sMsgId       		= 4;  // 
+	uint32	encrypt				= 5;  // *optional*, default no encrypt
+	uint32	exchangeMode		= 6;  // 暂无意义
+	string  sOprUserId			= 7;  // the user who impel client send exchangeKey quest	
+	uint64  msgTime				= 8;  // time--required	
+	repeated UserKey lsUserKeys = 12;  // the exchange userKey pairs,为了抓包查看的方便，index从2改为12
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_EXCHANGE_KEY_ACK ： 0xb060;		MSG服务器响应客户端请求		  	
+////////////////////////////////////////////////////////////////////////
+message MESExchangeKeyAck
+{
+	string 	sUserId 			= 1; 	// 
+	string  sGrpId				= 2;	// 
+	string  sMsgId       		= 3;  	// 
+	ErrCode errcode	 			= 4;	// such as same request(with same fromId&toId) already sent  
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_EXCHANGE_KEY_DELIVER	 ： 0xb062;	MSG服务器推送交换key请求到client客户端				
+////////////////////////////////////////////////////////////////////////
+message MESExchangeKeyDeliver
+{
+	string 	sFromId		  		= 1;  // 
+	string 	sToId		    	= 2;  // 
+	string 	sGrpId		  		= 3;  // 
+	string  sMsgId       		= 4;  // 
+	uint32	exchangeMode		= 5;  // same to MESExchangeKey's exchange mode
+	string 	sKey				= 6;  // 
+	uint32 	encrypt				= 7;  // same to MESExchangeKey's encrypt
+	string  sOprUserId			= 8;	
+	uint64  msgTime				= 9;  // time--required
+	string  extend				= 10; //expand field
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_EXCHANGE_KEY_DELIVER_ACK ： 0xb061; client客户端响应MSG服务器交换key推送				
+////////////////////////////////////////////////////////////////////////
+message MESExchangeKeyDeliverAck
+{
+	string 	sFromId		  		= 1;  // the user'Id who send this ack 
+	string 	sToId		    	= 2;  // the user'Id which the MESExchangeKeyDeliver come from
+	string 	sGrpId		  		= 3;  // 
+	string  sMsgId       		= 4;  // same with MESExchangeKeyDeliver's msgId
+	string 	sKey				= 5;  // 
+	uint32 	encrypt				= 6;  // 
+	ErrCode errcode	 			= 7;  // 
+	uint64  msgTime				= 8;  // time--required
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_EXCHANGE_KEY_DELIVERD_NOTIFY ： 0xb064;		MSG服务器将交换key的应答结果推送到交换key的发起客户端				
+////////////////////////////////////////////////////////////////////////
+//share with MESExchangeKeyDeliverAck construct
+
+////////////////////////////////////////////////////////////////////////
+//MES_EXCHANGE_KEY_DELIVERD_NOTIFY_ACK ： 0xb063;	client客户端响应交换key结果					
+////////////////////////////////////////////////////////////////////////
+message MESExchangeKeyDeliverNotifyAck
+{
+	string	sUserId 			= 1; 	// required, the user'Id who send this ack 
+	string  sMsgId       		= 2;  	// required, same to MES_EXCHANGE_KEY_DELIVERD_NOTIFY's msgId
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHATCANCCEL ： 					0xb077			移动发送端向msg消息服务器向发送消息撤回请求
+////////////////////////////////////////////////////////////////////////
+message MESChatCancel
+{
+	string 	sFromId		  						= 1;	// telephone number or any other number binded.
+	string 	sToId		  						= 2;	// telephone number or any other number binded.
+	uint32  nCancelType 						= 3;	// 0:P2P, 1:GRP ,单聊时使用默认值0
+	string  sGroupId			  				= 4;	// groud id , the value is generated by server as creating group. 
+	string  sMsgId       						= 5;  // Generated uuid by APP Id;
+	uint64  msgTime 							= 6;  // 
+	uint64  cancelTime 							= 7;  // 
+	uint32  sendState							= 8;  // 0:源消息离线 1:源消息已发送
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHATCANCEL_ACK ： 			0xb078		msg消息服务器回应撤销聊天消息
+////////////////////////////////////////////////////////////////////////
+message MESChatCancelAck
+{
+  	string  sUserId   						= 1; // telephone number or any other number binded. point to sFromId,tell cmSvr which client send to
+  	string  sMsgId       					= 2; // uuid , to identify unique message. 
+  	ErrCode errcode    						= 3; // return 0x8000 if no error.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHATCANCCEL_DELIVER ： 					0xb082			msg消息服务器向移动发送端向发送消息撤回请求推送
+////////////////////////////////////////////////////////////////////////
+//share with MESChatCancel construct
+
+////////////////////////////////////////////////////////////////////////
+//MES_CHATCANCEL_DELIVER_ACK ： 			0xb081	移动发送端回应撤销聊天推送消息
+////////////////////////////////////////////////////////////////////////
+//share with MESChatCancelAck construct
+
+
+////////////////////////////////////////////////////////////////////////
+//MS_COMMONNOTIFY							= 0xb0c1;		 移动端发起 通知消息
+////////////////////////////////////////////////////////////////////////
+message MSGCommonNotify
+{
+	string sFromId 					= 1;		// 发送者
+	repeated string sToIds			= 2;		// 被通知的人(数组)
+	string sMsgId					= 3;		// 通知消息ID
+	CommonNotifyType notifyType		= 4;		// 通知类型
+	string sContent					= 5;		// 通知内容
+	uint64  msgTime					= 6;		// 消息时间
+	string  sToId					= 7;		// 被通知的单人
+}
+
+////////////////////////////////////////////////////////////////////////
+//MS_COMMONNOTIFY_ACK						= 0xb0c2;		 msg消息服务器回应 通知消息
+////////////////////////////////////////////////////////////////////////
+message MSGCommonNotifyACK
+{
+	string sUserId 					= 1;		// telephone number or any other number binded. point to sFromId,tell cmSvr which client send to
+	string sMsgId					= 2;		// 通知ID
+	ErrCode errcode					= 3;		// 错误码
+}
+////////////////////////////////////////////////////////////////////////
+//MS_COMMONNOTIFY_DELIVER_ACK				= 0xb0c3;		 移动端回应 通知消息
+////////////////////////////////////////////////////////////////////////
+//share with MSGCommonNotifyACK construct
+
+////////////////////////////////////////////////////////////////////////
+//MS_COMMONNOTIFY_DELIVER					= 0xb0c4;		 MSG消息服务器向移动发送端向发送 通知消息 推送
+////////////////////////////////////////////////////////////////////////
+//share with MSGCommonNotify construct
+
+
+////////////////////////////////////////////////////////////////////////
+//GROUP_CHAT ： 					0xc001				移动发送端发聊天消息给Group群组服务器
+////////////////////////////////////////////////////////////////////////
+message MESGrpChat
+{
+	string 	sFromId		  						= 1;	// telephone number or any other number binded.
+	string  sGrpId			  					= 2;	// groud id , the value is generated by server as creating group. 
+	uint32	nNotifyCount	  					= 3;  	// support @user function , indicate total of @user. set the value to -1 if @all, 
+	repeated string sNotifyUsers 				= 4;  	// @user list. Need not to fill this array if nNotifyCount equal to -1 or 0. 
+	string  sMsgId       						= 5;  	// Generated uuid by APP Id;
+	uint64  msgTime 							= 6;  	//	server time,precision millisecond
+	uint32	encrypt								= 7;  	// 	whether encrypt chat contents
+	string  sContent							= 8;  	//chat contents
+	string	extend								= 9;  	// 扩展字段
+	uint32  msgType 							= 10;  	// *optional* default group chat 
+														// 1: P2P chat normal; 2: P2P chat with burning after read;
+														// 3: p2p hide ; 4: p2p hide with burning after read;
+														// 5: Group chat; 6: Group with burning after read;
+														// 7: Group hide; 8: Group with burning after read;
+	string 	sToId								= 11;  	
+}
+
+////////////////////////////////////////////////////////////////////////
+//GROUP_CHAT_ACK ： 			0xc002			Group群组服务器回应移动发送端聊天消息
+////////////////////////////////////////////////////////////////////////
+message GroupChatAck
+{
+  	string  sFromId   						= 1; // telephone number or any other number binded. point to sFromId,tell cmSvr which client send to
+  	string  sGroupId							= 2; // GroupId generated by server,
+  	string  sMsgId       					= 3; // uuid , to identify unique message. 
+  	uint64  sendtime 							= 4; // server time,precision millisecond,user can use to sort the message.
+  	ErrCode errcode    						= 5; // return 0x8000 if no error.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_GRPCHAT_DELIVER_ACK ： 0xb073 		移动接收端回应MES消息服务器消息送达
+////////////////////////////////////////////////////////////////////////
+message MESGrpChatDeliveredAck
+{
+	string 	sFromId		  		= 1; // 
+	string  sGrpId				= 2; // 
+	string  sMsgId  			= 3; // 
+	ErrCode errcode    			= 4; // 
+}
+
+
+
+////////////////////////////////////////////////////////////////////////
+//GROUP_CHATCANCCEl ： 					0xc023				移动发送端向Group群组服务器发送消息撤回请求
+////////////////////////////////////////////////////////////////////////
+message GroupChatCancel
+{
+	string 	sFromId		  						= 1;	// telephone number or any other number binded.
+	string  sGroupId			  				= 2;	// groud id , the value is generated by server as creating group. 
+	string  sMsgId       						= 3;  	// chat msg id
+	uint64  msgTime 							= 4;  	// chat time,returned by server at 0xc002
+	uint64  cancelTime 							= 5;  	// server time,precision millisecond
+}
+////////////////////////////////////////////////////////////////////////
+//GROUP_CHATCANCEL_ACK ： 			0xc024			Group群组服务器回应移动发送端聊天消息
+////////////////////////////////////////////////////////////////////////
+message GroupChatCancelAck
+{
+  	string  sFromId   						= 1; // telephone number or any other number binded. point to sFromId,tell cmSvr which client send to
+  	string  sGroupId							= 2; // GroupId generated by server,
+  	string  sMsgId       					= 3; // uuid , to identify unique message. 
+  	uint64  cancelTime 						= 4; // server time,precision millisecond,user can use to sort the message.
+  	ErrCode errcode    						= 5; // return 0x8000 if no error.
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_GRPNOTIFY_DELIVER ： 0xb068				MSG服务器推送通知到client客户端
+////////////////////////////////////////////////////////////////////////
+//之前版本MESGrpNotifyDeliver结构同MESGrpNotify, 不同之后为了使客户端不用修改，故这里使用名称MESGrpNotify,
+//内部b065不再使用MESGrpNotify，重新命名
+message MESGrpNotify
+{
+	string 	sGrpId		  		= 1;  // 
+	string 	sToId				= 2;  //  
+	string  sMsgId       		= 3;  //  
+	uint64  msgTime 			= 4;  // server time,precision millisecond
+	string	sOprUserId 			= 5;  // *optional* operator user
+	repeated string	sMnpledUserId 	= 6;  // *optional* Manipulated user id
+	string  sContent			= 7;  // notify contents
+	NotifyType  notifyType		= 8;
+	ErrCode errcode	 			= 9;  // *optional*, for some notify type this field is required
+	string  extend				= 10;  // expand field
+}
+
+////////////////////////////////////////////////////////////////////////
+//MES_GRPNOTIFY_DELIVER_ACK ： 0xb067			客户端响应通知消息
+////////////////////////////////////////////////////////////////////////
+message MESGrpNotifyDeliverAck
+{
+	string 	sUserId		    	= 1;  
+	string 	sGrpId		  		= 2;  
+	string  sMsgId       		= 3;  
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// 频道协议结构体
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////
+// RADIO_CHAT			= 0xc101;			// 移动端向channel服务发消息
+// RADIO_NOTIFY_DELIVER = = 0xc110;
+////////////////////////////////////////////////////////////////////////
+message RadioChat
+{
+	string 	sFromId		  						= 1;	// 发送者id
+	string  sRadioId			  				= 2;	// 频道id
+	string  sMsgId       						= 3;	// 消息id
+	uint64  msgTime 							= 4;	// 消息时间
+	uint32	encrypt								= 5;	// 加密方式
+	string  sContent							= 6;	// 消息内容
+	string	extend								= 7;	// 扩展字段
+	string	sId									= 8;	// mongo数据	
+	string	sToId								= 9;	// 发送到具体人
+}
+
+////////////////////////////////////////////////////////////////////////
+// RADIO_CHAT_ACK		= 0xc102;				// channel服务器向移动端回复消息
+// RADIO_ADMIN_CANCEL_CHAT_ACK	= 0xc106;		// channel服务器回复管理员撤回结果
+// RADIO_CANCEL_CHAT_ACK	= 0xc112;			// channel服务器回复撤回结果
+////////////////////////////////////////////////////////////////////////
+message RadioChatAck
+{
+  	string  sFromId   						= 1; // 发送者id
+  	string  sRadioId						= 2; // 频道id
+  	string  sMsgId       					= 3; // 消息id
+  	uint64  msgTime							= 4; // 服务器回复时间
+  	ErrCode errcode    						= 5; // 返回错误
+}
+
+////////////////////////////////////////////////////////////////////////
+//	RADIO_CHAT_DELIVER	= 0xc104;		// channel服务器发消息到接收者
+////////////////////////////////////////////////////////////////////////
+//share with RadioChat construct
+
+////////////////////////////////////////////////////////////////////////
+// RADIO_ADMIN_CANCEL_CHAT	= 0xc105;	// 管理员撤回
+// RADIO_CANCEL_CHAT		= 0xc111;	// 自己撤回
+////////////////////////////////////////////////////////////////////////
+message RadioCancelChat
+{
+	string 	sFromId		  						= 1;	// 发送者id
+	string  sRadioId			  				= 2;	// 频道id
+	string  sMsgId       						= 3;	// 消息id
+	uint64  msgTime 							= 4;	// 消息时间
+	string  extend								= 5;	// 扩展字段
+	string	sToId								= 6;	// 发送到具体人
+}
+
+////////////////////////////////////////////////////////////////////////
+//	RADIO_ADMIN_CANCEL_CHAT_DELIVER	= 0xc108 // channel服务器发送管理员撤回消息到接收者
+//  RADIO_CANCEL_CHAT_DELIVER = 0xc114 // channel服务器发送撤回撤回到接收者
+////////////////////////////////////////////////////////////////////////
+//share with RadioCancelChat construct
+

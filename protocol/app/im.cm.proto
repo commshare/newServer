@@ -1,0 +1,51 @@
+﻿syntax = "proto3";
+package im;
+
+import "im.pub.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+////////////////////////////////////////////////////////////////////////
+//CM_LOGIN ： 0xa001
+////////////////////////////////////////////////////////////////////////
+message CMLogin{
+	string 	sUserId 		= 1;						// telephone number or any other number binded. 
+	string 	sLoginToken 	= 2;				    	// 用户登录IM时需提供用户中心产生的token信息 
+	string  sDeviceToken 	= 3;						// 设备唯一标识
+	uint32	nPushType		= 4;						// 推送类型
+	string	sPushToken		= 5;						// 推送token
+}
+
+////////////////////////////////////////////////////////////////////////
+//CM_LOGIN_ACK ： 0xa002
+////////////////////////////////////////////////////////////////////////
+message CMLoginAck{
+	string sUserId 			= 1;
+	ErrCode  nErr 			= 2;						// 登录失败返回的错误码，无错返回200.
+	uint64 nLastLoginTime   = 3;                        // 当nErr=ERR_CM_AUTH_KICKEDOUT时,返回的最后登录时间
+}
+////////////////////////////////////////////////////////////////////////
+//CM_LOGOUT ： 0xa003
+////////////////////////////////////////////////////////////////////////
+message CMLogout{
+	string sUserId 			= 1;						// telephone number or any other number binded.
+	uint32 nDeviceType 		= 2;
+}
+////////////////////////////////////////////////////////////////////////
+//CM_LOGOUT_ACK ： 0xa004
+////////////////////////////////////////////////////////////////////////
+message CMLogoutAck{
+	ErrCode nErr 			= 1;						//无错则返回200
+	string sUserId			= 2;						// telephone number or any other number binded.
+}
+
+////////////////////////////////////////////////////////////////////////
+//CM_KICKOUT_NOTIFICATION ： 0xa010
+////////////////////////////////////////////////////////////////////////
+message CMKickoutNotification{
+	string sUserId 			= 1;						//telephone number or any other number binded.
+	string ip 			    = 2;						// ip address of the entry service
+	uint32 port			  	= 3;						
+}
+
+

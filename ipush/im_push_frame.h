@@ -27,9 +27,10 @@ private:
 
 	CConfigFileReader* 		m_pConfigReader;		//Pointer of config file stream. 
 	CPushHandler*   		m_pSvrToLogic[MAX_INSTANCE_SERVICE];			//hold the local logic server data
-	CClientBase*			m_pApnsClient;			//hold the apple APNS server;
-	CClientBase*			m_pVoipPushClient;			//hold the apple APNS server;
-
+//	CClientBase*			m_pApnsClient;			//hold the apple APNS server;
+//	CClientBase*			m_pVoipPushClient;			//hold the apple APNS server;
+    CClientBase*            m_pVoipHttp2DevClient;
+    CClientBase*            m_pVoipHttp2ProClient;
 	int m_nActualServiceInst;
 };
 

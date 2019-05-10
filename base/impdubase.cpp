@@ -114,6 +114,7 @@ int CImPdu::ReadPduHeader(uchar_t* buf, uint32_t len)
 
 std::shared_ptr<CImPdu> CImPdu::ReadPdu(uchar_t *buf, uint32_t len)
 {
+   // InfoLog("std::shared_ptr<CImPdu> CImPdu::ReadPdu(uchar_t *buf, uint32_t len) %s, %d", buf, len);
     uint32_t pdu_len = 0;
     if (len < 1) return NULL; 
     if (!IsPduAvailable(buf, len, pdu_len))   //Check the pdu whether or not valid. 
@@ -135,7 +136,7 @@ bool CImPdu::IsPduAvailable(uchar_t* buf, uint32_t len, uint32_t& pdu_len)
 
 	uint16_t nBodyLen = CByteStream::ReadUint16(buf+OFFSET_PDU_HDR_BODYSIZE);
 	pdu_len = ntohs(nBodyLen) + IM_PDU_HEADER_LEN;
-	//DbgLog("Pdu available len %d,%d",len,pdu_len);
+	DbgLog("Pdu available len buflen=%d, bodylen = %d, pdu_len=%d",len, ntohs(nBodyLen), pdu_len);
 	if (pdu_len > len) // it is error if pdu len >  total received len. 
 	{
 		return false;
@@ -162,6 +163,17 @@ void CImPdu::SetPBMsg(const google::protobuf::MessageLite* msg)
     }
     
     m_buf.Write(szData, msg_size);
+    delete []szData;
+    WriteHeader();
+}
+
+void CImPdu::SetPBMsg(const char buf[], size_t len)
+{
+    m_buf.Read(NULL, m_buf.GetWriteOffset()); //Reset body and allocate memory space
+    m_buf.Write(NULL, IM_PDU_HEADER_LEN);
+    uchar_t* szData = new uchar_t[len];
+    memcpy(szData, buf, len);
+    m_buf.Write(szData, len);
     delete []szData;
     WriteHeader();
 }

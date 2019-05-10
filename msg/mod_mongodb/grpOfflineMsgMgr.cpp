@@ -54,6 +54,31 @@ bool CGrpOfflineMsgMgr::InsertGrpOfflineMsg(const CGrpOfflineMsg& offlineMsg, mo
 	return CMongoDbColl::InsertOne(offlineMsg, callBack, para);
 }
 
+bool CGrpOfflineMsgMgr::InsertGrpOfflineMsg(const CGrpOfflineMsg& offlineMsg, void* para, mongoInsertCallBack__ callBack)
+{
+    DbgLog("add InsertMongotask to threadPool, from = %s, to = %s, msgId = %s ",
+		offlineMsg.GetFromId().c_str(), offlineMsg.GetGrpId().c_str(), offlineMsg.GetMsgId().c_str());
+    return CMongoDbColl::InsertOne(offlineMsg, callBack, para);
+}
+
+
+
+//bool CGrpOfflineMsgMgr::InsertGrpNoMongoOperTask(const std::shared_ptr<::google::protobuf::MessageLite>& pGrpTask, mongoNoOperCallBack callBack, void* para)
+//{
+//	return CMongoDbColl::InsertOne(pGrpTask, callBack, para);
+//}
+
+
+bool CGrpOfflineMsgMgr::DelOfflineMsg(const string& grpId, const string& msgId)
+{
+	return CMongoDbColl::DelOne(CGrpOfflineMsgKeys(grpId, msgId));
+}
+
+bool CGrpOfflineMsgMgr::DelOfflineMsg(const string& grpId, const string& msgId, mongoDelCallBack callBack, void* para)
+{
+	DbgLog("add removeMongotask to threadPool,  grpId = %s, msgId = %s ", grpId.c_str(), msgId.c_str());
+	return CMongoDbColl::DelOne(CGrpOfflineMsgKeys(grpId, msgId), callBack, para);
+}
 
 CGrpOfflineMsg CGrpOfflineMsgMgr::GetGrpOfflineMsg(const string& grpId, const string& msgId)
 {

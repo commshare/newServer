@@ -10,7 +10,7 @@
 #include "util.h"
 
 #include "lock.h"
-
+#include "thread.h"
 enum {
 	SOCKET_READ		= 0x1,
 	SOCKET_WRITE	= 0x2,
@@ -18,7 +18,7 @@ enum {
 	SOCKET_ALL		= 0x7
 };
 
-class CEventDispatch
+class CEventDispatch :public CThread
 {
 public:
 	virtual ~CEventDispatch();
@@ -31,7 +31,7 @@ public:
     
     void AddLoop(callback_t callback, void* user_data);
 
-	void StartDispatch(uint32_t wait_timeout = 100);
+    void StartDispatch(uint32_t wait_timeout, bool detached);
     void StopDispatch();
     
     bool isRunning() {return running;}
@@ -39,6 +39,7 @@ public:
 	static CEventDispatch* Instance();
 protected:
 	CEventDispatch();
+    void OnThreadRun(void);
 
 private:
 	void _CheckTimer();
@@ -66,6 +67,7 @@ private:
 	list<TimerItem*>	m_loop_list;
 
 	static CEventDispatch* m_pEventDispatch;
+    int m_wait_timeout;
     
     bool running;
 };

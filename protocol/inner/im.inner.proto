@@ -1,0 +1,258 @@
+syntax = "proto3";
+package im;
+import "im.pub.proto";
+option optimize_for = LITE_RUNTIME;
+
+///////////////////////////////////////////////////////////////////////
+// CM_LOGIN_NOTIFY  ： 0xa011
+///////////////////////////////////////////////////////////////////////
+message CMLoginNotify{
+	string sUserId 					= 1;					//telephone number or any other number binded.
+	string sIp						= 2;
+	uint32 nPort					= 3;
+	CMLoginNotifyType notifyType 	= 4;					// 通知类型
+	string sHost					= 5;					// 每条链路唯一标识
+}
+///////////////////////////////////////////////////////////////////////
+// CM_LOGIN_NOTIFY_ACK ： 0xa012
+///////////////////////////////////////////////////////////////////////
+message CMLoginNotifyAck
+{
+	string sUserId 			= 1;						//telephone number or any other number binded.
+	ErrCode nErr 			= 2;
+}
+
+enum CMLoginNotifyType
+{
+	CMLOGIN_CLOSELINK			= 0;		// 关闭链接
+}
+
+///////////////////////////////////////////////////////////////////////
+// LOGIN_CM_NOTIFY ： 0xa013
+///////////////////////////////////////////////////////////////////////
+message LoginCMNotify
+{
+	string sUserId = 1;
+	LoginCMNotifyType notifyType = 2;
+}
+//////////////////////////////////////////////////////////////////////
+// LOGIN_CM_NOTIFY_ACK ： 0xa014
+//////////////////////////////////////////////////////////////////////
+message LoginCMNotifyAck
+{
+	string sUserId 			= 1;						//telephone number or any other number binded.
+	ErrCode nErr 			= 2;
+}
+
+enum LoginCMNotifyType
+{
+	LOGINCM_CLOSELINK			= 0;		// 关闭链接
+}
+
+/////////////////////////////////////////////////////////////////////
+// CM_LOGIN_TRANS: 0xa015   服务器内部协议
+/////////////////////////////////////////////////////////////////////
+message CMLoginTrans
+{
+	string 	sUserId 		= 1;						// telephone number or any other number binded. 
+	string 	sLoginToken 	= 2;				    	// 用户登录IM时需提供用户中心产生的token信息 
+	string  sDeviceToken 	= 3;						// 设备唯一标识
+	uint32	nPushType		= 4;						// 推送类型
+	string	sPushToken		= 5;						// 推送token
+	string  sLoginIp		= 6;						// 登陆的IP
+	uint32	nLoginPort		= 7;						// 登陆的端口
+	string	sHost			= 8;						// 每条链路唯一标识
+}
+
+///////////////////////////////////////////////////////////////////////
+//	CM_PHP_LOGIN_NOTIFY					= 0xa017;		// php登陆通知
+///////////////////////////////////////////////////////////////////////
+message CMPHPLoginNotify
+{
+	string  sUserId = 1;
+	string	sDeviceToken=2;					// 设备唯一标识
+	uint64  msgTime = 3;
+	PHPLoginNotifyType loginType = 4;
+	string  extend = 5;
+	PHPLoginNotifySubType loginSubType = 6;	// 登陆类型
+}
+
+///////////////////////////////////////////////////////////////////////
+// CM_PHP_LOGIN_NOTIFY_ACK				= 0xa018;		// php登陆通知确认
+///////////////////////////////////////////////////////////////////////
+message CMPHPLoginNotifyACK
+{
+	string  sUserId = 1;
+	uint64  msgTime = 2;
+	ErrCode nErr = 3;
+}
+
+enum PHPLoginNotifyType
+{
+	PHP_NOTIFY_TYPE_UNKNOWN = 0;
+	PHP_NOTIFY_TYPE_LOGIN = 1;		// 登陆
+	PHP_NOTIFY_TYPE_LOGOUT = 2;		// 退出
+}
+
+enum PHPLoginNotifySubType
+{
+	PHPLOGIN_NOTIFY_SUBTYPE_OK = 0;							// 直接登陆
+	PHPLOGIN_NOTIFY_SUBTYPE_NOCAPTCHA = 1;					// 未输验证码登陆
+	PHPLOGIN_NOTIFY_SUBTYPE_CAPTCHA = 2;					// 验证码验证成功登陆
+}
+
+
+////////////////////////////////////////////////////////////////////////
+// SVR_GROUP_RELATIN_NOTIFY			= 0xa019;		// 群操作通知
+////////////////////////////////////////////////////////////////////////
+message SVRMSGGroupRelationNotify
+{
+	string 	sGrpId		  					= 1;  // 群组id
+	string  sMsgId       					= 2;  // 消息Id
+	repeated string sToIds					= 3;  // 被通知的人
+	uint64  msgTime 						= 4;  // 消息时间
+	string	sOprUserId 						= 5;  // 操作者Id
+	repeated string	sMnpledUserId 			= 6;  // 被操作者id
+	string  sContent						= 7;  // 消息内容
+	SVRGroupRelationNotifyType notifyType	= 8;  // 群通知类型
+	string sOperId							= 9;  // 操作id，NOTIFY_TYPE_MASTER_ANS_APPLY和NOTIFY_TYPE_MASTER_ANS_INVITE 需要此字段
+	string  extend							= 10;  // expand field
+}
+
+enum SVRGroupRelationNotifyType
+{
+	GRPRELATION_TYPE_UNKNOWN 			= 0;
+	GRPRELATION_TYPE_INFO_CHANGED 	= 1;		//群资料修改 包含修改 群名称 群昵称 群头像 群公告 
+	GRPRELATION_TYPE_MEM_QUIT 		= 2;		//退群通知，发送给管理员及群成员（删除key）
+	GRPRELATION_TYPE_MEM_REMOVE 		= 3;		//踢人通知，发送给被移除人及群成员（删除key）
+	GRPRELATION_TYPE_APPLY_RESULT	  	= 4;		//申请加群结果通知（成功，失败，发送给发起人）
+	GRPRELATION_TYPE_INVITE_RESULT 	= 5;		//邀请加群结果通知(成功，失败，发送给被邀请人）		
+	GRPRELATION_TYPE_MASTER_CHANGED  = 6;			//群管理员变更，发送给新管理员
+	GRPRELATION_TYPE_GRP_ACTIVE  		= 7;		//群激活（发送给群管理员）
+	GRPRELATION_TYPE_MASTER_ANS_APPLY	= 8;		// 加群请求需要验证(发送给群管理员)
+	GRPRELATION_TYPE_MASTER_ANS_INVITE	= 9;		// 拉人进群操作需要验证(被拉人开启入群验证)
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//  SVR_FRIEND_RELATION_NOTIFY			= 0xa021;		// 好友操作通知
+/////////////////////////////////////////////////////////////////////////////
+message SVRMSGFriendRelationNotify
+{
+	string 	sFromId 							= 1;  // 发起者Id
+	string 	sToId								= 2;  // 接收者Id 
+	string  sMsgId       						= 3;  // 消息Id
+	string 	sMemoName							= 4;  // 备注昵称
+	SVRFriendRelationNotifyType  notifyType		= 5;  // 类型
+	string  sSelfIntroduce						= 6;  // 说明
+	uint64  msgTime 							= 7;  // 消息时间
+	string sOperId								= 8;  // 操作id，FRIEND_NOTIFY_TYPE_ADD需要此字段
+	string  extend								= 9;  // expand field
+}
+
+enum SVRFriendRelationNotifyType
+{
+	FRIEND_NOTIFY_TYPE_UNKNOWN = 0;
+	FRIEND_NOTIFY_TYPE_ADD = 1;		// 对方需要验证
+	FRIEND_NOTIFY_TYPE_ANS = 2;		// 对方同意
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// SVR_COMMON_MSG_NOTIFY				= 0xa023;		// 外部通用消息接入
+/////////////////////////////////////////////////////////////////////////////
+message SVRMSGCommonMsgNotify
+{
+	string sFromId 					= 1;		// 发送者id
+	repeated string sToIds			= 2;		// 被通知的人
+	string sMsgId					= 3;		// 通知消息ID
+	SVRCommonNotifyType notifyType		= 4;		// 通知类型
+	string sContent					= 5;		// 通知内容
+	uint64  msgTime					= 6;		// 消息时间
+	string extend					= 7;		// 扩展字段
+}
+
+enum SVRCommonNotifyType
+{
+	NOTIFY_MODIFYUSERINFO			= 0;		// 个人信息更新
+}
+
+////////////////////////////////////////////////////////////////////////
+// SVR_RADIO_RELATIN_NOTIFY	= 0xa027;		// 频道操作通知
+////////////////////////////////////////////////////////////////////////
+message SVRRadioMsgNotify
+{
+	string 	sRadioId		  		= 1;  // 频道id
+	string  sMsgId       			= 2;  // 消息Id
+	uint64  msgTime 				= 3;  // 消息时间
+	string	sOprUserId 				= 4;  // 操作者Id
+	repeated string sMnpledUserId 	= 5;  // 被操作者id
+	string  sContent				= 6;  // 消息内容
+	SVRRadioNotifyType notifyType	= 7;  // 频道通知类型
+	string  extend					= 8;  // expand field
+}
+
+enum SVRRadioNotifyType
+{
+	SVRRADIO_TYPE_UNKNOWN 			= 0;
+	SVRRADIO_TYPE_NAME_CHANGED 		= 1;		//修改频道名称，通知成员
+	SVRRADIO_TYPE_ICON_CHANGED 		= 2;		//修改  频道头像，通知成员
+	SVRRADIO_TYPE_NOTICE_CHANGED 	= 3;		//修改频道公告，通知成员
+	SVRRADIO_TYPE_MEMBER_QUIT 		= 4;		//退出频道通知，发送给成员
+	SVRRADIO_TYPE_MEMBER_REMOVE 	= 5;		//踢人通知，发送给被移除人及成员
+	SVRRADIO_TYPE_APPLY				= 6;		//主动加入频道，发送给成员
+	SVRRADIO_TYPE_INVITE		 	= 7;		//被动加入频道，发送给成员
+	SVRRADIO_TYPE_MASTER_CHANGED 	= 8;		//频道主发生变更，发送给成员
+	SVRRADIO_TYPE_ADMIN_SET 		= 9;		//设置频道管理员，发送给成员
+	SVRRADIO_TYPE_ADMIN_UNSET	 	= 10;		//取消频道管理员，发送给成员
+	SVRRADIO_TYPE_DISMISS		 	= 11;		//解散频道，发送给成员
+	SVRRADIO_TYPE_NOSPEAK		 	= 12;		//禁言，发送给成员
+	SVRRADIO_TYPE_SPEAKING		 	= 13;		//取消禁言，发送给成员
+	SVRRADIO_TYPE_CREATE		 	= 14;		//频道创建
+}
+
+////////////////////////////////////////////////////////////////////////
+// SVR_USER_PUSHSET_NOTIFY	= 0xa029;		// 用户推送设置开关通知
+////////////////////////////////////////////////////////////////////////
+message SVRUserPushSetNotify
+{
+	string  sMsgId       				= 1;  // 消息Id
+	string	sUserId						= 2;  // 用户ID
+	SVRUserPushNotifyType	pushType	= 3;  // 是否推送
+	uint64  msgTime 					= 4;  // 消息时间
+}
+
+enum SVRUserPushNotifyType
+{
+	SVRUSER_UNPUSH = 0;				// 不推送
+	SVRUSER_ISPUSH = 1;				// 推送
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// SVR_GROUP_RELATIN_NOTIFY_ACK		= 0xa020
+// SVR_FRIEND_RELATION_NOTIFY_ACK	= 0xa022
+// SVR_COMMON_MSG_NOTIFY_ACK		= 0xa024
+// SVR_RADIO_RELATIN_NOTIFY_ACK		= 0xa028
+// SVR_USER_PUSHSET_NOTIFY_ACK		= 0xa030
+///////////////////////////////////////////////////////////////////////////////
+message SVRMSGNotifyACK
+{
+	string sMsgId = 1;
+	uint64 msgTime = 2;
+	ErrCode errcode = 3;
+}
+
+////////////////////////////////////////////////////////////////////////
+//SVR_LOGIN_RESULT ： 0xa025
+////////////////////////////////////////////////////////////////////////
+message OnLoginResult
+{
+	string sUserId 			= 1;						//telephone number or any other number binded.
+	string sHost			= 2;
+	LoginResultType type	= 3;
+	ErrCode nErr 			= 4;
+}
+
+enum LoginResultType
+{
+	LOGIN_ACK			= 0;		// 关闭链接
+	LOGIN_KICKOUT		= 1;		// 登陆被踢
+}

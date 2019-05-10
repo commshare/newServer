@@ -13,13 +13,13 @@ Description:     		关联服务端链路管理基类定义，负责管理Zookeep
 #include "singleton.h"
 #include "serverinfo.h"
 #include "serverlink.h"
-
+#include <vector>
 
 using namespace std;
 using namespace imsvr;
 
 #define SYSTEM_STACKSIZE 16*1024*1024
-typedef unordered_map<UidCode_t, CServerLink*,hash_func>  SessionServerLinkMap_t;
+typedef std::tr1::unordered_map<UidCode_t, CServerLink*,hash_func>  SessionServerLinkMap_t;
 typedef list<string> AssociatedPathList_t;
 
 
@@ -39,6 +39,7 @@ public:
 
 	void InitLinkMgr();
 	CServerLink* GetAssocSvrLink(int16_t nServiceId,UidCode_t sessionId); //Get a valid link for sending message. 
+	vector<CServerLink*> GetAssocSvrLinkList(int16_t nServiceId,UidCode_t sessionId); //Get valid links of indicated service for sending message.
 	void GetLocalHost(string& sIP,uint16_t& nPort) {sIP = m_sLocalIP; nPort = m_nLocalPort;}
 	uint64_t GetAssocHeartbeat(void){return (m_bAssocHeartbeatEnabled) ? m_nAssocHeartBeatInterval : 0;}	
 	void AddLinkBySessionId(UidCode_t sessionId,CServerLink* pLink);

@@ -75,12 +75,8 @@ bool CClientBase::Start()
 		return false;
 	}
 
-	//pthread_t tid;
-	//int i;
 	//创建epool线程侦听socket收发
 	startEpoll();
-
-
 
 	//创建推送消息的发送线程池
 

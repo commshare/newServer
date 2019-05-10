@@ -8,7 +8,6 @@ Description:
 #include "hw_handle_protobuf.h"
 #include "hw_push_client.h"
 #include "hw_ssl_get_token.h"
-#include "xmpp_fcm_client.h"
 #include "push_provide_server.h"
 
 std::string rfc1738_encode(const std::string& src, bool bigOrLittle)
@@ -47,13 +46,12 @@ std::string rfc1738_encode(const std::string& src, bool bigOrLittle)
 CLock *CApushLocalSvr::m_pLockSendResp = NULL;
 
 CApushLocalSvr::CApushLocalSvr(CConfigFileReader* pConfigReader,int nNumOfInst) :
-	m_pConfigReader(pConfigReader),m_nNumberOfInst(nNumOfInst)
+	m_pConfigReader(pConfigReader),m_nNumberOfInst(nNumOfInst),m_uExpires(0), uTimeTick(0)
 {
 }
 
 CApushLocalSvr::~CApushLocalSvr()
 {
-	
 	
 }
 
@@ -112,8 +110,6 @@ bool CApushLocalSvr::Initialize(void)
 bool CApushLocalSvr::RegistPacketExecutor(void)	 //Regist command process function to network frame. 
 {
 
-	//ANDROID_PUSH = 53255,
-	//ANDROID_PUSH_ACK = 53256,
 	CmdRegist(ANDROID_PUSH, m_nNumberOfInst, CommandProc(&CApushLocalSvr::OnAndroidPush));
 	CmdRegist(ANDROID_NOTIFY_ACK, m_nNumberOfInst, CommandProc(&CApushLocalSvr::OnNotifyAck));
 	return true;
@@ -125,10 +121,10 @@ string CApushLocalSvr::GetToken(bool bNecessary /*= false*/)
 	//don`t to request the Push Token again
 	if (!bNecessary)
 	{
-		if(CHwGetPushTokenClient::uTimeTick != 0 &&
-		   CHwGetPushTokenClient::m_uExpires != 0	&&
+		if(uTimeTick != 0 &&
+		   m_uExpires != 0	&&
 		   !m_strToken.empty() &&
-		   (time(NULL) - CHwGetPushTokenClient::uTimeTick < CHwGetPushTokenClient::m_uExpires/2))
+		   (time(NULL) - uTimeTick < m_uExpires/2))
 		{
 				return m_strToken;
 		}
@@ -154,10 +150,11 @@ string CApushLocalSvr::GetToken(bool bNecessary /*= false*/)
 		return m_strToken;
 	}
 
-	string strToken = pTokenClient->Post_ToGetToken();
+//	string strToken = pTokenClient->Post_ToGetToken();
+	string strToken = pTokenClient->Post_ToGetToken(m_uExpires, uTimeTick);
 	if (strToken.empty())
 	 {
-		 ErrLog("CHWPushClient new pTokenClient");
+		 ErrLog("CHWPushClient get new pTokenClient failed");
 
 		 delete pTokenClient;
 		 return strToken;
@@ -189,81 +186,51 @@ static int testcount = 0;
 bool CApushLocalSvr::OnAndroidPush(std::shared_ptr<CImPdu> pPdu)
 {
 	testcount++;
-	printf("onPush:%d\n", testcount);
 	InfoLog("onPush:%d\n", testcount);
-	//string sMsgId;
 	UidCode_t  sessionId = pPdu->GetSessionId();
 
 	int iRet = -1;
-
-//	DbgLog("Success to regist sessionId=%x%x%x%x%x%x%x%x%x%x%x%x",
-//    sessionId.Uid_Item.code[0],sessionId.Uid_Item.code[1],
-//	sessionId.Uid_Item.code[2],sessionId.Uid_Item.code[3],sessionId.Uid_Item.code[4],
-//	sessionId.Uid_Item.code[5],sessionId.Uid_Item.code[6],sessionId.Uid_Item.code[7],
-//	sessionId.Uid_Item.code[8],sessionId.Uid_Item.code[9],sessionId.Uid_Item.code[10],
-//	sessionId.Uid_Item.code[11]);
-
-	//bool bRet = false;
 	ErrCode eCode = EXCEPT_ERR;
 
-	//CBaseClient *pClient = nullptr;
-
 	m_strToken = GetToken();
-
+    InfoLog("Thread %lu Get hwToken = %s, currentTime = %u, token expirtime = %u",pthread_self(),  m_strToken.c_str(), uTimeTick, m_uExpires); 
 	CProtoHandele proto;
 
-	shared_ptr<APushData> shared_APushData = proto.GetaPushData((const char *)pPdu->GetBodyData(), pPdu->GetBodyLength(), m_strToken);
+	vector<shared_ptr<HTTP_REQDATA_>> shared_APushData = proto.GetAndroidPushData((const char *)pPdu->GetBodyData(), pPdu->GetBodyLength(), m_strToken);
 
-	APushData *data = shared_APushData.get();
-	if (!data)
-	{
-		ErrLog("GetaPushData");
+    for(int i = 0; i < shared_APushData.size(); i++) 
+    {
+        P_HTTP_REQDATA_ pdata =  shared_APushData[i].get();
+        if (pdata) {
+            DbgLog("receive msg => devType=%d, msgId=%s, url=%s, postData=\n\"%s\"\n\n", pdata->diveceType, pdata->msgId.c_str(), pdata->strUrl_.c_str(), pdata->strPost_.c_str());
+        }
 
-		return false;
-		//goto goEnd;
-	}
+        P_HTTP_REQDATA_ data = shared_APushData[i].get();
+        if (!data)
+        {
+            ErrLog("GetaPushData");
 
-	data->sessionId = sessionId;
-	
-    CBaseClient *pclient= NULL;
-    pclient = m_pManage->GetClient(data->diveceType);
-    if (pclient) {
-        iRet = pclient->AddTask(shared_APushData);
-    } else {
-        ErrLog("dones't support deiveceType %d", data->diveceType);
-        return false;
+            return false;
+            //goto goEnd;
+        }
+
+        data->sessionId = sessionId;
+
+        CHttpBase *pclient= NULL;
+        pclient = m_pManage->GetClient(data->diveceType);
+        if(pclient) {
+            pclient->AddTask(shared_APushData[i]);
+        } else {
+
+            ErrLog("dones't support deiveceType %d", data->diveceType);
+            return false;
+        }
     }
-
-	if (iRet <= 0)
-	{
-		ErrLog("OnAndroidPush AddTask");
-
-		OnNotify(shared_APushData);
-
-		goto goEnd;
-	}
-
-	eCode =  NON_ERR;
-
-goEnd:
-	OnAndroidPushAck(data->msgId, sessionId, eCode);
-	return true;
-
-	
-	//return bRet;
+    return true;
 }
 
 void CApushLocalSvr::OnAndroidPushAck(string sMsgId, UidCode_t sessionId, ErrCode bCode)
 {
-
-//	DbgLog("Success to regist sessionId=%x%x%x%x%x%x%x%x%x%x%x%x",
-//    sessionId.Uid_Item.code[0],sessionId.Uid_Item.code[1],
-//	sessionId.Uid_Item.code[2],sessionId.Uid_Item.code[3],sessionId.Uid_Item.code[4],
-//	sessionId.Uid_Item.code[5],sessionId.Uid_Item.code[6],sessionId.Uid_Item.code[7],
-//	sessionId.Uid_Item.code[8],sessionId.Uid_Item.code[9],sessionId.Uid_Item.code[10],
-//	sessionId.Uid_Item.code[11]);
-
-
 	if (!CApushLocalSvr::m_pLockSendResp)
 	{
 		CApushLocalSvr::m_pLockSendResp  = new CLock;
@@ -284,7 +251,6 @@ void CApushLocalSvr::OnAndroidPushAck(string sMsgId, UidCode_t sessionId, ErrCod
                                                    
     if(SendPdu(&AckPdu, 0) < 0)               
     {                                              
-        //ErrLog("OnApnsPushAck:%d\n", testcountErr);
     }                                              
 
 }
@@ -324,7 +290,6 @@ bool CApushLocalSvr::OnNotify(shared_ptr<APushData> shared_APushData)
 	CAutoLock autolock(CApushLocalSvr::m_pLockSendResp);
     if(SendPdu(&notifyPdu, 0)< 0)
     {
-        //ErrLog("OnApnsNotify:%d\n", testcountErr);
     }
 
     testNotify++;
@@ -345,13 +310,6 @@ bool CApushLocalSvr::OnNotify(shared_ptr<APushData> shared_APushData)
 	printf("testNotify:%d, speed:%d/s\n", testNotify, testNotify/tmSub);
 	InfoLog("testNotify:%d, speed:%d/s\n", testNotify, testNotify/tmSub);
 
-//	DbgLog("Success to regist pData->sessionId=%x%x%x%x%x%x%x%x%x%x%x%x",
-//pData->sessionId.Uid_Item.code[0],pData->sessionId.Uid_Item.code[1],
-//pData->sessionId.Uid_Item.code[2],pData->sessionId.Uid_Item.code[3],pData->sessionId.Uid_Item.code[4],
-//pData->sessionId.Uid_Item.code[5],pData->sessionId.Uid_Item.code[6],pData->sessionId.Uid_Item.code[7],
-//pData->sessionId.Uid_Item.code[8],pData->sessionId.Uid_Item.code[9],pData->sessionId.Uid_Item.code[10],
-//pData->sessionId.Uid_Item.code[11]);
-
     return true;                                                  
 }                                                                 
                                                                   
@@ -359,11 +317,8 @@ bool CApushLocalSvr::OnNotify(shared_ptr<APushData> shared_APushData)
 void CApushLocalSvr::OnNotifyAck(std::shared_ptr<CImPdu> pPdu)
 {      
 	NOTUSED_ARG(pPdu);
-    //do nothing
-	//
 	InfoLog("OnNotifyAckOnNotifyAckOnNotifyAckOnNotifyAck\n");                                                
     return;                                                       
 }                                                                 
 
 
-//

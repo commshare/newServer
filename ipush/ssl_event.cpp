@@ -29,20 +29,6 @@ CSslEventDispatch::~CSslEventDispatch()
 	m_event_state = EVENT_NONE;
 }
 
-/*
-static CSslEventDispatch *g_pSslEventDispatch;
-
-CSslEventDispatch* CSslEventDispatch::Instance()
-{
-	if (g_pSslEventDispatch == NULL)
-	{
-		g_pSslEventDispatch = new CSslEventDispatch();
-	}
-
-	return g_pSslEventDispatch;
-}
-*/
-
 void CSslEventDispatch::AddEvent(CSslSocket *sslSocket, uint64_t interval)
 {
 	NOTUSED_ARG(interval);
@@ -61,7 +47,6 @@ void CSslEventDispatch::_AddEvent(SOCKET fd)
 	struct epoll_event ev;
 	ev.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLRDHUP;
 
-	//ev.events = EPOLLIN | EPOLLOUT | EPOLLPRI | EPOLLERR | EPOLLHUP | EPOLLRDHUP;
 	ev.data.fd = fd;
 	if (epoll_ctl(m_epfd, EPOLL_CTL_ADD, fd, &ev) != 0)
 	{
@@ -119,7 +104,6 @@ void CSslEventDispatch::OnThreadRun(void)
 	InfoLog("sslEventDispatch %p start success", this);
 	while (running)
 	{
-		//static uint64_t curr_tick = get_tick_count();
 		nfds = epoll_wait(m_epfd, events, MAX_EVENT_NUMS, m_waitTime);
 		for (int i = 0; i < nfds; i++)
 		{
@@ -139,13 +123,11 @@ void CSslEventDispatch::OnThreadRun(void)
 
 			if (events[i].events & EPOLLIN)
 			{
-				//InfoLog("OnRead, socket=%d\n", ev_fd);
 				pSocket->OnRead();
 			}
 
 			if (events[i].events & EPOLLOUT)
 			{
-				//InfoLog("OnWrite, socket=%d\n", ev_fd);
 				pSocket->OnWrite();
 			}
 

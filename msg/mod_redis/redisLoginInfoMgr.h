@@ -18,7 +18,7 @@ public:
 	~CLoginInfoMgr();
 	static std::shared_ptr<CLoginInfo> GetLoginInfo(const std::string& userId);
 	static bool UpdateCallBusyState(const std::string& userId, uint16_t callState);
-	static std::string getDeviceLastUserID(const std::string& deviceID);
+	static std::string getDeviceLastUserID(const std::string& deviceToken);
 };
 
 #endif // __REDISLOGININFOMGR_H__

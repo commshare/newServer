@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package grpc;
+package bi_analysis;
 
 //option optimize_for = LITE_RUNTIME;
 
@@ -14,9 +14,10 @@ message LocationInfo {
 
 //平台类型
 enum PlatFormType {
-	PLAT_IOS = 0;
-	PLAT_ANDROID = 1;
-	PLAT_PC = 2;
+	PLAT_UNKNOWN = 0;
+	PLAT_IOS = 1;
+	PLAT_ANDROID = 2;
+	PLAT_PC = 3;
 }
 
 //数据来源
@@ -28,14 +29,33 @@ enum DataFromType {
 	FROM_IM_SERVER = 4;
 }
 
+//安装渠道
+enum AppChannelType{
+	APP_CHANNEL_UNKNOWN = 0;
+	APP_CHANNEL_APPSTORE = 1001;
+	APP_CHANNEL_GOOLEPLAY = 2001;
+	APP_CHANNEL_OFFICIALWEB = 2002;
+	APP_CHANNEL_FIR  = 2003;
+}
+
+//网络状态
+enum NetStateType{
+	NET_STATE_UNKNOWN = 0;
+	NET_STATE_WIFI = 1;
+	NET_STATE_2G = 2;
+	NET_STATE_3G = 3;
+	NET_STATE_4G = 4;
+	NET_STATE_5G = 5;	
+}
+
 // 统计服务接口
 service Statistic {
-	rpc UpdateUserContext (UserContexts) returns (CommonRsp) {}; //用户上下文更新接口
+	rpc UpdateUserContext (UserContext) returns (CommonRsp) {}; //用户上下文更新接口
 	rpc PushUserAction (UserActions) returns (CommonRsp) {};  //用户行为统计接口
 }
 
 message CommonRsp {
-  string  sMsgId = 1;	//消息ID
+  string  sBatchMsgId = 1;	//消息ID
   uint32  nErrCode = 2;  //0-成功 1-失败
   string  sErrMessage = 3;
 }
@@ -52,33 +72,32 @@ message UserContext {
   PlatFormType PlatForm = 8; //平台类型
   string sOsVersion = 9; //固件版本
   string sSysLang = 10; //系统语言
-  uint32 nAppChannel = 11; //安装渠道--参考<<统计服务数据说明.docx>> app_channel_code
+  AppChannelType nAppChannel = 11; //安装渠道
   string sIP = 12; //设备IP
+  NetStateType nNetworkState = 13; //网络状态 
+  string sMsgId = 14; //单消息ID
 }
+
 message UserContexts {
-	string sMsgId = 1; //消息ID
+	string sBatchMsgId = 1; //批次消息ID
 	repeated UserContext contexts = 2; //用户上下文集合
 }
 
 //用户行为消息体
 message UserAction {
 	string sUserId = 1; //用户ID
-	string sActionType = 2; /*用户行为类型--参考<<统计服务数据说明.docx>> 用户行为类型表，jason格式
-							eg: { "LV1":{
-										  "value":1,
-										  "LV2":{
-										  "value":1
-										  }
-										}
-								}*/
+	string sTypePath = 2; //Type Path
 	string sContent = 3; //用户行为内容jason格式
 	string sGroupId = 4; //群组ID,群行为时赋值
 	DataFromType Data_From = 5; //数据来源
 	string sDescription = 6; //行为描述
+	string sMsgId = 7; //单消息ID
+	string sCorrelationId = 8; //关联ID
+	uint64 nActionTime = 9; //用户行为时间
 }
 
 message UserActions {
-	string sMsgId = 1; //消息ID
+	string sBatchMsgId = 1; //批次消息ID
 	repeated UserAction actions = 2; //用户行为集合
 }
 

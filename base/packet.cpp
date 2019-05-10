@@ -64,7 +64,7 @@ void CPacket::StopThread()
 
 void CPacket::OnThreadRun()
 {
-	std::shared_ptr<CImPdu> pPdu = 0;
+	//std::shared_ptr<CImPdu> pPdu = 0;
 //	static int nTimes = 0;
 	int i = 0;
 
@@ -80,7 +80,7 @@ void CPacket::OnThreadRun()
 		//other packet queue, 
 		if(m_queuePdu.size()&&(i <= PACKET_PROCESS_UNIT))
 		{
-			pPdu = m_queuePdu.front();
+			std::shared_ptr<CImPdu> pPdu = m_queuePdu.front();
 			m_queuePdu.pop();
 			m_pLock->unlock();
 			
@@ -128,7 +128,7 @@ void CPacket::ProcPdu(std::shared_ptr<CImPdu> pPdu)
 	{
 		pProc = pExecutor->pProc;
 		(this->*pProc)(pPdu);		//Invork the callback function to process the packet. 
-		pPdu.reset();
+	//	pPdu.reset();
 	}
 }
 //CAutoLock autolock(pLinkMgrLock);
@@ -224,7 +224,7 @@ int CPacket::SendPdu(int16_t nServiceId,CImPdu* pPdu)
 	UidCode_t sessionId =  pPdu->GetSessionId();	
 
 	pLinkMgrLock = CZookeeper::GetInstance()->GetSvrLock();
-	pLink = CZookeeper::GetInstance()->GetAssocSvrLink(nServiceId,sessionId);
+	pLink = CZookeeper::GetInstance()->GetAssocSvrLink(nServiceId,sessionId);//session here unuse
 	if(!pLink || !pLink->GetRegistStatus())
 	{
 		if(pLink)
@@ -252,5 +252,48 @@ int CPacket::SendPdu(int16_t nServiceId,CImPdu* pPdu)
 	return nLen;
 }
 
-//USE_CONSISTENT_LINK
+int CPacket::BroadcastPdu(int16_t nServiceId,CImPdu* pPdu)
+{
+	if(!pPdu) 
+    {
+        ErrLog("the pdu packet is empty!");
+        return -1;
+    }
+	
+	CLock*  pLinkMgrLock = NULL;
+	CServerLink* pLink = 0;
+	vector<CServerLink*> vecLink;
+	UidCode_t sessionId =  pPdu->GetSessionId();	
 
+	pLinkMgrLock = CZookeeper::GetInstance()->GetSvrLock();
+	vecLink = CZookeeper::GetInstance()->GetAssocSvrLinkList(nServiceId,sessionId);//session here unuse
+    
+    int cnt = 0;
+//    int nLen = -1;
+    for(auto it = vecLink.begin(); it != vecLink.end(); it++)
+    {
+        pLink = *it;
+        if(!pLink || !pLink->GetRegistStatus())
+        {
+            if(pLink)
+            {
+                CAutoLock autolock(pLinkMgrLock);
+                pLink->ReleaseRef();
+            }
+           // ErrLog("Err sending for the link is not exist or the link is not regist!");
+
+            continue;
+        }
+        
+        cnt++;
+        CAutoLock autolock(pLinkMgrLock);
+        pPdu->SetSessionId(pLink->GetSessionId());  
+       // nLen = pLink->SendPdu(pPdu);
+        pLink->SendPdu(pPdu);
+        InfoLog("send pdu to the link %p", pLink);
+        pLink->ReleaseRef();
+    }
+
+    InfoLog("send pdu to the %d links", cnt);
+    return cnt; // valid link count;
+}

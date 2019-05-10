@@ -25,7 +25,7 @@ namespace imsvr
 
 #define MAX_RECONNECT_CNT	64
 #define MIN_RECONNECT_CNT	4
-#define MAX_ASSOCSER_TYPE   10
+#define MAX_ASSOCSER_TYPE   12
 #define INVALID_ASSOCSER_ID -1
 
 typedef enum _ASSOCIATED_SERVICE_ID          //Associated identification
@@ -37,8 +37,11 @@ typedef enum _ASSOCIATED_SERVICE_ID          //Associated identification
 	APUSH	= 16,			//For Android  push device 
 	BPN 	= 32,
 	FS		= 64,			//freeswitch
-	CSR		= 128			//customer service
-	
+	CSR		= 128,			//customer service
+	NOTIFY	= 256,
+	LOGIN	= 512,			// login service
+	CHANNEL	= 1024,			// channel service
+    DESKTOP = 2048          //desktop service
 } ASSOCIATED_SERVICE_ID;
 
 
@@ -60,7 +63,7 @@ typedef struct _AssociatedSvr				// associcated server attr, id, node path and i
 
 
 typedef list<serv_info_t *> ServerList_t; // list of basic associated server.
-typedef unordered_map<string, serv_info_t*>  ServerInfoMap_t;  // reserved for future using , server info map. 
+typedef std::tr1::unordered_map<string, serv_info_t*>  ServerInfoMap_t;  // reserved for future using , server info map. 
 
 
 typedef struct _AssocSvrList				  // list of refreshed associated server  	

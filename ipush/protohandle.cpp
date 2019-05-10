@@ -19,11 +19,17 @@
 #include "lock.h"
 #include "CApnsPostData.h"
 #include "ssl_post_mgr.h"
+#include "configfilereader.h"
 
-static const char 	*topicBunldId = "com.onlyy.kimi";		//topicBunldId
-static const string	KID_VALUE = "594632QH7J";	//issauthKeyId classCHead
+#define CONFIG_FILE "server.conf"
+
+//static const char 	*topicBunldId = "com.onlyy.kimi.voip";		//topicBunldId
+static const string topicBunldId = CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("topic") ? CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("topic") : "com.onlyy.kimi.voip";
+//static const string	KID_VALUE = "594632QH7J";	//issauthKeyId classCHead
+static const string	KID_VALUE = CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("kid") ? CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("kid") : "594632QH7J";
 static const string	ISS_UERVALUE = "PF9HQJWL24";	//teamId classCHeadiss
-static const string JWT_SIGN_KEY = "AuthKey_594632QH7J.p8";
+//static const string JWT_SIGN_KEY = "AuthKey_594632QH7J.p8";
+static const string JWT_SIGN_KEY =CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("signkey") ? CConfigFileReader::GetInstance(CONFIG_FILE)->GetConfigName("signkey") : "AuthKey_594632QH7J.p8";
 static const string JWT_HEAD = "{ \"alg\": \"ES256\", \"kid\": \"%s\" }";
 static const string JWT_CLAIMS = "{ \"iss\": \"%s\", \"iat\": %d }";
 
@@ -758,7 +764,7 @@ std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateAPNsPostData(const PSv
 	static bool bInit = false;
 	if (!bInit)
 	{
-		if (!head.Init(topicBunldId, JWT_SIGN_KEY.c_str()))
+		if (!head.Init(topicBunldId.c_str(), JWT_SIGN_KEY.c_str()))
 		{
 			return pPostData;
 		}
@@ -875,6 +881,79 @@ string getMsg(const string& deviceToken, const string& message)
 	return string(msg, len);
 }
 
+
+string getPayLoadJsonStr(int nMsgType, const string& message)
+{
+	Json::Value extendValue;
+	Json::Value categoryValue;
+	categoryValue["pushType"] = 0;
+	categoryValue["action"] = 0;
+	//pushType 消息类型 0:普通消息   1:p2p音频 2:好友邀请 3:群邀请 4:会议呼叫 5:运营公告类型 6:PC Wakeup
+	if(nMsgType == im::P2P_CALL)
+	{
+		categoryValue["pushType"] = 1;
+		if(message.compare("cancel_p2p_call") == 0)
+			categoryValue["action"] = 1;
+	}
+	else if(nMsgType == im::CONTACTS)
+	{
+		categoryValue["pushType"] = 2;
+	}
+	else if(nMsgType == im::GRP_CONTACTS)
+	{
+		categoryValue["pushType"] = 3;
+	}
+	else if(nMsgType == im::REFERENCE_CALL)
+	{
+		categoryValue["pushType"] = 4;
+	}
+    else if (nMsgType == im::APP_WAKEUP)
+    {
+		categoryValue["pushType"] = 6;
+    }
+	categoryValue["extend"] = extendValue;
+	Json::Value apsValue;
+	apsValue["alert"] = message;
+	apsValue["sound"] = "default";
+	apsValue["category"] = categoryValue;
+	Json::Value 	root;
+	root["aps"] = apsValue;
+	
+	return root.toStyledString();
+}
+
+
+string getMsgBody(int nMsgType, const string& deviceToken, const string& message)
+{
+	string payLoad = getPayLoadJsonStr(nMsgType, message);
+	DbgLog("%s", payLoad.c_str());
+	int len = 2 + 1 + deviceToken.size() + 4 + payLoad.size();
+	char* msg = new char[len + 1];
+	memset(msg, 0, len + 1);
+	len = 2;
+	len += sprintf(msg + len, "%c", 32);
+
+
+	int value;
+	for (unsigned int i = 0; i < (deviceToken.length() + 1) / 2; ++i)
+	{
+		//sscanf(string(string(deviceToken[i*2])+deviceToken[i*2+1]).c_str(), "%x", &value);
+		string valueStr = deviceToken.substr(i * 2, 2);
+
+		sscanf(valueStr.c_str(), "%x", &value);
+		len += sprintf(msg + len, "%c", value);
+	}
+
+	len += sprintf(msg + len, "%c", (int)payLoad.length() / 256);
+	len += sprintf(msg + len, "%c", (int)payLoad.length() % 256);
+
+	len += sprintf(msg + len, "%s", payLoad.c_str());
+
+	return string(msg, len);
+}
+
+
+
 std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipPostData(const PSvrMsg& msg)
 {
 	std::shared_ptr<CApnsPostData> pPostData = std::shared_ptr<CApnsPostData>(new CApnsPostData);
@@ -886,8 +965,13 @@ std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipPostData(const PSv
 	pPostData->sToId = msg.stoid();
 
 	//string sendFN = getMsg("48d24d6c9b29389c86251203a34b777ce8ad42a0dd138db440ebd36d9e896276", "\344\275\240\346\234\211\344\270\200\344\270\252\346\226\260\347\232\204\345\221\274\345\217\253\357\274\201");
-	string sendFN = getMsg(msg.stotoken(),msg.sbody());
-	
+
+//	string sendFN = "";
+//	if(msg.sappversion().empty())
+//		sendFN = getMsg(msg.stotoken(),msg.sbody());
+//	else
+//		sendFN = getMsgBody(msg.emsgtype(), msg.stotoken(),msg.sbody());
+	string sendFN = getMsgBody(msg.emsgtype(), msg.stotoken(),msg.sbody());
 	char *body = (char *)malloc(sendFN.length() + 1);
 	if (body == nullptr)
 	{
@@ -905,4 +989,68 @@ std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipPostData(const PSv
 	//DbgLog("push content %s\n", sendFN.c_str());
 	return pPostData;
 
+}
+
+std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipHttp2PostData(const PSvrMsg& msg) {
+
+	std::shared_ptr<CApnsPostData> pPostData(NULL);
+
+	//设置CHead
+	static CHead	head;				//CHead vec for apns
+	static bool bInit = false;
+	if (!bInit)
+	{
+		if (!head.Init(topicBunldId.c_str(), JWT_SIGN_KEY.c_str()))
+		{
+			return pPostData;
+		}
+	}
+	head.SetAPNsId(msg.smsgid().c_str());
+	head.SetDeviceToken(msg.stotoken().c_str());
+
+	//创建pPostData并设置值
+	pPostData = std::shared_ptr<CApnsPostData>(new CApnsPostData);
+	if (!pPostData)
+	{
+		return pPostData;
+	}
+
+
+	pPostData->nva = head.GetNghttp2Nv(pPostData->navArrayLen);
+	if (!pPostData->nva)
+	{
+		InfoLog("GetNghttp2Nv is null!\n");
+		return  shared_ptr<CApnsPostData>(NULL);
+	}
+
+
+//	pPostData->sToId = payLoad.GetToId();
+    pPostData->sToId = msg.stoid();
+	pPostData->sMsgId = msg.smsgid();
+
+//	string jsonStr = payLoad.GetJson_s();
+    string jsonStr = getPayLoadJsonStr(msg.emsgtype(), msg.sbody());//get json payload
+	if (jsonStr.empty())
+	{
+		InfoLog("payload GetJson false!\n");
+		return  shared_ptr<CApnsPostData>(NULL);
+	}
+
+	char *body = (char *)malloc(jsonStr.size() + 1);
+	if (body == nullptr)
+	{
+
+		InfoLog("payload GetJson false!\n");
+		return  shared_ptr<CApnsPostData>(NULL);
+	}
+
+	strcpy(body, jsonStr.c_str());
+
+	pPostData->body = body;
+	pPostData->bodyLen = jsonStr.size();
+
+	DbgLog("%s\n", jsonStr.c_str());
+
+
+	return pPostData;
 }

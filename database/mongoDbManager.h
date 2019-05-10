@@ -25,6 +25,7 @@ public:
 	virtual ~CMongoDbConn();
 
 	mongocxx::collection GetCollection(const string& dbName, const string& collName)const;
+	mongocxx::database GetDatabase(const string& dbName)const;
 private:
 	CMongoDbConn(const CMongoDbConn&);				//declare copy constructor but not defined, forbidden use it
 	CMongoDbConn& operator=(const CMongoDbConn&);	//declare Assignment operator but not defined, forbidden use it
@@ -74,7 +75,7 @@ public:
 	virtual ~CMongoDbManager();
 
 	//读取配置文件，加载dbServer的相关信息并根据配置信息创建dbPool对象
-	int Init(CConfigFileReader* pReader);
+	int Init(CConfigFileReader* pReader, bool initThreadPool = true);
 
 	static CImThreadPool* GetMongoThreadPoolInstance();
 	std::unique_ptr<CMongoDbConn> GetDBConn();

@@ -73,7 +73,10 @@ public:
 	
 	bool CreateIndex(const std::string& indexName, bool unique = false, bool backGround = true);
 	bool CreateIndex(const std::vector<std::string>& indexNames);
-	bool InsertOne(const IMongoDataEntry& mongoData);
+    static    bool CreateCollection(const std::string& collection);
+ //   bool CreateCollection(const std::string& collection, bool shard);
+    
+    bool InsertOne(const IMongoDataEntry& mongoData);
     unsigned short InsertOne(const IMongoDataEntry& mongoData, int);
     CMongoInsertTask* InsertOne(const IMongoDataEntry& mongoData, mongoInsertCallBack callBack, void* para)const;
     CMongoInsertTask* InsertOne(const IMongoDataEntry& mongoData, mongoInsertCallBack__ callBack, void* para)const;
@@ -99,6 +102,8 @@ private:
 private:
 	std::string m_sDbName;								//database name
 	std::string m_sCollName;								//collection name
+
+    static    std::string m_sAdminDbName;                   //admin db for run command 
 };
 
 #endif // __MONGODBCOLL_H__

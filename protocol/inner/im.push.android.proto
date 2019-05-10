@@ -1,0 +1,56 @@
+//ANDROID_PUSH					= 0xd007;						//ANDROID消息推送
+//ANDROID_PUSH_ACK				= 0xd008;						//ANDROID消息推送应答
+
+syntax = "proto3";
+
+package im;
+import "im.pub.proto";
+
+option optimize_for = LITE_RUNTIME;
+
+////////////////////////////////////////////////////////////////////////
+//ANDROID_PUSH					= 0xd007;						//ANDROID消息推送
+////////////////////////////////////////////////////////////////////////
+//服务器之间交互消息内容
+message ANDPushMsg
+{
+	MsgType eMsgType 			= 1;				// 消息类型 详见enum MsgType
+	string  sMsgId				= 2; 				//Generated uuid by APP Id;
+	uint32	nGroupId			= 3;				//群id			
+	string 	sTitle				= 4;				//标题
+	string 	sBody 				= 5;				// 消息内容	
+	
+	string sToId				= 6;				//receive user id
+	string sDivece_Token		= 7;				//device token
+	DiveceType eDivece_type		= 8;				//根据不同的设备类型，走不同的push服务
+	
+	//repeated ANDPersonList to_vec = 6;				//发送列表，最多1000个， 最少一个
+	//string 	sName				= 6;				//个人名或群名,取决于是去群聊还是个人聊天--
+    //string 	sUrl				= 7;				//http://www.xxx.com/xx.jpg",//个人头像或群头像或活动页面
+		
+}
+
+////////////////////////////////////////////////////////////////////////
+//ANDROID_PUSH_ACK				= 0xd008;						//ANDROID消息推送应答
+////////////////////////////////////////////////////////////////////////
+message ANDPushMsgAck{
+	string  sMsgId				= 1;				// Generated uuid by APP Id;
+	ErrCode	nErr				= 2;				//协议正确与否
+}
+
+//
+//ANDROID_NOTIFY					= 0xd00a;						//pushServer(ANDROID_NOTIFY)通知消息推送状态
+message ANDNotify
+{
+	string  sMsgId				= 1;  				//Generated uuid by APP Id;
+	string 	sToId				= 2;				//receive user id
+	ErrCode	nErr		 		= 3;				//error code
+}
+
+//ANDROID_NOTIFY_ACK				= 0xd00b;						//业务服务器应答
+message ANDNotifyAck
+{
+	string  sMsgId				= 1;  				//Generated uuid by APP Id;
+	string 	sToId				= 2;				//receive user id
+	ErrCode	nErr		 		= 3;				//error code
+}

@@ -7,11 +7,13 @@ Description:
 #include <mongocxx/client.hpp>
 #include <mongocxx/exception/bulk_write_exception.hpp>
 #include <mongocxx/uri.hpp>
+#include <mongocxx/database.hpp>
 #include "configfilereader.h"
 #include "threadpool.h"
 #include "mongoDbManager.h"
 #include "util.h"
 using mongocxx::collection;
+using mongocxx::database; 
 
 CMongoDbConn::CMongoDbConn(std::unique_ptr< client, std::function< void(client *)>> client)
 	:mRealClient(move(client))
@@ -35,6 +37,10 @@ collection CMongoDbConn::GetCollection(const string& dbName, const string& collN
 	return (*mRealClient)[dbName][collName];
 }
 
+database CMongoDbConn::GetDatabase(const string& dbName) const 
+{
+    return (*mRealClient)[dbName];
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 CMongoDbPool::CMongoDbPool(const char* pool_name, const char* db_server_ip, uint16_t db_server_port,
@@ -99,7 +105,7 @@ CMongoDbManager::~CMongoDbManager()
 
 }
 
-int CMongoDbManager::Init(CConfigFileReader* pReader)
+int CMongoDbManager::Init(CConfigFileReader* pReader, bool initThreadPool)
 {
 	if (NULL == pReader)
 	{
@@ -165,18 +171,21 @@ int CMongoDbManager::Init(CConfigFileReader* pReader)
 		m_dbpoolMap.insert(make_pair(pool_name, pDBPool));
 	}
 
-	char* str_mongo_thread_num = config_file.GetConfigName("mongo_thread_num");
-	int mongo_thread_num = str_mongo_thread_num ? atoi(str_mongo_thread_num) : 40;
-	m_pMongoThreadPool = new CImThreadPool();
-	//如果创建成功但初始化失败，则返回NULL
-	if (m_pMongoThreadPool != NULL && m_pMongoThreadPool->Init(mongo_thread_num) != 0)
+	if(initThreadPool)
 	{
-		DbgLog("mongothread created failed, size = %d", mongo_thread_num);
-		delete m_pMongoThreadPool;
-		m_pMongoThreadPool = NULL;
-		return 1;
+		char* str_mongo_thread_num = config_file.GetConfigName("mongo_thread_num");
+		int mongo_thread_num = str_mongo_thread_num ? atoi(str_mongo_thread_num) : 40;
+		m_pMongoThreadPool = new CImThreadPool();
+		//如果创建成功但初始化失败，则返回NULL
+		if (m_pMongoThreadPool != NULL && m_pMongoThreadPool->Init(mongo_thread_num) != 0)
+		{
+			DbgLog("mongothread created failed, size = %d", mongo_thread_num);
+			delete m_pMongoThreadPool;
+			m_pMongoThreadPool = NULL;
+			return 1;
+		}
+		log("CMongoDbManager created %d threads", mongo_thread_num);
 	}
-	log("CMongoDbManager created %d threads", mongo_thread_num);
 
 	m_bHasInit = true;
 	return 0;

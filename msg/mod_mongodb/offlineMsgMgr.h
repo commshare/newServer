@@ -51,7 +51,7 @@ public:
 
 	//COfflineMsg GetOfflineMsg(const int cmdId, const string& msgId);
 
-    im::MESOfflineMsgAck GetUserOfflineMsg(const string& toId, const string& fromId = string(""), int maxLen = 65535, int limitNum = 50, int cmdId = 0)  throw (int);
+    im::MESOfflineMsgAck GetUserOfflineMsg(const string& toId, const string& fromId = string(""), int maxLen = 65535, int limitNum = 50, int cmdId = 0, int64_t createTime = 0)  throw (int);
     //bool GetUserOfflineMsgSortByCmdID(std::vector<COfflineMsg>& offlineMsgList, string& toId, const string& fromId = string(""),  int limitNum = 0, int cmdId = 0)  throw (int);
     //im::MESOfflineMsgAck GetUserOfflineMsg(const string& toId, const string& fromId = string(""), int maxLen = 65515, int limitNum = 0, int cmdId = 0, std::int64_t createTime = 0)  throw (int);
 
@@ -65,7 +65,8 @@ public:
 	im::MESOfflineSummaryAck GetUserOfflineTotal(const string & toId, const string& fromId, int maxLen = 65515, int cmdId = 0);
 	// 更改 呼叫/视频通话离线消息的状态
     bool updateCallOfflineMsgStatus(const string& toId, const int cmdId, const string&  scallId, int nStatus);
-    int GetUserOfflineMsgSummaryBytoId(const string &toId);
+	bool getOfflineMsgPullStatus(const string& toId, const int cmdId, const string& msgId);
+    int GetUserOfflineMsgSummaryBytoId(const string &toId, int64_t createTime);
 };
 
 

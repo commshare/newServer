@@ -19,6 +19,7 @@ Description:
 #include "serverinfo.h"
 #include "util.h"
 #include "commonTaskMgr.h"
+#include"getDataInterfaceManager.h"
 
 using namespace im;
 using namespace std;
@@ -135,44 +136,59 @@ void CMsgHandler::sendMsgChatAck(const im::MESChat& msg, im::ErrCode retCode, co
 
 void CMsgHandler::HandleMsgChatTask(const im::MESChat& msg, const UidCode_t& sessionId)
 {
-	CUsecElspsedTimer elspsedTimer;
-	elspsedTimer.start();
-
-	im::ErrCode retCode = msg.scontent().empty() ? ERR_CHAT_UNHEALTHY : NON_ERR;
-
-	//check user right for chat
-	MsgSessionSetting sessionSetting;
-	if (NON_ERR == retCode)
-	{	
-		DbgLog("Thread[%lu] checkFriend begin msg[%s]",pthread_self(),msg.smsgid().c_str());
-		retCode = GetErrorCodeForChatToFriend(msg.sfromid(), msg.stoid(), sessionSetting);
-		DbgLog("Thread[%lu] checkFriend end msg[%s]",pthread_self(),msg.smsgid().c_str());
-	}
-
-	uint64_t checkUserRightTime = elspsedTimer.elapsed();
-	if (retCode != NON_ERR)
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
+	im::ErrCode retCode = NON_ERR;
+	unsigned short bInsertSuccess = 0;
+	FRIEND_INFO_ friendInfo;
+	do 
 	{
-		sendMsgChatAck(msg, retCode, sessionId);
-		WarnLog("MsgChat %s illegal ,Task handle finish, at checkRight use %llu usecond ,total use use %llu usecond \n",
-			msg.smsgid().c_str(), checkUserRightTime, elspsedTimer.elapsed());
-		return;
-	}
+		if(msg.scontent().empty())
+		{
+			retCode = ERR_CHAT_UNHEALTHY;
+			break;
+		}
 
-	DbgLog("Thread[%lu] insertOffline begin msg[%s]",pthread_self(),msg.smsgid().c_str());
-	COfflineMsg offmsg(msg);
+		uint64_t nowTick = getCurrentTime_usec();
+		CGetDataInterfaceManager dataInterface;
+		string strCode = "";
+		if(!dataInterface.getFriendInfo(m_friendInfoUrl, m_sAppSecret, msg.sfromid(), msg.stoid(), friendInfo, strCode))
+		{
+			retCode = im::ERR_GROUP_NETWORKEXCEPTION;
+			ErrLog("get friend info fail");
+			break;
+		}
+		DbgLog("Thread[%lu] get friend info time %llu msgId=%s",pthread_self(), getCurrentTime_usec() - nowTick, msg.smsgid().c_str());
 
-    unsigned short bInsertSuccess = m_offlineMsgMgr.InsertOfflineMsg(offmsg, 0xffff);
-	DbgLog("Thread[%lu] insertOffline end msg[%s]",pthread_self(),msg.smsgid().c_str());
-	
-    sendMsgChatAck(msg, ((bInsertSuccess & MONGO_OPERATION_SUCCESS) ? NON_ERR : EXCEPT_ERR),sessionId);
-	uint64_t chatAckSendTime = elspsedTimer.elapsed();
+		if(NO_RELA == friendInfo.friendStatus || NO_RELA == friendInfo.userStatus)
+		{
+			retCode = ERR_CHAT_FORBIDDEN;
+			break;
+		}
 
-	uint64_t chatDeliverSendTime = 0;
-	uint64_t pushSendTime = 0;
+		if(IS_BLACK == friendInfo.friendStatus || IS_BLACK == friendInfo.userStatus)
+		{
+			retCode = ERR_CHAT_FRIEND_BLOCK;
+			break;
+		}
 
-    if (!bInsertSuccess)
+		if(IS_DEL == friendInfo.friendStatus || IS_DEL == friendInfo.userStatus)
+		{
+			retCode = ERR_CHAT_FRIEND_DEL;
+			break;
+		}
+		
+		COfflineMsg offmsg(msg);
+		DbgLog("Thread[%lu] insertOffline begin msg[%s]",pthread_self(),msg.smsgid().c_str());
+		bInsertSuccess = m_offlineMsgMgr.InsertOfflineMsg(offmsg, 0xffff);
+		DbgLog("Thread[%lu] insertOffline end msg[%s]",pthread_self(),msg.smsgid().c_str());
+		retCode = (bInsertSuccess & MONGO_OPERATION_SUCCESS) ? NON_ERR : EXCEPT_ERR;
+		if(0 == bInsertSuccess )
+			ErrLog("Thread[%lu] insert msg %s to mongodb failed",pthread_self(), msg.smsgid().c_str());
+	}while(0);
+	sendMsgChatAck(msg, retCode,sessionId);
+	if(retCode != NON_ERR)
 	{
-		WarnLog("Thread[%lu] insert msg %s toDb failed",pthread_self(), msg.smsgid().c_str());
+		WarnLog("Thread[%lu] send msg exception! msgid=%s, from=%s, to=%s code=%d", pthread_self(), msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str(), retCode);
 		return;
 	}
 
@@ -183,55 +199,42 @@ void CMsgHandler::HandleMsgChatTask(const im::MESChat& msg, const UidCode_t& ses
 	else
 	{
 		std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(msg.stoid());		
-		if (pLogin)
+		if (nullptr == pLogin)
 		{
-			if (pLogin->IsLogin())//如果对端在线则直接推到对方
+			ErrLog("Thread[%lu]  get login info fail  msg=%s, toid=%s",pthread_self(), msg.smsgid().c_str(), msg.stoid().c_str());
+			return;
+		}
+		if(pLogin->IsLogin())	//如果对端在线则直接推到对方
+		{
+			sendReq(&msg, MES_CHAT_DELIVER, pLogin->GetCmIp(), atoi(pLogin->GetCmPort().c_str()));
+			DbgLog("****from_id %s send MES_CHAT_DELIVER(0x%x) %s to %s", msg.sfromid().c_str(), MES_CHAT_DELIVER, msg.smsgid().c_str(), msg.stoid().c_str());
+		}
+		else
+		{
+			if(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE)
 			{
-				sendReq(&msg, MES_CHAT_DELIVER, pLogin->GetCmIp(), atoi(pLogin->GetCmPort().c_str()));
-				chatDeliverSendTime = elspsedTimer.elapsed();
-				DbgLog("\t****send MES_CHAT_DELIVER(0x%x) %s to %s", MES_CHAT_DELIVER, msg.smsgid().c_str(), msg.stoid().c_str());
+				WarnLog("the msg is repeat! msgid=%s, from=%s, to=%s", msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str());
+				return;
 			}
-			else //如果不在线则直接发推送，如果不在线，根据消息免打扰设置结果确定是否发送推送
+			bool bPush = friendInfo.newMsg;
+			if(friendInfo.newMsg)
 			{
-				do{
-                    if (!(bInsertSuccess & MONGO_OPERATION_REPLACE_ONE)) {
-                        string sDeviceId = pLogin->GetDeviceID();
-                        string sUserID = CLoginInfoMgr::getDeviceLastUserID(sDeviceId);
-
-                        if(!sUserID.empty() && sUserID != msg.stoid())  //other user login the same device,no need to push
-                        {
-                            DbgLog("Ohter user %s login device %s,no push to user %s ",sUserID.c_str(),sDeviceId.c_str(),msg.stoid().c_str());
-                            break;
-                        }
-
-                        std::shared_ptr<CUserCfg> pUserCfg = CUserCfgMgr::GetUserCfg(msg.stoid());
-                        bool msgNoInterruption = pUserCfg->IsGlobalNoInterruption();
-                        DbgLog("use %s:%s cfg setting,globalNointerupt:%d, sessionNoInterupt:%d, InHideModel:%d, hideMsgSoundOn:%d", msg.stoid().c_str(), msg.sfromid().c_str(),
-                            pUserCfg->IsGlobalNoInterruption(), sessionSetting.m_nSoundOff, sessionSetting.m_nHidenFlag, pUserCfg->IsHidenMsgSoundOn());
-                        if (!msgNoInterruption)					//会话是否设置了消息免打搅
-                        {
-                            msgNoInterruption = sessionSetting.m_nSoundOff;
-                            if (!msgNoInterruption && sessionSetting.m_nHidenFlag) //隐藏消息的免打搅
-                            {
-                                msgNoInterruption = !pUserCfg->IsHidenMsgSoundOn();
-                            }
-                        }
-
-                        if (!msgNoInterruption)
-                        {
-                            //static string NewMsgStr("\344\275\240\346\234\211\344\270\200\346\235\241\346\226\260\346\266\210\346\201\257\357\274\201");	//你有一条新消息！
-                            sendPush(pLogin, msg.sfromid(), msg.stoid(), msg.smsgid(), PERSONAL_TALK, NewMsgStr/*"you have new msg!"*/);
-                            pushSendTime = elspsedTimer.elapsed();
-                        }
-                    }
-				}while(0);
+				bPush = !friendInfo.undisturb;
+				if(!friendInfo.undisturb && IS_STRANGER == friendInfo.friendStatus)
+				{
+					bPush = friendInfo.hideMsgSoundOn;
+				}
 			}
+			DbgLog("user %s bPush = %d", msg.stoid().c_str(), bPush);	
+			if(bPush && checkDeviceLastUser(msg.stoid(), pLogin->GetDeviceToken()))
+			{
+				sendPush(msg.sfromid(), msg.stoid(), msg.smsgid(), im::PERSONAL_TALK, NewMsgStr, 
+								friendInfo.pushType, friendInfo.pushToken, friendInfo.voipToken, friendInfo.versionCode);
+				DbgLog("****from_id %s push MES_CHAT_DELIVER(0x%x) %s to %s", msg.sfromid().c_str(), MES_CHAT_DELIVER, msg.smsgid().c_str(), msg.stoid().c_str());
+			}	
 		}
 	}
-	
-	log("MsgChat %s finish,%llu right chked ,MESChatAck(0xb002)@%llu, MESChatDeliver(0xb004)@%llu, push@ %llu\r\n",
-		msg.smsgid().c_str(),/* pthread_self(),*/ checkUserRightTime, chatAckSendTime, chatDeliverSendTime, pushSendTime);
-	DbgLog("Thread[%lu] process msg end [%s]",pthread_self(),msg.smsgid().c_str());
+	DbgLog("process handle end msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
 }
 
 
@@ -265,7 +268,7 @@ void CMsgHandler::OnMsgChat(std::shared_ptr<CImPdu> pPdu)
 	}
 
     msg.set_msgtime(getCurrentTime());//set server time
-	DbgLog("process msg begin [%s]",msg.smsgid().c_str());
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
 	CCommonTaskMgr::InsertCommonTask(pMsg, OnMsgChatStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()),BKDRHash(msg.stoid().c_str()));
 	log("msgChat-%d (0x%x) %s prehandled , %s-->%s, content Len %d, content = %s, use %llu usecond \n", msgChatCount, pPdu->GetCommandId()/*MES_CHAT*/, msg.smsgid().c_str(),
 		msg.sfromid().c_str(), msg.stoid().c_str(), msg.scontent().size(), (msg.scontent().size() > 40 ? "..." : msg.scontent().c_str()), elspsedTimer.elapsed());
@@ -313,53 +316,74 @@ void CMsgHandler::sendMsgChatCancelAck(const im::MESChatCancel& msg, im::ErrCode
 	}
 }
 
-void CMsgHandler::HandleMsgChatCancelTask(const im::MESChatCancel& msg, const UidCode_t& sessionId)
+void CMsgHandler::HandleMsgChatCancelTask(im::MESChatCancel& msg, const UidCode_t& sessionId)
 {
-	CUsecElspsedTimer elspsedTimer;
-	elspsedTimer.start();
-
-	im::ErrCode retCode = GetErrorCodeForChatToFriend(msg.sfromid(), msg.stoid());
-	
-
-	uint64_t checkUserRightTime = elspsedTimer.elapsed();
-	if (retCode != NON_ERR)
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
+	im::ErrCode retCode = NON_ERR;
+	bool bUpdateSuccess = false;
+	FRIEND_INFO_ friendInfo;
+	do 
 	{
-		//const uint64_t msgTime = getCurrentTime();
-		//send addFriendAck to sender
-		sendMsgChatCancelAck(msg, retCode,sessionId);
-		WarnLog("MsgChatCancel %s illegal Task handle finish, at checkRight use %llu usecond ,total use use %llu usecond \n",
-			msg.smsgid().c_str(), checkUserRightTime, elspsedTimer.elapsed());
+		uint64_t nowTick = getCurrentTime_usec();
+		CGetDataInterfaceManager dataInterface;
+		string strCode = "";
+		if(!dataInterface.getFriendInfo(m_friendInfoUrl, m_sAppSecret, msg.sfromid(), msg.stoid(), friendInfo, strCode))
+		{
+			retCode = im::ERR_GROUP_NETWORKEXCEPTION;
+			ErrLog("get friend info fail");
+			break;
+		}
+		DbgLog("Thread[%lu] get friend info time %llu",pthread_self(), getCurrentTime_usec() - nowTick);
+
+		if(NO_RELA == friendInfo.friendStatus || NO_RELA == friendInfo.userStatus)
+		{
+			retCode = ERR_CHAT_FORBIDDEN;
+			break;
+		}
+		if(IS_BLACK == friendInfo.friendStatus || IS_BLACK == friendInfo.userStatus)
+		{
+			retCode = ERR_CHAT_FRIEND_BLOCK;
+			break;
+		}
+		if(IS_DEL == friendInfo.friendStatus || IS_DEL == friendInfo.userStatus)
+		{
+			retCode = ERR_CHAT_FRIEND_DEL;
+			break;
+		}
+
+		DbgLog("Thread[%lu] cancel chat msg update offline msg begin! msg[%s]",pthread_self(), msg.smsgid().c_str());
+		msg.set_sendstate(0);
+		if(m_offlineMsgMgr.getOfflineMsgPullStatus(msg.stoid(), MES_CHAT_DELIVER, msg.smsgid()))
+			msg.set_sendstate(1);
+		DbgLog("Thread[%lu] read offline msg status! msg[%s] status=%d",pthread_self(), msg.smsgid().c_str(), msg.sendstate());
+		bUpdateSuccess = m_offlineMsgMgr.UpdateOfflineMsg(msg.stoid(), MES_CHAT_DELIVER, msg.smsgid(), COfflineMsg(msg));
+		DbgLog("Thread[%lu] cancel chat msg update offline msg end! msg[%s]",pthread_self(), msg.smsgid().c_str());
+		retCode = bUpdateSuccess ? NON_ERR : EXCEPT_ERR;
+		if(!bUpdateSuccess )
+			ErrLog("Thread[%lu] cancel chat msg update fail! msg %s to mongodb failed",pthread_self(), msg.smsgid().c_str());
+	}while(0);
+
+	sendMsgChatCancelAck(msg, retCode,sessionId);
+	if(retCode != NON_ERR)
+	{
+		WarnLog("send cancel msg exception! msgid=%s, from=%s, to=%s code=%d", msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str(), retCode);
 		return;
 	}
-
 	
-	bool bUpdateSuccess = m_offlineMsgMgr.UpdateOfflineMsg(msg.stoid(), MES_CHAT_DELIVER, msg.smsgid(), COfflineMsg(msg));
-	uint64_t insertFinishTime = elspsedTimer.elapsed();
-
-
-	sendMsgChatCancelAck(msg, (bUpdateSuccess ? NON_ERR : EXCEPT_ERR), sessionId);
-
-	if (bUpdateSuccess)
+	if (isCustomerService(msg.stoid()))
 	{
-		if (isCustomerService(msg.stoid()))
+		sendReq(&msg, MES_CHATCANCEL_DELIVER, imsvr::CSR);
+	}
+	else
+	{
+		std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(msg.stoid());
+		if (pLogin && pLogin->IsLogin())
 		{
-			sendReq(&msg, MES_CHATCANCEL_DELIVER, imsvr::CSR);
-		}
-		else
-		{
-			std::shared_ptr<CLoginInfo> pLogin = CLoginInfoMgr::GetLoginInfo(msg.stoid());
-
-			if (pLogin && pLogin->IsLogin())
-			{
-				sendReq(&msg, MES_CHATCANCEL_DELIVER, pLogin->GetCmIp(), atoi(pLogin->GetCmPort().c_str()));
-				log("\t****send MES_CHATCANCEL_DELIVER(0x%x) %s to %s", MES_CHATCANCEL_DELIVER, msg.smsgid().c_str(), msg.stoid().c_str());
-			}
+			sendReq(&msg, MES_CHATCANCEL_DELIVER, pLogin->GetCmIp(), atoi(pLogin->GetCmPort().c_str()));
+			log("\t****send MES_CHATCANCEL_DELIVER(0x%x) %s to %s", MES_CHATCANCEL_DELIVER, msg.smsgid().c_str(), msg.stoid().c_str());
 		}
 	}
-	
-
-	DbgLog("MsgChatCancel %s Task handle in thread %llu finish , at %llu usec right checked, %llu mongo insertted, total use use %llu usecond \r\n\r\n",
-		msg.smsgid().c_str(), pthread_self(), checkUserRightTime, insertFinishTime, elspsedTimer.elapsed());
+	DbgLog("process handle end msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
 }
 
 
@@ -389,7 +413,7 @@ void CMsgHandler::OnMsgChatCancel(std::shared_ptr<CImPdu> pPdu)
 		ErrLog("no toId or msgId specified");
 		return;
 	}
-
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
 	CCommonTaskMgr::InsertCommonTask(pMsg, OnMsgChatCancelStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()));
 	log("msgChatCancel (0x%x) %s prehandled , %s-->%s, use %llu usecond \n", pPdu->GetCommandId(), msg.smsgid().c_str(),
 		msg.sfromid().c_str(), msg.stoid().c_str(), elspsedTimer.elapsed());
@@ -402,6 +426,7 @@ void CMsgHandler::OnMsgChatCancel(std::shared_ptr<CImPdu> pPdu)
 
 void CMsgHandler::HandleMsgChatDeliverAckTask(const im::MESChatDeliveredAck& msg)
 {
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
 	CUsecElspsedTimer timer;
 	timer.start();	
 
@@ -430,6 +455,7 @@ void CMsgHandler::HandleMsgChatDeliverAckTask(const im::MESChatDeliveredAck& msg
 	}
 	log("MESChatDeliveredAck %s handle in thread %llu finish,dir %s --> %s, use %llu usecond\r\n",
 		pthread_self(), msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str(), timer.elapsed());
+	DbgLog("process handle end msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
 }
 
 void OnMsgChatDeliverAckStartUp(const std::shared_ptr<::google::protobuf::MessageLite>& pChatTask, void* paras)
@@ -467,7 +493,7 @@ void CMsgHandler::onMsgChatDeliverAck(std::shared_ptr<CImPdu> pPdu)
 			pPdu->GetCommandId(), msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str());
 		return;
 	}
-
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
 	CCommonTaskMgr::InsertCommonTask(pMsg, OnMsgChatDeliverAckStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()), BKDRHash(msg.stoid().c_str()));
 	log("MESChatDeliveredAck(0x%x) %s prehandled ,dir %s --> %s",
 		pPdu->GetCommandId(), msg.smsgid().c_str(), msg.sfromid().c_str(), msg.stoid().c_str());
@@ -545,6 +571,7 @@ void OnMsgReadStartUp(const std::shared_ptr<::google::protobuf::MessageLite>& pT
 
 void CMsgHandler::HandleMsgChatReadTask(const im::MESChatRead& msg, const UidCode_t& sessionId)
 {
+	DbgLog("process handle begin msgId=%s thread=%lu", msg.smsgid().c_str(), pthread_self());
 	COfflineMsg offmsg(msg);
 	bool bInsertSuccess = m_offlineMsgMgr.InsertOfflineMsg(offmsg);
 
@@ -580,6 +607,7 @@ void CMsgHandler::OnMsgRead(std::shared_ptr<CImPdu> pPdu)
 		ErrLog("!!!lack of required parameter");
 		return;
 	}
+	DbgLog("process add task msgId=%s",msg.smsgid().c_str());
 	CCommonTaskMgr::InsertCommonTask(pMsg, OnMsgReadStartUp, new OfflineMsgInsertCallBackParas_t(this, pPdu->GetSessionId()), BKDRHash(msg.stoid().c_str()));
 	log("msgChatRead(0x%x) %s prehandled , %s-->%s", pPdu->GetCommandId(), msg.smsgid().c_str(),
 		msg.sfromid().c_str(), msg.stoid().c_str());
@@ -661,8 +689,8 @@ bool CMsgHandler::RegistPacketExecutor(void)
 	CmdRegist(APNS_PUSH_ACK,						m_nNumberOfInst, CommandProc(&CMsgHandler::OnIPushAck));
 	CmdRegist(APNS_NOTIFY,							m_nNumberOfInst, CommandProc(&CMsgHandler::OnINotify));
 	// 消息通知 by Abner
-	CmdRegist(MS_COMMONNOTIFY,						m_nNumberOfInst, CommandProc(&CMsgHandler::OnCommonNotifyMsg));
-	CmdRegist(MS_COMMONNOTIFY_DELIVER_ACK,			m_nNumberOfInst, CommandProc(&CMsgHandler::OnCommonNotifyMsgDeliverAck));
+//	CmdRegist(MS_COMMONNOTIFY,						m_nNumberOfInst, CommandProc(&CMsgHandler::OnCommonNotifyMsg));
+//	CmdRegist(MS_COMMONNOTIFY_DELIVER_ACK,			m_nNumberOfInst, CommandProc(&CMsgHandler::OnCommonNotifyMsgDeliverAck));
 	
 	return true;
 }
@@ -717,7 +745,7 @@ void CMsgHandler::OnINotify(std::shared_ptr<CImPdu> pPdu)
 }
 
 // 通知消息处理 2018-8-16 Abner
-void OnCommonNotifyMsgStartUp(const std::shared_ptr<::google::protobuf::MessageLite>& pCommonNotifyMsgTask, void* paras)
+/*void OnCommonNotifyMsgStartUp(const std::shared_ptr<::google::protobuf::MessageLite>& pCommonNotifyMsgTask, void* paras)
 {
 	OfflineMsgInsertCallBackParas_t* pCallBackPara = (OfflineMsgInsertCallBackParas_t*)paras;
 	CMsgHandler* pHandle = (CMsgHandler*)pCallBackPara->m_handle;
@@ -862,7 +890,7 @@ void CMsgHandler::sendCommonNotifyMsgAck(const im::MSGCommonNotify& msg, im::Err
 	sendAck(&CommonNotifyACK, MS_COMMONNOTIFY_ACK, sessionId);
 	log("****send MSGCommonNotifyACK(0x%x) %s to %s, code = 0X%X", MS_COMMONNOTIFY_ACK,
 			CommonNotifyACK.smsgid().c_str(), CommonNotifyACK.suserid().c_str(), retCode);
-}
+}*/
 
 
 

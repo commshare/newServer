@@ -14,13 +14,6 @@
         NGHTTP2_NV_FLAG_NO_INDEX \
   }
   
-/* 																				                                                               			 																				                                                               			 
-#define MAKE_NV(NAME, VALUE)\
-  {\
-    (uint8_t *)NAME, (uint8_t *)(VALUE).c_str(), strlen(NAME), (VALUE).size(),\
-        NGHTTP2_NV_FLAG_NONE\
-  }	
-*/
 
 CStreamMap::~CStreamMap()
 {
@@ -140,33 +133,6 @@ void CHttp2Socket::httpCallback(void* callback_data, uint8_t msg, uint32_t handl
 	NOTUSED_ARG(pParam);
 }
 
-//int CHttp2Socket::_Decode_status_code(const uint8_t *value, size_t len)
-//{
-//  int i;
-//  int res;
-//
-//  if(len != 3) {
-//    return -1;
-//  }
-//
-//  res = 0;
-//
-//  for(i = 0; i < 3; ++i) {
-//    char c = value[i];
-//
-//    if(c < '0' || c > '9') {
-//      return -1;
-//    }
-//
-//    res *= 10;
-//    res += c - '0';
-//  }
-//
-//  return res;
-//}
-
-
-//regist the callback function just the apns needed
 void CHttp2Socket::SetNghttp2Callbacks()
 {
 	nghttp2_session_callbacks_set_send_callback(m_callbacks, 
@@ -262,6 +228,7 @@ size_t CHttp2Socket::_On_send_callback(nghttp2_session *session, const uint8_t *
 	CHttp2Socket *http = (CHttp2Socket*)user_data;
 
 	
+    DbgLog("send_callback, socket=%d", http->GetSocket());
 	if (http->GetSocket() <= 0)
 	{
 		InfoLog("socket:%d, SSL_write", http->GetSocket());
@@ -277,13 +244,16 @@ size_t CHttp2Socket::_On_recv_callback(nghttp2_session *session, uint8_t *buf, s
 	NOTUSED_ARG(session);
 	NOTUSED_ARG(flags);
 	CHttp2Socket *http = (CHttp2Socket*) user_data;
+    
+    DbgLog("recv_callback, socket=%d", http->GetSocket());
 
 	if (http->GetSocket() <= 0)
 	{
 		ErrLog("_On_recv_callback socket <= 0!");
 		return -1;
 	}
-
+//ping cause this callback???
+    http->GetCallBack()(http->GetCallBackData(), HTTP_PING_RESPONE, http->GetSocket(), NULL);
 	return http->Recv(buf, length);
 }
 
@@ -320,10 +290,8 @@ int CHttp2Socket::_On_header_callback(nghttp2_session *session, const nghttp2_fr
 			if (strcmp(errval, (const char *)value) == 0)
 			{
 				CHead::m_timestampSecAuth = 0;
-				//int i  = ::decode_status_code(value, valuelen);
 			}
 
-			//InfoLog("pop stream:%d", streamData->streamId);
 
 			if (streamData && streamData->pPostData)
 			{
@@ -345,7 +313,6 @@ int CHttp2Socket::_On_header_callback(nghttp2_session *session, const nghttp2_fr
 				ErrLog("streamData is nullptr");
 				return -1;
 			}
-			//shared_ptr<CApnsPostData> pData;
 
 			if (streamData->iPostStatus != POSt_STATUS_RESPONE_ECODE)
 			{
@@ -354,14 +321,12 @@ int CHttp2Socket::_On_header_callback(nghttp2_session *session, const nghttp2_fr
 
 			if (streamData && streamData->pPostData)
 			{
-				//pData = streamData->pPostData;
 
 				streamData->iPostStatus = POST_STATUS_RESPONE_APNS_ID;
 				if (streamData->pPostData.get()->nva->apns_id != string((char *)value))
 				{
 					ErrLog("pPostData->sMsgId:%s, apns ret Id:%s\n\n\n\n", streamData->pPostData.get()->nva->apns_id.c_str(), value);
 				}
-				//streamData-> = (char *)value;
 			}
 			else
 			{
@@ -393,12 +358,14 @@ int CHttp2Socket::_On_data_chunk_recv_callback(nghttp2_session *session, uint8_t
 	NOTUSED_ARG(session);
 	NOTUSED_ARG(flags);
 	NOTUSED_ARG(stream_id);
-	NOTUSED_ARG(user_data);
+//	NOTUSED_ARG(user_data);
+
+	CHttp2Socket *http = (CHttp2Socket*)user_data;
 	printf("on_data_chunk_recv_callback\n");
 
 	printf("[INFO] C <---------------------------- S (DATA chunk) %lu bytes\n",(unsigned long int)len);
 
-	ErrLog("data_chunk:%s", data);
+	ErrLog("data_chunk:%s, socket=%d", data, http->GetSocket());
 	return 0;
 }
 
@@ -433,7 +400,6 @@ int CHttp2Socket::Send(shared_ptr<CApnsPostData> data)
 		{
 			streamData->iPostStatus = POST_STATUS_REQUEST_SEND;
 			streamData->pPostData = data;
-			//streamData->ipostTimeTick = time(NULL);
 			streamData->streamId = iRet;
 
 			m_streamDataMap.Insert(streamData);
@@ -548,7 +514,6 @@ int CHttp2Socket::Close()
 	m_streamDataMap.Clear();
 
 	CSslSocket::Close();
-	//SetWriteable(false);
 
 	if (m_session)
 	{
@@ -567,7 +532,7 @@ void CHttp2Socket::OnClose()
 size_t 	CHttp2Socket::_On_Body_read_callback(nghttp2_session *session, int32_t stream_id, uint8_t *buf, 
 										   size_t length, uint32_t *data_flags, nghttp2_data_source *source, void *user_data)
 {
-	NOTUSED_ARG(user_data);
+//	NOTUSED_ARG(user_data);
 	NOTUSED_ARG(stream_id);
 	NOTUSED_ARG(length);
 	NOTUSED_ARG(session);
@@ -576,8 +541,9 @@ size_t 	CHttp2Socket::_On_Body_read_callback(nghttp2_session *session, int32_t s
 		return -1;
 	}
 	
+	CHttp2Socket *http = (CHttp2Socket*)user_data;
 	BodyCallBackData *data = (BodyCallBackData *)source->ptr;
-	//InfoLog("post body):%s", data->body);
+	DbgLog("post body):%s,socket=", data->body, http->GetSocket());
 
 	memcpy(buf, (char *)data->body, data->len);
 
@@ -663,22 +629,29 @@ int CHttp2Socket::Submit_request(nghttparr *nva, int navArrayLen, char *body, in
 	return stream_id;
 }
 
-//int CHttp2Socket::Submit_ping()
-//{
-//	InfoLog("Submit_ping");
-//
-//	if (!m_session)
-//	{
-//		ErrLog("m_session is null");
-//		return -1;
-//	}
-//	
-//	int iRet = nghttp2_submit_ping(m_session, 0x1, nullptr);
-//
-//	if (iRet < 0)
-//	{
-//		ErrLog("nghttp2_submit_ping");
-//	}
-//
-//	return iRet;
-//}
+int CHttp2Socket::Submit_ping()
+{
+	InfoLog("Submit_ping");
+
+	if (!m_session)
+	{
+		ErrLog("m_session is null");
+		return -1;
+	}
+    char buf[8] = {0};	
+    //int iRet = nghttp2_submit_ping(m_session, 0x1, nullptr);
+    int iRet = nghttp2_submit_ping(m_session, 0x0, (uint8_t*)buf);
+
+    if (iRet < 0)
+    {
+    	ErrLog("nghttp2_submit_ping, errcode = %d", iRet);
+        return iRet;
+    }
+    
+    iRet = nghttp2_session_send(m_session);
+    if (iRet < 0) {
+    	ErrLog("nghttp2_session_send , errcode = %d", iRet);
+
+    }
+    return iRet;
+}

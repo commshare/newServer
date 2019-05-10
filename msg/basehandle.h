@@ -48,14 +48,29 @@ protected:
 	int		sendAck(const google::protobuf::MessageLite* pMsg, uint16_t command_id, const UidCode_t& sessionId, int nDirection = 0);
 	int		sendReq(const google::protobuf::MessageLite* pMsg, uint16_t command_id, const string& ip, int port);
 	int		sendReq(const google::protobuf::MessageLite* pMsg, uint16_t command_id, int16_t nServiceId);
-	void	sendPush(std::shared_ptr<CLoginInfo>& pLogin, const string& fromId, const string& toId, const string& msgId,
-					im::MsgType msgType, const string& content);
+	void sendPush(const string& fromId, const string& toId, const string& msgId, im::MsgType msgType, 
+					const string& content, int pushType, const string& pushToken, const string& voipToken, int vesionCode);
+
+	void sendAndroidPush(const string& fromId, const string& toId, const string& msgId, im::MsgType msgType, 
+													const string& content, const string& pushToken, int pushType);
+	void sendiOSPush(const string& fromId, const string& toId, const string& msgId, im::MsgType msgType, const string& content, 
+													const string& pushToken, int pushType, int callType, const std::string& callId);
 	string  getAppName()const;
+	bool checkDeviceLastUser(const std::string& strUserId, const std::string& strDeviceToken);
+
 protected:
 	virtual bool RegistPacketExecutor(void) = 0;
+	void getConfigData();
 protected:
 	CConfigFileReader* m_pConfigReader;	
 	COfflineMsgMgr	m_offlineMsgMgr;
+
+protected:
+	std::string m_grpInfoUrl;
+	std::string m_usrInfoUrl;
+	std::string m_grpMemberInfoUrl;
+	std::string m_friendInfoUrl;
+	std::string m_sAppSecret;
 };
 #endif // __BASEHANDLE_H__
 

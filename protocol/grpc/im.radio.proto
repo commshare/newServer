@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package radionotify;
+
+service RadioNotifyService {
+	rpc OnRadioMsgNotify (RadioMsgNotify) returns (RadioMsgNotifyACK) {};
+	rpc OnUserPushSetNotify (UserPushSetNotify) returns (UserPushSetNotifyACK) {};
+}
+
+////////////////////////////////////////////////////////////////////////
+// 频道创建 添加 删除 通知
+////////////////////////////////////////////////////////////////////////
+message RadioMsgNotify
+{
+	string 	sRadioId		  		= 1;  // 频道id
+	string  sMsgId       			= 2;  // 消息Id
+	uint64  msgTime 				= 3;  // 消息时间
+	string	sOprUserId 				= 4;  // 操作者Id
+	repeated string sMnpledUserId 	= 5;  // 被操作者id
+	string  sContent				= 6;  // 消息内容
+	RadioNotifyType notifyType		= 7;  // 频道通知类型
+	string  extend					= 8;  // expand field
+}
+
+message RadioMsgNotifyACK
+{
+	string sMsgId = 1;
+	uint64  msgTime = 2;
+	ExceptionCode expcode = 3;
+}
+
+enum RadioNotifyType
+{
+	RADIO_TYPE_UNKNOWN 			= 0;
+	RADIO_TYPE_NAME_CHANGED 	= 1;		//修改频道名称，通知成员
+	RADIO_TYPE_ICON_CHANGED 	= 2;		//修改  频道头像，通知成员
+	RADIO_TYPE_NOTICE_CHANGED 	= 3;		//修改频道公告，通知成员
+	RADIO_TYPE_MEMBER_QUIT 		= 4;		//退出频道通知，发送给成员
+	RADIO_TYPE_MEMBER_REMOVE 	= 5;		//踢人通知，发送给被移除人及成员
+	RADIO_TYPE_APPLY			= 6;		//主动加入频道，发送给成员
+	RADIO_TYPE_INVITE		 	= 7;		//被动加入频道，发送给成员
+	RADIO_TYPE_MASTER_CHANGED 	= 8;		//频道主发生变更，发送给成员
+	RADIO_TYPE_ADMIN_SET 		= 9;		//设置频道管理员，发送给成员
+	RADIO_TYPE_ADMIN_UNSET	 	= 10;		//取消频道管理员，发送给成员
+	RADIO_TYPE_DISMISS		 	= 11;		//解散频道，发送给成员
+	RADIO_TYPE_NOSPEAK		 	= 12;		//禁言，发送给成员
+	RADIO_TYPE_SPEAKING		 	= 13;		//取消禁言，发送给成员
+	RADIO_TYPE_CREATE		 	= 14;		//频道创建
+}
+
+////////////////////////////////////////////////////////////
+// 推送用户设置通知
+////////////////////////////////////////////////////////////
+message UserPushSetNotify
+{
+	string  sMsgId       			= 1;  // 消息Id
+	string	sUserId					= 2;  // 用户ID
+	UserPushNotifyType	pushType	= 3;  // 是否推送
+	uint64  msgTime 				= 4;  // 消息时间
+}
+
+enum UserPushNotifyType
+{
+	USER_UNPUSH = 0;				// 不推送
+	USER_ISPUSH = 1;				// 推送
+}
+
+message UserPushSetNotifyACK
+{
+	string sMsgId = 1;
+	uint64  msgTime = 2;
+	ExceptionCode expcode = 3;
+}
+
+////////////////////////////////////////////////////
+// 错误码
+////////////////////////////////////////////////////
+enum ExceptionCode
+{
+	NO_EXP = 0;		// 无异常
+	EXP_ERR = 1;	// 异常
+}
+

@@ -142,6 +142,7 @@ void CImConn::OnRead()
 		m_last_recv_tick = get_tick_count();
 	}
 
+//    InfoLog("==================================");
     std::shared_ptr<CImPdu> pPdu = NULL;
     try
     {
@@ -149,7 +150,7 @@ void CImConn::OnRead()
 		{
                 uint32_t pdu_len = pPdu->GetLength();
                 pPdu->SetSockHandle(m_handle);
-
+               // InfoLog(" void CImConn::OnRead() lenght = %d ", pdu_len);
                 HandlePdu(pPdu);
 
                 m_in_buf.Read(NULL, pdu_len);

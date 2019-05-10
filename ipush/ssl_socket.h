@@ -32,7 +32,7 @@ public:
 	virtual int ReConnect() = 0;
 
 
-	//virtual int Submit_ping() = 0;
+	virtual int Submit_ping() = 0;
 	virtual int Send(void* buf, int len) = 0;
 
 	virtual int Send(shared_ptr<CApnsPostData> data) = 0;
@@ -122,7 +122,9 @@ public:
 	virtual void OnWrite();
 
 	virtual void OnClose();
+public:
 
+	virtual int Submit_ping() {return 0;}
 private:
 
 	int _SslShakeHands();

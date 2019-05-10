@@ -7,6 +7,7 @@
 #define __JPUSH_PROTOC_H_INCL__
 
 #include "util.h"
+#include "base64.h"
 #include "jpush_protoc.h"
 #include "im.push.android.pb.h"
 
@@ -42,22 +43,14 @@ private:
 class CJPushProtoc
 {
 public:
-	// Constructor
 	CJPushProtoc(im::ANDPushMsg *pPbMsg);
-
-	// Destructor
 	virtual ~CJPushProtoc();
 
-	// Copy constructor
-	// TODO: Uncomment the copy constructor when you need it.
-	//CJPushProtoc(const CJPushProtoc& src);
-
-	// Assignment operator
-	// TODO: Uncomment the assignment operator when you need it.
-	//CJPushProtoc& operator=(const CJPushProtoc& src);
-
 	string GetSendBuf();
-
+//https
+    string GetHttpUrl();
+    void GetHttpHeaders(vector<string>& vstr);
+    string GetHttpPostData();
 private:
 	im::ANDPushMsg *m_pPbMsg;
 

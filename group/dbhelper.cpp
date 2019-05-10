@@ -254,10 +254,35 @@ ErrCode CDbTask::VerifyGroupCreatingAuth(string sUserId, uint8_t bRole, uint16_t
 	return errCode;
 }
 
-ErrCode CDbTask::VerifyGroupJoiningAuth(string sGroupId, uint8_t bRole, uint16_t nMemberLimit,uint16_t nJoinNum, uint32_t appyType)
+ErrCode CDbTask::VerifyGroupInviteAuth(string sGroupId, uint16_t nMemberLimit,uint16_t nJoinNum)
 {
 	ErrCode errCode = ERR_GROUP_NETWORKEXCEPTION;
 
+	do
+	{
+		GroupInfo_t info;
+		info.sGroupId =  sGroupId.c_str();
+		if(!GetGroupInfo(info))
+			break;
+		if (DISMISS_GROUPSTATUS == info.bStatus)
+		{
+			errCode = ERR_GROUP_DISMISSED;
+			break;
+		}
+		else if(NORMAL_GROUPSTATUS == info.bStatus)
+		{
+			// 对群人数进行判断
+			errCode = ((info.nGroupNumber + nJoinNum) >= nMemberLimit) ? ERR_GROUP_OVERJOIN : NON_ERR;
+		}
+
+	}while(0);
+
+	return errCode;
+}
+
+ErrCode CDbTask::VerifyGroupApplyAuth(const string& sGroupId, const string& sUserId, uint16_t nMemberLimit, uint32_t appyType)
+{
+	ErrCode errCode = ERR_GROUP_NETWORKEXCEPTION;
 	do
 	{
 		GroupInfo_t info;
@@ -280,9 +305,17 @@ ErrCode CDbTask::VerifyGroupJoiningAuth(string sGroupId, uint8_t bRole, uint16_t
 					errCode = ERR_GROUP_FORBIDDEN;
 					break;
 				}
+				else
+				{
+					if(im::ERR_GROUP_MASTER == IsMaster(sUserId,sGroupId) && DEPOSIT_GROUPSTATUS == info.bStatus)
+					{
+						errCode = im::ERR_GROUP_MASTER;
+						break;
+					}
+				}
 			}
 			// 对群人数进行判断
-			errCode = ((info.nGroupNumber + nJoinNum) >= nMemberLimit) ? ERR_GROUP_OVERJOIN : NON_ERR;
+			errCode = ((info.nGroupNumber + 1) >= nMemberLimit) ? ERR_GROUP_OVERJOIN : NON_ERR;
 		}
 
 	}while(0);
@@ -705,7 +738,7 @@ ErrCode  CDbTask::ApplyGroup(void)
 	UserCache_t userCache;
 		
 
-	if((errCode = VerifyGroupJoiningAuth(sGroupId, 0, MAX_GROUPMEMBER, 1, pUserData->applytype())) != NON_ERR)
+	if((errCode = VerifyGroupApplyAuth(sGroupId, sUserId, MAX_GROUPMEMBER, pUserData->applytype())) != NON_ERR)
 	{
 		WarnLog("join forbiddened 0x%x when processing user %s apply group %s!",
 					errCode ,sUserId.c_str(),sGroupId.c_str());
@@ -719,7 +752,7 @@ ErrCode  CDbTask::ApplyGroup(void)
 		//...
 		//end of reserved . 
 		errCode = IsMember(sUserId,sGroupId,bMemberStatus);
-		if((errCode == ERR_GROUP_MEMBERNONEXIST) || ((errCode == ERR_GROUP_MEMBEREXIST) && (bMemberStatus==QUIT_MEMBER)))		
+		if((errCode == im::ERR_GROUP_MEMBERNONEXIST) || ((errCode == im::ERR_GROUP_MEMBEREXIST) && (bMemberStatus == QUIT_MEMBER)))		
 		{
 			GroupInfo_t info;
 			info.sGroupId = sGroupId.c_str();
@@ -772,7 +805,7 @@ ErrCode CDbTask::InviteGroup(void)
 	UserCache_t userCache;
 	string sCacheUser = PREFIX_CMCACHE;
 		
-	if((errCode = VerifyGroupJoiningAuth(sGroupId,0,MAX_GROUPMEMBER,pUserData->sinviteeids_size()))!=NON_ERR)
+	if((errCode = VerifyGroupInviteAuth(sGroupId, MAX_GROUPMEMBER, pUserData->sinviteeids_size()))!=NON_ERR)
 	{
 		WarnLog("Encounter err 0x%x when processing user %s invite group %s!",
 					errCode ,sUserId.c_str(),sGroupId.c_str());

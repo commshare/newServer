@@ -67,8 +67,12 @@ bool CPost::TimeOut()
 		return true;
 	}
 
-	//test
-	//InfoLog("time(NULL) - GetRespHeartBeatTime:%d", time(NULL)-GetRespHeartBeatTime());
+    if (time(NULL) - GetRespHeartBeatTime() > 20) {
+        if (m_pSocket) {
+            m_pSocket->Submit_ping(); 
+        } 
+
+    }
 
 	//return false first, 这里close/respone/request 存在竞争关系, 暂且这么处理, 不完美.
 	if (time(NULL) - GetRespHeartBeatTime() > 60*5)
@@ -104,19 +108,20 @@ time_t CPost::GetRespHeartBeatTime()
 	return m_respHeartBeatTime;
 }
 
-//static int responeDebug = 0;
 
 //CLock CPost::m_callbackmutex;
 void CPost::ResponeCallBack(void* callback_data, uint8_t msg, uint32_t handle, void* pParam)
 {
-	//CAutoLock lock(&CPost::m_callbackmutex);
 	//InfoLog("%d, msg type:%d\n", handle, msg);
 	NOTUSED_ARG(handle);
 
 	CPost *post = (CPost *) callback_data;
 	//post->SetHeartbeat();
-
-	if (NETLIB_MSG_CLOSE == msg)
+    if(HTTP_PING_RESPONE == msg)
+    {
+		post->SetRespHeartBeatTime(time(NULL));
+    }
+	else if (NETLIB_MSG_CLOSE == msg)
 	{
 		InfoLog("close by peer");
 		post->SetUsrable(false);

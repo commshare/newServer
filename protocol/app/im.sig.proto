@@ -1,0 +1,197 @@
+﻿syntax = "proto3";
+
+package im;
+import "im.pub.proto";
+
+option optimize_for = LITE_RUNTIME;
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL ： 0xb091		//发起P2P呼叫
+////////////////////////////////////////////////////////////////////////
+message SIGSponsorCall
+{
+	string 	sFromId 			= 1;  // 呼叫发起人
+	string  sInviteId			= 2;  // 被呼叫人
+	string  sMsgId       		= 3;  // Generated uuid by APP Id;	used for distingulish requests
+	uint64  msgTime 			= 4;  // server time,precision millisecond
+	uint32	encrypt				= 5;  // whether encrypt chat contents	
+	string  sContent 			= 6;  //
+	uint32	callType			= 7;  // 0:video 1:voice
+	string  scallId				= 8;  // sponsor call id   协定 0 为无效id
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL_ACK ： 0xb092;		P2P呼叫ACK			  	
+////////////////////////////////////////////////////////////////////////
+message SIGSponsorCallAck
+{
+	string 	sToId 				= 1; 	// telephone number or any other number binded.
+	string  sMsgId       		= 2;  	// 
+	ErrCode errcode	 			= 3;	//  
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL_DELIVER_ACK ： 0xb093;		P2P呼叫推送ACK					
+////////////////////////////////////////////////////////////////////////
+message SIGSponsorCallDeliverAck
+{
+	string		sUserId 			= 1;
+	string  	sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL_DELIVER ： 0xb094;		推送P2P呼叫				
+////////////////////////////////////////////////////////////////////////
+//share with struct SIGSponsorCall
+
+
+////////////////////////////////////////////////////////////////////////	
+//SIG_SPONSORP2PCALL_ANS ： 0xb095;						
+////////////////////////////////////////////////////////////////////////
+message SIGSponsorCallAns
+{
+	string 	sFromId 			= 1; 	// 
+	string 	sToId				= 2;  	// p2p时填写，会议时可不填
+	string  sMsgId       		= 3;  	// 
+	uint64  msgTime				= 4;    // time--required	
+	uint32	encrypt				= 5;  // whether encrypt chat contents	
+	string  sContent			= 6;
+	ErrCode errcode	 			= 7;	// 0：拒绝 0x8000：同意
+	string  scallId				= 8;	// sponsor call id
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL_ANS_ACK ： 0xb096;						
+////////////////////////////////////////////////////////////////////////
+message SIGSponsorCallAnsAck
+{
+	string 	sToId 				= 1; 	// 
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;	
+	ErrCode errcode    			= 3; 	// 
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL_ANS_DELIVER_ACK ： 0xb097;						
+////////////////////////////////////////////////////////////////////////
+message SIGSponsorCallAnsDeliverACK
+{
+	string	sUserId 			= 1;
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_SPONSORP2PCALL_ANS_DELIVER	 ： 0xb098;						
+////////////////////////////////////////////////////////////////////////
+//share with SIGSponsorCallAns message structure; 其中sToId必填
+
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALL_EXCHANGE_NATINFO	 ： 0xb099;		发起交换NatInfo 				
+////////////////////////////////////////////////////////////////////////
+message SIGP2PCallExchangeNatInfo
+{
+	string 	sFromId 			= 1; 	// 
+	string 	sToId				= 2;  	// 
+	string  sMsgId       		= 3;  	// 
+	string  sContent			= 4;    //nat candicate交换的内容
+	uint64  msgTime				= 5;  	// 
+	string  scallId			= 6;	// sponsor call id
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALL_EXCHANGE_NATINFO_ACK ： 0xb0a0;		交换NatInfo  ACK			  	
+////////////////////////////////////////////////////////////////////////
+message SIGP2PCallExchangeNatInfoAck
+{
+	string 	sToId 				= 1; 	// telephone number or any other number binded.
+	string  sMsgId       		= 2;  	// 
+	ErrCode errcode	 			= 3;	//  
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALL_EXCHANGE_NATINFO_DELIVER	 ： 0xb0a2;		交换NatInfo信息推送				
+////////////////////////////////////////////////////////////////////////
+//share with SIGP2PCallExchangeNatInfo message structure; 其中sToId必填
+
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALL_EXCHANGE_NATINFO_DELIVER_ACK	 ： 0xb0a1;		交换NatInfo 推送ACK				
+////////////////////////////////////////////////////////////////////////
+message SIGP2PCallExchangeNatInfoDeliverAck
+{
+	string	sUserId 			= 1;
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLHANGUP ： 0xb0a5;		//P2P呼叫终止
+////////////////////////////////////////////////////////////////////////
+message SIGHangUp				//呼叫终止
+{
+	string 	sFromId 			= 1; 	// 
+	string 	sToId				= 2;  	// p2p时填写，会议时可不填
+	string  sMsgId       		= 3;  	// 
+	uint64  msgTime				= 4;    // time--required
+	string	scallId			= 5;	// 被取消的通话id
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLHANGUP_ACK ： 0xb0a6;		//P2P呼叫终止ACK
+////////////////////////////////////////////////////////////////////////
+message SIGHangUpAck			//呼叫终止
+{
+	string 	sToId				= 1;  	// p2p时填写，会议时可不填
+	string  sMsgId       		= 2;  	// 
+	ErrCode errcode	 			= 5;	// 
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLHANGUPDElIVER ： 0xb0a8;		//P2P呼叫终止推送
+////////////////////////////////////////////////////////////////////////
+//share with struct SIGHangUp, 推送给终端用户需要stoId
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLHANGUPDElIVER_ACK ： 0xb0a7;	//P2P呼叫终止推送
+////////////////////////////////////////////////////////////////////////
+message SIGHangUpDeliverAck				//呼叫终止
+{
+	string	sUserId 			= 1;
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLSTATENOTIFY 								= 0xb0b1;
+////////////////////////////////////////////////////////////////////////
+message SIGP2PCallStateNotify
+{
+	string 	sFromId		  		= 1;  // 
+	string 	sToId				= 2;  //  
+	string  sMsgId       		= 3;  //  
+	uint64  msgTime 			= 4;  // server time,precision millisecond
+	uint32  notifyType			= 8;  // 每一位标识一个开关是否变化
+	uint32  notifyValue			= 9;  // 每一位标识一个开关的当前状态	
+	string  scallId				= 10; // 正在通话会话ID
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLSTATENOTIFY_ACK 							= 0xb0b2;
+////////////////////////////////////////////////////////////////////////
+message SIGP2PCallStateNotifyACK
+{
+	string 	sToId	  			= 1; 
+	string  sMsgId       		= 2;  
+	ErrCode errcode	 			= 3;  // required, such as same request(with same fromId&toId) already sent 
+}	
+	
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLSTATENOTIFYDElIVER_ACK 					= 0xb0b3;		
+////////////////////////////////////////////////////////////////////////
+message SIGP2PCallStateNotifyDeliverAck				//呼叫终止
+{
+	string	sUserId 			= 1;
+	string  sMsgId       		= 2;  	// Generated uuid by APP Id;
+}
+
+////////////////////////////////////////////////////////////////////////
+//SIG_P2PCALLSTATENOTIFYDElIVER 						= 0xb0b4;	
+////////////////////////////////////////////////////////////////////////
+// share with struct SIGP2PCallStateNotify

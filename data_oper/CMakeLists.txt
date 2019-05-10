@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 2.6)
+PROJECT(data_oper)
+
+AUX_SOURCE_DIRECTORY(./ SRC_LIST)
+ADD_DEFINITIONS( -g -W -Wall -Wno-unused-parameter -Wno-deprecated -D_REENTRANT 
+-D_FILE_OFFSET_BITS=64 -DAC_HAS_INFO -DAC_HAS_WARNING -DAC_HAS_ERROR 
+-DAC_HAS_CRITICAL -DTIXML_USE_STL -DAC_HAS_DEBUG -DLINUX_DAEMON -std=c++11)
+
+INCLUDE_DIRECTORIES(../base)
+LINK_DIRECTORIES(../lib)
+
+ADD_LIBRARY(data_oper STATIC ${SRC_LIST}) 
+
+TARGET_LINK_LIBRARIES(data_oper hiredis base pthread dl)

@@ -64,7 +64,7 @@ protected:
     uint64_t        m_last_all_user_tick;
 };
 
-typedef unordered_map<net_handle_t, CImConn*> ConnMap_t;
+typedef std::tr1::unordered_map<net_handle_t, CImConn*> ConnMap_t;
 typedef hash_map<uint32_t, CImConn*> UserMap_t;
 
 void imconn_callback(void* callback_data, uint8_t msg, uint32_t handle, void* pParam);

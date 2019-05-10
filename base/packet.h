@@ -45,6 +45,7 @@ protected:
 	int SendPdu(string sUserId,CImPdu* pPdu);			//Send pdu by userid. to Seek the sending link by user id. 
 	int SendPdu(string sIp,uint16_t nPort,CImPdu* pPdu);//Send pdu by host ip. Seek the sending link by host info.  
 	int SendPdu(int16_t nServiceId,CImPdu* pPdu);	 // Send pdu by associated server id, as client mode use it. 
+	int BroadcastPdu(int16_t nServiceId,CImPdu* pPdu);	 // Broadcast pdu by associated server id, as client mode use it. 
 private:
 	bool   m_bRunning;
 	CLock* m_pLock;					//Thread Lock。

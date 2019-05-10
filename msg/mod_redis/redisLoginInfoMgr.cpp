@@ -8,15 +8,12 @@ Description:
 #include "redisPool.h"
 #include "util.h"
 
-#define  LOGININFO_FIELD_CMIP		"cmIPAddr"
-#define  LOGININFO_FIELD_CMPORT		"cmIPPort"
-#define  LOGININFO_FIELD_ROLE		"role"
+#define  LOGININFO_FIELD_CMIP		"cm_ip"
+#define  LOGININFO_FIELD_CMPORT		"cm_port"
 #define  LOGININFO_FIELD_STATUS		"status"
-#define  LOGININFO_FIELD_DEVTYPE	"deviceType"
-#define  LOGININFO_FIELD_DEVTOKEN	"deviceToken"
-#define  LOGININFO_FIELD_DEVVOIPTOKEN	"deviceVoipToken"
-#define  LOGININFO_FIELD_CALLSTATE	"callState"
+#define  LOGININFO_FIELD_CALLSTATE	"call_state"
 #define  DEVICEID_FIELD_SUBSCRIBER	"subscriber"
+#define  DEVICEID_FIELD_DEVICETOKEN	"device_token"
 
 CLoginInfoMgr::CLoginInfoMgr()
 {
@@ -30,30 +27,35 @@ CLoginInfoMgr::~CLoginInfoMgr()
 
 std::shared_ptr<CLoginInfo> CLoginInfoMgr::GetLoginInfo(const std::string& userId)
 {
+	if(userId.empty())
+	{
+		WarnLog("user id is empty!");
+		return std::shared_ptr<CLoginInfo>(nullptr);
+	}
+	
 	std::string cmUserId = "CM_" + userId;
 	CRedisConn conn = CRedisManager::getInstance()->GetCRedisConn();
 	std::vector<const char*> fields;
-	fields.push_back(LOGININFO_FIELD_ROLE);
 	fields.push_back(LOGININFO_FIELD_STATUS);
 	fields.push_back(LOGININFO_FIELD_CMIP);
 	fields.push_back(LOGININFO_FIELD_CMPORT);
-	fields.push_back(LOGININFO_FIELD_DEVTYPE);
-	fields.push_back(LOGININFO_FIELD_DEVTOKEN);
-	fields.push_back(LOGININFO_FIELD_DEVVOIPTOKEN);
 	fields.push_back(LOGININFO_FIELD_CALLSTATE);
+	fields.push_back(DEVICEID_FIELD_DEVICETOKEN);
 
+	uint64_t now = getCurrentTime_usec();
 	std::vector<acl::string> result;
 	if (conn.hmget(cmUserId.c_str(), fields, &result))
 	{
 		if (!result[1].empty() && !result[2].empty())
 		{
-			DbgLog("user %s Login info ,status = %s, cmip = %s, cmport = %s, devtype = %s, devtoken = %s, devvoipToken=%s",
-				userId.c_str(), result[1].c_str(), result[2].c_str(), result[3].c_str(), result[4].c_str(), result[5].c_str(), result[6].c_str());
-			return std::shared_ptr<CLoginInfo>(new CLoginInfo(result[0].c_str(), result[1].c_str(), result[2].c_str(),
-				result[3].c_str(), atoi(result[4].c_str()), result[5].c_str(), result[6].c_str(), USER_CALL_STATE(result[7].empty() ? 0 : atoi(result[7].c_str()))));
+
+			DbgLog("===========getlogininfo end at %lu, used time=%lu===============", getCurrentTime_usec(), getCurrentTime_usec() - now);
+			DbgLog("user %s Login info ,status = %s, cmip = %s, cmport = %s device_token=%s", userId.c_str(), result[0].c_str(), result[1].c_str(), result[2].c_str(), result[4].c_str());
+			return std::shared_ptr<CLoginInfo>(new CLoginInfo( result[0].c_str(), result[1].c_str(), result[2].c_str(), result[4].c_str(), USER_CALL_STATE(result[3].empty() ? 0 : atoi(result[3].c_str()))));
 		}
 	}
-	DbgLog("user %s not login yet or not exist", cmUserId.c_str());
+	DbgLog("user %s not login yet or not exist", cmUserId.c_str()); 
+	DbgLog("===========getlogininfo end at %lu, used time=%lu===============", getCurrentTime_usec(), getCurrentTime_usec() - now);
 	return std::shared_ptr<CLoginInfo>(NULL);
 }
 
@@ -68,9 +70,9 @@ bool CLoginInfoMgr::UpdateCallBusyState(const std::string& userId, uint16_t call
 	return conn.hmset(cmUserId, hashVals);
 }
 
-std::string CLoginInfoMgr::getDeviceLastUserID(const std::string& deviceID)
+std::string CLoginInfoMgr::getDeviceLastUserID(const std::string& deviceToken)
 {
-	std::string deviceIDKey = "CMDT_" + deviceID;
+	std::string deviceIDKey = "CMDT_" + deviceToken;
 	std::string userID = "";
 	CRedisConn conn = CRedisManager::getInstance()->GetCRedisConn();
 	std::vector<const char*> fields;

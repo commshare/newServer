@@ -28,7 +28,7 @@ typedef struct _PacketExecutor
 	CommandProc pProc;
 } PacketExecutor_t;
 
-typedef unordered_map<string, PacketExecutor_t*>  PacketExecutorMap_t; // 
+typedef std::tr1::unordered_map<string, PacketExecutor_t*>  PacketExecutorMap_t; // 
 
 
 

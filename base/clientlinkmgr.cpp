@@ -84,7 +84,7 @@ bool CClientLinkMgr::Initialize(CConfigFileReader* pConfigReader)		//Initiate ne
 		return false;
 
 	if(NETLIB_ERROR == netlib_listen(											
-						m_sListenIp.c_str(),
+						"0.0.0.0",
 						m_nListenPort,
 						CClientLinkMgr::ClientLinkListener,
 						NULL)) 
@@ -140,6 +140,8 @@ bool CClientLinkMgr::SetServiceId(void)
 
 	if((i<=MAX_ASSOCSER_TYPE)&&(m_nServiceId!=INVALID_ASSOCSER_ID))
 	{
+	   // m_nLinkType  = (m_nServiceId == CM || m_nServiceId == DESKTOP) ? MOBILE_LOGIN_LINKER :			//type of client link. 
+	   // 				ASSOC_REGIST_LINKER;
 		m_nLinkType  = (m_nServiceId == CM) ? MOBILE_LOGIN_LINKER :			//type of client link. 
 						ASSOC_REGIST_LINKER;
 	}
@@ -327,6 +329,59 @@ CClientLink* CClientLinkMgr::GetLinkByHost(string sIp, uint16_t nPort)
 	return pLink;
 
 	//return (it!=m_mapHostLink.end()) ? it->second : NULL;  
+}
+
+void CClientLinkMgr::addSessionByHost(const string& sIp, uint16_t nPort, const UidCode_t& sessionId)
+{
+	if(sIp.empty()) return;
+	std::lock_guard<std::mutex> lck(m_mtxHostSession);
+	std::string strHost = sIp + ":";
+	strHost = strHost + std::to_string(nPort);
+	m_mapHostSession[strHost] = sessionId;
+								
+}
+
+void CClientLinkMgr::delSessionByHost(const string& sIp, uint16_t nPort)
+{
+	if(sIp=="") return;
+	std::lock_guard<std::mutex> lck(m_mtxHostSession);
+	std::string strHost = sIp + ":";
+	strHost = strHost + std::to_string(nPort);
+	auto it = m_mapHostSession.find(strHost);
+								
+	if(it != m_mapHostSession.end())
+	{
+		m_mapHostLink.erase(strHost);			//Erase the specific user in map
+	}
+}
+
+UidCode_t CClientLinkMgr::getSessionByHost(const string& sIp, uint16_t nPort)
+{
+	UidCode_t sessionId;
+	if(sIp=="") return sessionId;
+	std::lock_guard<std::mutex> lck(m_mtxHostSession);
+	std::string strHost = sIp + ":";
+	strHost = strHost + std::to_string(nPort);
+	auto it = m_mapHostSession.find(strHost);
+	if(it != m_mapHostSession.end())
+	{
+		//memcpy(sessionId.Uid_Item.code, it->second.Uid_Item.code, SIZE_PDU_HDR_SESSIONID);
+		return it->second;
+	}
+	return sessionId;
+}
+
+UidCode_t CClientLinkMgr::getSessionByHost(const string& strHost)
+{
+	UidCode_t sessionId;
+	if(strHost == "") return sessionId;
+	std::lock_guard<std::mutex> lck(m_mtxHostSession);
+	auto it = m_mapHostSession.find(strHost);
+	if(it != m_mapHostSession.end())
+	{
+		return it->second;
+	}
+	return sessionId;
 }
 
 

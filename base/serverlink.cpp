@@ -93,7 +93,7 @@ void CServerLink::OnConfirm()							//Confirm to connect associated server succe
 void CServerLink::OnClose()
 {
 	Close();
-	DbgLog("this link is closed by remoted host");	
+	DbgLog("this link is closed by remoted host  %s:%d ...", m_pAccoSvrInfo->server_ip.c_str(), m_pAccoSvrInfo->server_port);	
 }
 
 void CServerLink::OnTimer(uint64_t curr_tick)

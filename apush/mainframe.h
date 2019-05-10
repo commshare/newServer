@@ -8,9 +8,7 @@
 
 #include "hw_push_client.h"
 #include "push_provide_server.h"
-
 #include "mi_push_client.h"
-
 
 #define IMFRAME_VERSION "1.0"
 #define CONFIG_FILE	 "server.conf"
@@ -60,19 +58,8 @@ static void init_locks(void)
 	
 	CRYPTO_set_id_callback((unsigned long (*)())thread_id);
 	CRYPTO_set_locking_callback(lock_callback);
-	//CRYPTO_set_locking_callback((void (*)())lock_callback);
 }
 
-//static void kill_locks(void)
-//{
-//	int i;
-//	
-//	CRYPTO_set_locking_callback(NULL);
-//	for(i=0; i<CRYPTO_num_locks(); i++)
-//		pthread_mutex_destroy(&(lockarray[i]));
-//	
-//	OPENSSL_free(lockarray);
-//}
 
 class CIMFrame
 { 
@@ -83,10 +70,7 @@ public:
 
 public: 
 	static CIMFrame* GetInstance(void);                           //
-
-
-	static void *_StartEventLoop(void *);
-
+//	static void *_StartEventLoop(void *);
 	bool InitFrame(const char* pConfigFile);	 // 
 	bool StartFrame(void);					// Run  framework
 	void StopFrame();						// Release framework 
@@ -95,8 +79,6 @@ protected:
 
 private:
 	CConfigFileReader* 	m_pConfigReader;		//Config file srteam , 
-	//CAppApnsPushserver* m_pCAppApnsPushserver;				//Application framework instance pointer
-
 	CApushLocalSvr		*m_pApushLocalSvr[MAX_INSTANCE_SERVICE];
 	CHWPushClient 		*m_pHWPushClient;
 

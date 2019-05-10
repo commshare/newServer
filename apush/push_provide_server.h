@@ -19,8 +19,6 @@ Description:
 #include "lock.h"
 #include "protobuf_phase.h"
 
-
-
 using namespace std;
 using namespace im;
 using namespace imsvr;
@@ -59,7 +57,8 @@ private:
 	string 		m_strVer;
 	string 		m_strClientId;
 	string 		m_strToken;
-
+	uint32_t uTimeTick;
+	uint32_t m_uExpires;	
 };
 
 #endif

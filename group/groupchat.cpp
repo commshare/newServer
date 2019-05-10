@@ -47,6 +47,7 @@ void GrpChatToMsg(std::map<std::string, CGrpMem>& grpmems, const im::GroupChat& 
 	grpChat.set_encrypt(msg.encrypt());
 	grpChat.set_scontent(msg.scontent());
 	grpChat.set_nnotifycount(msg.nnotifycount());
+	grpChat.set_extend(msg.extend());
 
 	int notifySize = msg.snotifyusers_size();
 	int index = 0;
