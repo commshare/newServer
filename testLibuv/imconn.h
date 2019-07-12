@@ -1,0 +1,78 @@
+/*
+ * imconn.h
+ *
+ *  Created on: 2013-6-5
+ *      Author: ziteng
+ */
+
+#ifndef IMCONN_H_
+#define IMCONN_H_
+
+#include <tr1/unordered_map>
+
+#include "netlib.h"
+#include "util.h"
+#include "impdubase.h"
+#include <uv.h>
+#define SERVER_HEARTBEAT_INTERVAL	5000
+#define SERVER_TIMEOUT				30000
+#define CLIENT_HEARTBEAT_INTERVAL	30000
+#define CLIENT_TIMEOUT				120000
+#define MOBILE_CLIENT_TIMEOUT       60000 * 5
+#define READ_BUF_SIZE	2048
+
+
+using namespace std::tr1;
+
+class CImConn/* : public CRefObject*/
+{
+public:
+	CImConn();
+	virtual ~CImConn();
+
+	bool IsBusy() { return m_busy; }
+   // int SendPdu(CImPdu* pPdu) { return Send(pPdu->GetBuffer(), pPdu->GetLength()); }
+   // int SendPdu(std::shared_ptr<CImPdu> pPdu) { return Send(pPdu->GetBuffer(), pPdu->GetLength()); }
+	int SendPdu(CImPdu* pPdu) { return WriteData(pPdu->GetBuffer(), pPdu->GetLength()); }
+	int SendPdu(std::shared_ptr<CImPdu> pPdu) { return WriteData(pPdu->GetBuffer(), pPdu->GetLength()); }
+	int Send(void* data, int len);
+	int WriteData(void* data, int len);
+	uint16_t GetPeerPort() { return m_peer_port; }
+	string GetPeerIp() { return m_peer_ip; }
+
+	virtual void OnConnect(net_handle_t handle) { m_handle = handle; }
+	virtual void OnConfirm() {}
+	virtual void OnRead();
+    virtual void OnRead(char* buf, ssize_t len);
+	virtual void OnWrite();
+	virtual void OnClose() {}
+	virtual void OnTimer(uint64_t curr_tick);
+    virtual void OnWriteCompelete() {};
+
+	virtual void HandlePdu(CImPdu* pPdu);
+	virtual void HandlePdu(std::shared_ptr<CImPdu> pPdu);
+
+protected:
+	net_handle_t	m_handle;
+    uv_stream_t*    m_stream;
+	bool			m_busy;
+
+	string			m_peer_ip;
+	uint16_t		m_peer_port;
+	CSimpleBuffer	m_in_buf;
+	CSimpleBuffer	m_out_buf;
+
+	bool			m_policy_conn;
+	uint32_t		m_recv_bytes;
+	uint64_t		m_last_send_tick;
+	uint64_t		m_last_recv_tick;
+    uint64_t        m_last_all_user_tick;
+};
+
+typedef std::tr1::unordered_map<uv_stream_t*, shared_ptr<CImConn>> ConnMap_t;
+typedef hash_map<uint32_t, std::shared_ptr<CImConn>> UserMap_t;
+
+void imconn_callback(void* callback_data, uint8_t msg, uint32_t handle, void* pParam);
+void ReadPolicyFile();
+
+#endif /* IMCONN_H_ */
