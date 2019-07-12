@@ -39,7 +39,7 @@ namespace protobuf_im_2eradio_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[2];
+  static const ::google::protobuf::internal::ParseTable schema[4];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -53,11 +53,19 @@ extern RadioMsgNotifyDefaultTypeInternal _RadioMsgNotify_default_instance_;
 class RadioMsgNotifyACK;
 class RadioMsgNotifyACKDefaultTypeInternal;
 extern RadioMsgNotifyACKDefaultTypeInternal _RadioMsgNotifyACK_default_instance_;
+class RadioPushSetNotify;
+class RadioPushSetNotifyDefaultTypeInternal;
+extern RadioPushSetNotifyDefaultTypeInternal _RadioPushSetNotify_default_instance_;
+class RadioPushSetNotifyACK;
+class RadioPushSetNotifyACKDefaultTypeInternal;
+extern RadioPushSetNotifyACKDefaultTypeInternal _RadioPushSetNotifyACK_default_instance_;
 }  // namespace radionotify
 namespace google {
 namespace protobuf {
 template<> ::radionotify::RadioMsgNotify* Arena::CreateMaybeMessage<::radionotify::RadioMsgNotify>(Arena*);
 template<> ::radionotify::RadioMsgNotifyACK* Arena::CreateMaybeMessage<::radionotify::RadioMsgNotifyACK>(Arena*);
+template<> ::radionotify::RadioPushSetNotify* Arena::CreateMaybeMessage<::radionotify::RadioPushSetNotify>(Arena*);
+template<> ::radionotify::RadioPushSetNotifyACK* Arena::CreateMaybeMessage<::radionotify::RadioPushSetNotifyACK>(Arena*);
 }  // namespace protobuf
 }  // namespace google
 namespace radionotify {
@@ -78,12 +86,14 @@ enum RadioNotifyType {
   RADIO_TYPE_NOSPEAK = 12,
   RADIO_TYPE_SPEAKING = 13,
   RADIO_TYPE_CREATE = 14,
+  RADIO_TYPE_FORBID_INTERFACING_ON = 15,
+  RADIO_TYPE_FORBID_INTERFACING_OFF = 16,
   RadioNotifyType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   RadioNotifyType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool RadioNotifyType_IsValid(int value);
 const RadioNotifyType RadioNotifyType_MIN = RADIO_TYPE_UNKNOWN;
-const RadioNotifyType RadioNotifyType_MAX = RADIO_TYPE_CREATE;
+const RadioNotifyType RadioNotifyType_MAX = RADIO_TYPE_FORBID_INTERFACING_OFF;
 const int RadioNotifyType_ARRAYSIZE = RadioNotifyType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* RadioNotifyType_descriptor();
@@ -95,6 +105,29 @@ inline bool RadioNotifyType_Parse(
     const ::std::string& name, RadioNotifyType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<RadioNotifyType>(
     RadioNotifyType_descriptor(), name, value);
+}
+enum RadioPushSetNotifyType {
+  PUSH_NEWMSG = 0,
+  PUSH_HIDEMSGSOUNDON = 1,
+  PUSH_ISHIDE = 2,
+  PUSH_UNDISTURB = 3,
+  RadioPushSetNotifyType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  RadioPushSetNotifyType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool RadioPushSetNotifyType_IsValid(int value);
+const RadioPushSetNotifyType RadioPushSetNotifyType_MIN = PUSH_NEWMSG;
+const RadioPushSetNotifyType RadioPushSetNotifyType_MAX = PUSH_UNDISTURB;
+const int RadioPushSetNotifyType_ARRAYSIZE = RadioPushSetNotifyType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* RadioPushSetNotifyType_descriptor();
+inline const ::std::string& RadioPushSetNotifyType_Name(RadioPushSetNotifyType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    RadioPushSetNotifyType_descriptor(), value);
+}
+inline bool RadioPushSetNotifyType_Parse(
+    const ::std::string& name, RadioPushSetNotifyType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<RadioPushSetNotifyType>(
+    RadioPushSetNotifyType_descriptor(), name, value);
 }
 enum ExceptionCode {
   NO_EXP = 0,
@@ -441,6 +474,293 @@ class RadioMsgNotifyACK : public ::google::protobuf::Message /* @@protoc_inserti
   void set_expcode(::radionotify::ExceptionCode value);
 
   // @@protoc_insertion_point(class_scope:radionotify.RadioMsgNotifyACK)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr smsgid_;
+  ::google::protobuf::uint64 msgtime_;
+  int expcode_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_im_2eradio_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class RadioPushSetNotify : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:radionotify.RadioPushSetNotify) */ {
+ public:
+  RadioPushSetNotify();
+  virtual ~RadioPushSetNotify();
+
+  RadioPushSetNotify(const RadioPushSetNotify& from);
+
+  inline RadioPushSetNotify& operator=(const RadioPushSetNotify& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  RadioPushSetNotify(RadioPushSetNotify&& from) noexcept
+    : RadioPushSetNotify() {
+    *this = ::std::move(from);
+  }
+
+  inline RadioPushSetNotify& operator=(RadioPushSetNotify&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RadioPushSetNotify& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const RadioPushSetNotify* internal_default_instance() {
+    return reinterpret_cast<const RadioPushSetNotify*>(
+               &_RadioPushSetNotify_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  void Swap(RadioPushSetNotify* other);
+  friend void swap(RadioPushSetNotify& a, RadioPushSetNotify& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RadioPushSetNotify* New() const final {
+    return CreateMaybeMessage<RadioPushSetNotify>(NULL);
+  }
+
+  RadioPushSetNotify* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<RadioPushSetNotify>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const RadioPushSetNotify& from);
+  void MergeFrom(const RadioPushSetNotify& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RadioPushSetNotify* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string sMsgId = 1;
+  void clear_smsgid();
+  static const int kSMsgIdFieldNumber = 1;
+  const ::std::string& smsgid() const;
+  void set_smsgid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_smsgid(::std::string&& value);
+  #endif
+  void set_smsgid(const char* value);
+  void set_smsgid(const char* value, size_t size);
+  ::std::string* mutable_smsgid();
+  ::std::string* release_smsgid();
+  void set_allocated_smsgid(::std::string* smsgid);
+
+  // string sUserId = 2;
+  void clear_suserid();
+  static const int kSUserIdFieldNumber = 2;
+  const ::std::string& suserid() const;
+  void set_suserid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_suserid(::std::string&& value);
+  #endif
+  void set_suserid(const char* value);
+  void set_suserid(const char* value, size_t size);
+  ::std::string* mutable_suserid();
+  ::std::string* release_suserid();
+  void set_allocated_suserid(::std::string* suserid);
+
+  // string sRadioId = 3;
+  void clear_sradioid();
+  static const int kSRadioIdFieldNumber = 3;
+  const ::std::string& sradioid() const;
+  void set_sradioid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_sradioid(::std::string&& value);
+  #endif
+  void set_sradioid(const char* value);
+  void set_sradioid(const char* value, size_t size);
+  ::std::string* mutable_sradioid();
+  ::std::string* release_sradioid();
+  void set_allocated_sradioid(::std::string* sradioid);
+
+  // .radionotify.RadioPushSetNotifyType notifyType = 4;
+  void clear_notifytype();
+  static const int kNotifyTypeFieldNumber = 4;
+  ::radionotify::RadioPushSetNotifyType notifytype() const;
+  void set_notifytype(::radionotify::RadioPushSetNotifyType value);
+
+  // uint32 status = 5;
+  void clear_status();
+  static const int kStatusFieldNumber = 5;
+  ::google::protobuf::uint32 status() const;
+  void set_status(::google::protobuf::uint32 value);
+
+  // uint64 msgTime = 6;
+  void clear_msgtime();
+  static const int kMsgTimeFieldNumber = 6;
+  ::google::protobuf::uint64 msgtime() const;
+  void set_msgtime(::google::protobuf::uint64 value);
+
+  // @@protoc_insertion_point(class_scope:radionotify.RadioPushSetNotify)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr smsgid_;
+  ::google::protobuf::internal::ArenaStringPtr suserid_;
+  ::google::protobuf::internal::ArenaStringPtr sradioid_;
+  int notifytype_;
+  ::google::protobuf::uint32 status_;
+  ::google::protobuf::uint64 msgtime_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_im_2eradio_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class RadioPushSetNotifyACK : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:radionotify.RadioPushSetNotifyACK) */ {
+ public:
+  RadioPushSetNotifyACK();
+  virtual ~RadioPushSetNotifyACK();
+
+  RadioPushSetNotifyACK(const RadioPushSetNotifyACK& from);
+
+  inline RadioPushSetNotifyACK& operator=(const RadioPushSetNotifyACK& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  RadioPushSetNotifyACK(RadioPushSetNotifyACK&& from) noexcept
+    : RadioPushSetNotifyACK() {
+    *this = ::std::move(from);
+  }
+
+  inline RadioPushSetNotifyACK& operator=(RadioPushSetNotifyACK&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RadioPushSetNotifyACK& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const RadioPushSetNotifyACK* internal_default_instance() {
+    return reinterpret_cast<const RadioPushSetNotifyACK*>(
+               &_RadioPushSetNotifyACK_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  void Swap(RadioPushSetNotifyACK* other);
+  friend void swap(RadioPushSetNotifyACK& a, RadioPushSetNotifyACK& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RadioPushSetNotifyACK* New() const final {
+    return CreateMaybeMessage<RadioPushSetNotifyACK>(NULL);
+  }
+
+  RadioPushSetNotifyACK* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<RadioPushSetNotifyACK>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const RadioPushSetNotifyACK& from);
+  void MergeFrom(const RadioPushSetNotifyACK& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RadioPushSetNotifyACK* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string sMsgId = 1;
+  void clear_smsgid();
+  static const int kSMsgIdFieldNumber = 1;
+  const ::std::string& smsgid() const;
+  void set_smsgid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_smsgid(::std::string&& value);
+  #endif
+  void set_smsgid(const char* value);
+  void set_smsgid(const char* value, size_t size);
+  ::std::string* mutable_smsgid();
+  ::std::string* release_smsgid();
+  void set_allocated_smsgid(::std::string* smsgid);
+
+  // uint64 msgTime = 2;
+  void clear_msgtime();
+  static const int kMsgTimeFieldNumber = 2;
+  ::google::protobuf::uint64 msgtime() const;
+  void set_msgtime(::google::protobuf::uint64 value);
+
+  // .radionotify.ExceptionCode expcode = 3;
+  void clear_expcode();
+  static const int kExpcodeFieldNumber = 3;
+  ::radionotify::ExceptionCode expcode() const;
+  void set_expcode(::radionotify::ExceptionCode value);
+
+  // @@protoc_insertion_point(class_scope:radionotify.RadioPushSetNotifyACK)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -908,9 +1228,303 @@ inline void RadioMsgNotifyACK::set_expcode(::radionotify::ExceptionCode value) {
   // @@protoc_insertion_point(field_set:radionotify.RadioMsgNotifyACK.expcode)
 }
 
+// -------------------------------------------------------------------
+
+// RadioPushSetNotify
+
+// string sMsgId = 1;
+inline void RadioPushSetNotify::clear_smsgid() {
+  smsgid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RadioPushSetNotify::smsgid() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotify.sMsgId)
+  return smsgid_.GetNoArena();
+}
+inline void RadioPushSetNotify::set_smsgid(const ::std::string& value) {
+  
+  smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotify.sMsgId)
+}
+#if LANG_CXX11
+inline void RadioPushSetNotify::set_smsgid(::std::string&& value) {
+  
+  smsgid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:radionotify.RadioPushSetNotify.sMsgId)
+}
+#endif
+inline void RadioPushSetNotify::set_smsgid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:radionotify.RadioPushSetNotify.sMsgId)
+}
+inline void RadioPushSetNotify::set_smsgid(const char* value, size_t size) {
+  
+  smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:radionotify.RadioPushSetNotify.sMsgId)
+}
+inline ::std::string* RadioPushSetNotify::mutable_smsgid() {
+  
+  // @@protoc_insertion_point(field_mutable:radionotify.RadioPushSetNotify.sMsgId)
+  return smsgid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RadioPushSetNotify::release_smsgid() {
+  // @@protoc_insertion_point(field_release:radionotify.RadioPushSetNotify.sMsgId)
+  
+  return smsgid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RadioPushSetNotify::set_allocated_smsgid(::std::string* smsgid) {
+  if (smsgid != NULL) {
+    
+  } else {
+    
+  }
+  smsgid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), smsgid);
+  // @@protoc_insertion_point(field_set_allocated:radionotify.RadioPushSetNotify.sMsgId)
+}
+
+// string sUserId = 2;
+inline void RadioPushSetNotify::clear_suserid() {
+  suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RadioPushSetNotify::suserid() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotify.sUserId)
+  return suserid_.GetNoArena();
+}
+inline void RadioPushSetNotify::set_suserid(const ::std::string& value) {
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotify.sUserId)
+}
+#if LANG_CXX11
+inline void RadioPushSetNotify::set_suserid(::std::string&& value) {
+  
+  suserid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:radionotify.RadioPushSetNotify.sUserId)
+}
+#endif
+inline void RadioPushSetNotify::set_suserid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:radionotify.RadioPushSetNotify.sUserId)
+}
+inline void RadioPushSetNotify::set_suserid(const char* value, size_t size) {
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:radionotify.RadioPushSetNotify.sUserId)
+}
+inline ::std::string* RadioPushSetNotify::mutable_suserid() {
+  
+  // @@protoc_insertion_point(field_mutable:radionotify.RadioPushSetNotify.sUserId)
+  return suserid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RadioPushSetNotify::release_suserid() {
+  // @@protoc_insertion_point(field_release:radionotify.RadioPushSetNotify.sUserId)
+  
+  return suserid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RadioPushSetNotify::set_allocated_suserid(::std::string* suserid) {
+  if (suserid != NULL) {
+    
+  } else {
+    
+  }
+  suserid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), suserid);
+  // @@protoc_insertion_point(field_set_allocated:radionotify.RadioPushSetNotify.sUserId)
+}
+
+// string sRadioId = 3;
+inline void RadioPushSetNotify::clear_sradioid() {
+  sradioid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RadioPushSetNotify::sradioid() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotify.sRadioId)
+  return sradioid_.GetNoArena();
+}
+inline void RadioPushSetNotify::set_sradioid(const ::std::string& value) {
+  
+  sradioid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotify.sRadioId)
+}
+#if LANG_CXX11
+inline void RadioPushSetNotify::set_sradioid(::std::string&& value) {
+  
+  sradioid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:radionotify.RadioPushSetNotify.sRadioId)
+}
+#endif
+inline void RadioPushSetNotify::set_sradioid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  sradioid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:radionotify.RadioPushSetNotify.sRadioId)
+}
+inline void RadioPushSetNotify::set_sradioid(const char* value, size_t size) {
+  
+  sradioid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:radionotify.RadioPushSetNotify.sRadioId)
+}
+inline ::std::string* RadioPushSetNotify::mutable_sradioid() {
+  
+  // @@protoc_insertion_point(field_mutable:radionotify.RadioPushSetNotify.sRadioId)
+  return sradioid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RadioPushSetNotify::release_sradioid() {
+  // @@protoc_insertion_point(field_release:radionotify.RadioPushSetNotify.sRadioId)
+  
+  return sradioid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RadioPushSetNotify::set_allocated_sradioid(::std::string* sradioid) {
+  if (sradioid != NULL) {
+    
+  } else {
+    
+  }
+  sradioid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sradioid);
+  // @@protoc_insertion_point(field_set_allocated:radionotify.RadioPushSetNotify.sRadioId)
+}
+
+// .radionotify.RadioPushSetNotifyType notifyType = 4;
+inline void RadioPushSetNotify::clear_notifytype() {
+  notifytype_ = 0;
+}
+inline ::radionotify::RadioPushSetNotifyType RadioPushSetNotify::notifytype() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotify.notifyType)
+  return static_cast< ::radionotify::RadioPushSetNotifyType >(notifytype_);
+}
+inline void RadioPushSetNotify::set_notifytype(::radionotify::RadioPushSetNotifyType value) {
+  
+  notifytype_ = value;
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotify.notifyType)
+}
+
+// uint32 status = 5;
+inline void RadioPushSetNotify::clear_status() {
+  status_ = 0u;
+}
+inline ::google::protobuf::uint32 RadioPushSetNotify::status() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotify.status)
+  return status_;
+}
+inline void RadioPushSetNotify::set_status(::google::protobuf::uint32 value) {
+  
+  status_ = value;
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotify.status)
+}
+
+// uint64 msgTime = 6;
+inline void RadioPushSetNotify::clear_msgtime() {
+  msgtime_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 RadioPushSetNotify::msgtime() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotify.msgTime)
+  return msgtime_;
+}
+inline void RadioPushSetNotify::set_msgtime(::google::protobuf::uint64 value) {
+  
+  msgtime_ = value;
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotify.msgTime)
+}
+
+// -------------------------------------------------------------------
+
+// RadioPushSetNotifyACK
+
+// string sMsgId = 1;
+inline void RadioPushSetNotifyACK::clear_smsgid() {
+  smsgid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& RadioPushSetNotifyACK::smsgid() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotifyACK.sMsgId)
+  return smsgid_.GetNoArena();
+}
+inline void RadioPushSetNotifyACK::set_smsgid(const ::std::string& value) {
+  
+  smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotifyACK.sMsgId)
+}
+#if LANG_CXX11
+inline void RadioPushSetNotifyACK::set_smsgid(::std::string&& value) {
+  
+  smsgid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:radionotify.RadioPushSetNotifyACK.sMsgId)
+}
+#endif
+inline void RadioPushSetNotifyACK::set_smsgid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:radionotify.RadioPushSetNotifyACK.sMsgId)
+}
+inline void RadioPushSetNotifyACK::set_smsgid(const char* value, size_t size) {
+  
+  smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:radionotify.RadioPushSetNotifyACK.sMsgId)
+}
+inline ::std::string* RadioPushSetNotifyACK::mutable_smsgid() {
+  
+  // @@protoc_insertion_point(field_mutable:radionotify.RadioPushSetNotifyACK.sMsgId)
+  return smsgid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* RadioPushSetNotifyACK::release_smsgid() {
+  // @@protoc_insertion_point(field_release:radionotify.RadioPushSetNotifyACK.sMsgId)
+  
+  return smsgid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void RadioPushSetNotifyACK::set_allocated_smsgid(::std::string* smsgid) {
+  if (smsgid != NULL) {
+    
+  } else {
+    
+  }
+  smsgid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), smsgid);
+  // @@protoc_insertion_point(field_set_allocated:radionotify.RadioPushSetNotifyACK.sMsgId)
+}
+
+// uint64 msgTime = 2;
+inline void RadioPushSetNotifyACK::clear_msgtime() {
+  msgtime_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 RadioPushSetNotifyACK::msgtime() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotifyACK.msgTime)
+  return msgtime_;
+}
+inline void RadioPushSetNotifyACK::set_msgtime(::google::protobuf::uint64 value) {
+  
+  msgtime_ = value;
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotifyACK.msgTime)
+}
+
+// .radionotify.ExceptionCode expcode = 3;
+inline void RadioPushSetNotifyACK::clear_expcode() {
+  expcode_ = 0;
+}
+inline ::radionotify::ExceptionCode RadioPushSetNotifyACK::expcode() const {
+  // @@protoc_insertion_point(field_get:radionotify.RadioPushSetNotifyACK.expcode)
+  return static_cast< ::radionotify::ExceptionCode >(expcode_);
+}
+inline void RadioPushSetNotifyACK::set_expcode(::radionotify::ExceptionCode value) {
+  
+  expcode_ = value;
+  // @@protoc_insertion_point(field_set:radionotify.RadioPushSetNotifyACK.expcode)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 
@@ -925,6 +1539,11 @@ template <> struct is_proto_enum< ::radionotify::RadioNotifyType> : ::std::true_
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::radionotify::RadioNotifyType>() {
   return ::radionotify::RadioNotifyType_descriptor();
+}
+template <> struct is_proto_enum< ::radionotify::RadioPushSetNotifyType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::radionotify::RadioPushSetNotifyType>() {
+  return ::radionotify::RadioPushSetNotifyType_descriptor();
 }
 template <> struct is_proto_enum< ::radionotify::ExceptionCode> : ::std::true_type {};
 template <>

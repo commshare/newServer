@@ -13,13 +13,13 @@
 #include <grpcpp/impl/codegen/client_callback.h>
 #include <grpcpp/impl/codegen/method_handler_impl.h>
 #include <grpcpp/impl/codegen/rpc_service_method.h>
-#include <grpcpp/impl/codegen/server_callback.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 namespace radionotify {
 
 static const char* RadioNotifyService_method_names[] = {
   "/radionotify.RadioNotifyService/OnRadioMsgNotify",
+  "/radionotify.RadioNotifyService/OnRadioPushSetNotify",
 };
 
 std::unique_ptr< RadioNotifyService::Stub> RadioNotifyService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -30,6 +30,7 @@ std::unique_ptr< RadioNotifyService::Stub> RadioNotifyService::NewStub(const std
 
 RadioNotifyService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_OnRadioMsgNotify_(RadioNotifyService_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_OnRadioPushSetNotify_(RadioNotifyService_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status RadioNotifyService::Stub::OnRadioMsgNotify(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::radionotify::RadioMsgNotifyACK* response) {
@@ -48,18 +49,46 @@ void RadioNotifyService::Stub::experimental_async::OnRadioMsgNotify(::grpc::Clie
   return ::grpc::internal::ClientAsyncResponseReaderFactory< ::radionotify::RadioMsgNotifyACK>::Create(channel_.get(), cq, rpcmethod_OnRadioMsgNotify_, context, request, false);
 }
 
+::grpc::Status RadioNotifyService::Stub::OnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::radionotify::RadioPushSetNotifyACK* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_OnRadioPushSetNotify_, context, request, response);
+}
+
+void RadioNotifyService::Stub::experimental_async::OnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response, std::function<void(::grpc::Status)> f) {
+  return ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_OnRadioPushSetNotify_, context, request, response, std::move(f));
+}
+
+::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>* RadioNotifyService::Stub::AsyncOnRadioPushSetNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::radionotify::RadioPushSetNotifyACK>::Create(channel_.get(), cq, rpcmethod_OnRadioPushSetNotify_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>* RadioNotifyService::Stub::PrepareAsyncOnRadioPushSetNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::radionotify::RadioPushSetNotifyACK>::Create(channel_.get(), cq, rpcmethod_OnRadioPushSetNotify_, context, request, false);
+}
+
 RadioNotifyService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       RadioNotifyService_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< RadioNotifyService::Service, ::radionotify::RadioMsgNotify, ::radionotify::RadioMsgNotifyACK>(
           std::mem_fn(&RadioNotifyService::Service::OnRadioMsgNotify), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      RadioNotifyService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< RadioNotifyService::Service, ::radionotify::RadioPushSetNotify, ::radionotify::RadioPushSetNotifyACK>(
+          std::mem_fn(&RadioNotifyService::Service::OnRadioPushSetNotify), this)));
 }
 
 RadioNotifyService::Service::~Service() {
 }
 
 ::grpc::Status RadioNotifyService::Service::OnRadioMsgNotify(::grpc::ServerContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status RadioNotifyService::Service::OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -15,6 +15,8 @@
 #include "../base/util.h"
 #include "hiredis.h"
 #include "threadpool.h"
+#include "singleton.h"
+
 
 enum REDIS_OPER_CODE
 {
@@ -86,6 +88,22 @@ public:
 	REDIS_OPER_CODE srem(const std::string& key, const std::string& values, long& ret_value);
 	// 移动元素
 	REDIS_OPER_CODE smove(const std::string& srcKey, const std::string& destKey, const std::string& value, long& ret_value);
+
+	// redis sorted set structure
+	REDIS_OPER_CODE zadd(const std::string& key, const std::string& sMember, int nScore);
+	REDIS_OPER_CODE zadd(const std::string& key, const std::map<string, int>& values);
+	// 获取元素个数
+	REDIS_OPER_CODE zcard(const std::string& key, long& ret_value);
+	// 获取所有元素
+	REDIS_OPER_CODE zrange(const std::string& key, std::vector<string>& values);
+	// 获取所有元素包含分数
+	REDIS_OPER_CODE zrange(const std::string& key, std::map<string, int>& values);
+	// 删除元素
+	REDIS_OPER_CODE zrem(const std::string& key, const std::vector<string>& values);
+	REDIS_OPER_CODE zrem(const std::string& key, const std::string& value);
+	// 获取某个元素的分数
+	REDIS_OPER_CODE zscore(const std::string& key, const std::string& sMember, int& nScore);
+	
 	
 
 private:
@@ -122,20 +140,19 @@ private:
 	CThreadNotify		m_free_notify;
 };
 
-class CacheManager {
+class CacheManager : public Singleton <CacheManager>
+{
 public:
 	virtual ~CacheManager();
-
-	static CacheManager* getInstance();
-
+	
 	int Init();
 	CacheConn* GetCacheConn(const char* pool_name);
 	void RelCacheConn(CacheConn* pCacheConn);
 private:
+	friend class Singleton <CacheManager> ;
 	CacheManager();
 
 private:
-	static CacheManager* 	s_cache_manager;
 	map<string, CachePool*>	m_cache_pool_map;
 };
 

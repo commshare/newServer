@@ -136,10 +136,10 @@ grpc::Status GrpcServer::CRadioNotifyServiceImpl::OnRadioMsgNotify(::grpc::Serve
 	return Status::OK;
 }
 
-::grpc::Status GrpcServer::CRadioNotifyServiceImpl::OnUserPushSetNotify(::grpc::ServerContext* context, const ::radionotify::UserPushSetNotify* request, ::radionotify::UserPushSetNotifyACK* response)
+::grpc::Status GrpcServer::CRadioNotifyServiceImpl::OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response)
 {
 	cout << "=========OnUserPushSetNotify==========" <<endl;
-	userPushSetNotify(request, response);
+	radioPushSetNotify(request, response);
 	return Status::OK;
 }
 
@@ -168,21 +168,25 @@ void GrpcServer::CRadioNotifyServiceImpl::radioMsgNotify(const radionotify::Radi
 	DbgLog("radio relation ack  msg=%s radio=%s type=%d from=%s", request->smsgid().c_str(), request->sradioid().c_str(), request->notifytype(), request->sopruserid().c_str());
 }
 
-void GrpcServer::CRadioNotifyServiceImpl::userPushSetNotify(const radionotify::UserPushSetNotify* request, radionotify::UserPushSetNotifyACK* response)
+void GrpcServer::CRadioNotifyServiceImpl::radioPushSetNotify(const radionotify::RadioPushSetNotify* request, radionotify::RadioPushSetNotifyACK* response)
 {
-	DbgLog("user push set msg=%s user=%s push=%d", request->smsgid().c_str(), request->suserid().c_str(), request->pushtype());
-	im::SVRUserPushSetNotify userNotify;
-	userNotify.set_smsgid(request->smsgid());
-	userNotify.set_suserid(request->suserid());
-	userNotify.set_pushtype((im::SVRUserPushNotifyType)request->pushtype());
-	userNotify.set_msgtime(request->msgtime());
-	
-	CPduSender::getInstance()->sendReq(&userNotify, im::SVR_USER_PUSHSET_NOTIFY, imsvr::LOGIN);
+	DbgLog("user push set msg=%s user=%s radio=%s push=%d status=%d", request->smsgid().c_str(), request->suserid().c_str(), request->sradioid().c_str(), request->notifytype(), request->status());
+	im::SVRRadioPushSetNotify radioNotify;
+	radioNotify.set_smsgid(request->smsgid());
+	radioNotify.set_suserid(request->suserid());
+	radioNotify.set_sradioid(request->sradioid());
+	radioNotify.set_notifytype((im::SVRRadioPushSetNotifyType)request->notifytype());
+	radioNotify.set_status(request->status());
+	radioNotify.set_msgtime(request->msgtime());
+	if(radionotify::PUSH_NEWMSG == request->notifytype() || radionotify::PUSH_HIDEMSGSOUNDON == request->notifytype())
+		CPduSender::getInstance()->sendReq(&radioNotify, im::SVR_RADIO_PUSHSET_NOTIFY, imsvr::LOGIN);
+	else
+		CPduSender::getInstance()->sendReq(&radioNotify, im::SVR_RADIO_PUSHSET_NOTIFY, imsvr::CHANNEL);
 	
 	response->set_smsgid(request->smsgid());
 	response->set_msgtime(getCurrentTime());
 	response->set_expcode(radionotify::ExceptionCode::NO_EXP);
-	DbgLog("user push set ack  msg=%s user=%s push=%d", request->smsgid().c_str(), request->suserid().c_str(), request->pushtype());
+	DbgLog("user push set ack  msg=%s user=%s radio=%s push=%d status=%d", request->smsgid().c_str(), request->suserid().c_str(), request->sradioid().c_str(), request->notifytype(), request->status());
 }
 
 

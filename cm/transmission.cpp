@@ -49,6 +49,7 @@ bool CTransimission::RegistPacketExecutor(void)
 //	CmdRegist(im::CM_DEVICETOKENSYNC,m_nNumberOfInst, CommandProc(&CTransimission::OnLoginTrans));
 	CmdRegist(im::LOGIN_CM_NOTIFY, m_nNumberOfInst,CommandProc(&CTransimission::OnLoginCMNotify));
 	CmdRegist(im::SVR_LOGIN_RESULT,m_nNumberOfInst,  CommandProc(&CTransimission::OnLoginResult));
+	CmdRegist(im::CM_PUSHTOKENSYNC,m_nNumberOfInst, CommandProc(&CTransimission::OnLoginTrans));
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	// 						Regist chat cmd for forwarding to MSG.
@@ -149,7 +150,7 @@ bool CTransimission::RegistPacketExecutor(void)
 //	CmdRegist(im::MS_COMMONNOTIFY_ACK, m_nNumberOfInst, CommandProc(&CTransimission::OnClientTrans));
 	CmdRegist(im::CM_LOGIN_ACK, m_nNumberOfInst, CommandProc(&CTransimission::OnClientTrans));
 	CmdRegist(im::CM_LOGOUT_ACK, m_nNumberOfInst, CommandProc(&CTransimission::OnClientTrans));
-//	CmdRegist(im::CM_DEVICETOKENSYNC_ACK, m_nNumberOfInst, CommandProc(&CTransimission::OnClientTrans));
+	CmdRegist(im::CM_PUSHTOKENSYNC_ACK, m_nNumberOfInst, CommandProc(&CTransimission::OnClientTrans));
 	//////////////////////////////////////////////////////////////////////////////////////
 	// 						Regist chat cmd for exanging to client.
 	/////////////////////////////////////////////////////////////////////////////////////	
@@ -192,6 +193,8 @@ bool CTransimission::RegistPacketExecutor(void)
 	
 	CmdRegist(im::PC_CHECKAPPACTIVE, m_nNumberOfInst, CommandProc(&CTransimission::OnClientExange));
 	CmdRegist(im::PC_CHECKAPPACTIVEACK, m_nNumberOfInst, CommandProc(&CTransimission::OnDesktopTrans));
+
+    CmdRegist(im::PC_PCSTATUSSYNTOAPP,	m_nNumberOfInst,  CommandProc(&CTransimission::OnClientExange));
     return true;
 }
 
@@ -859,19 +862,17 @@ bool CTransimission::GetUserId(std::shared_ptr<CImPdu> pPdu,string &sUserId)
 			sUserId += logoutAck.suserid();
 		}
 			break;
-//		case im::CM_DEVICETOKENSYNC_ACK:
-//		{
-//			im::CMDeviceTokenSyncAck syncAck;
-						
-//			if(false==syncAck.ParseFromArray(pContent,nBodySize))
-//			{
-//				bRet = false;
-//				break;
-//			}
-
-//			sUserId += syncAck.suserid();
-//		}
-//			break;
+		case im::CM_PUSHTOKENSYNC_ACK:
+		{
+			im::CCMPushTokenSyncAck syncAck;
+			if(false==syncAck.ParseFromArray(pContent,nBodySize))
+			{
+				bRet = false;
+				break;
+			}
+			sUserId += syncAck.suserid();
+		}
+		break;
 		case im::RADIO_CHAT_ACK:
 		case im::RADIO_ADMIN_CANCEL_CHAT_ACK:
 		case im::RADIO_CANCEL_CHAT_ACK:
@@ -941,6 +942,17 @@ bool CTransimission::GetUserId(std::shared_ptr<CImPdu> pPdu,string &sUserId)
 				break;
 			}
 			sUserId += msg.sfromid();
+		}
+		break;
+		case im::PC_PCSTATUSSYNTOAPP:
+		{
+			im::PcStatusSynToApp msg;
+			if(false==msg.ParseFromArray(pContent,nBodySize))
+			{
+				bRet = false;
+				break;
+			}
+			sUserId += msg.userid();
 		}
 		break;
 		default:
@@ -1448,6 +1460,7 @@ bool CTransimission::OnLoginResult(std::shared_ptr<CImPdu> pPdu)
 		loginAck.set_nerr(LoginRes.nerr());
 		loginAck.set_nlastlogintime(getCurrentTime());
 		sendAck(&loginAck, im::CM_LOGIN_ACK, sessionId);
+        //NotifyPCToLineOff(pPdu);
 	}
 	else if(im::LOGIN_KICKOUT == LoginRes.type())
 	{
@@ -1460,10 +1473,11 @@ bool CTransimission::OnLoginResult(std::shared_ptr<CImPdu> pPdu)
 		kickoutUser.set_ip(strIp);
 		kickoutUser.set_port(nPort);
 		sendAck(&kickoutUser, im::CM_KICKOUT_NOTIFICATION, sessionId);
-        NotifyPCToLineOff(pPdu);//
+        //NotifyPCToLineOff(pPdu);//
         //BroadcastPdu(DESKTOP, pPdu.get());
 	}
 	
+    NotifyPCToLineOff(pPdu);
 	if(bCloseLink)
 	{
 		CClientLink* pKickoutLink = CClientLinkMgr::GetInstance()->GetLinkBySessionId(sessionId);

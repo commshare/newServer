@@ -126,6 +126,12 @@ void CChannelNotify::insertChannelNotifyToDataBase(im::SVRRadioMsgNotify msg)
 	if(nTick > 0)
 		CThreadPoolManager::getInstance()->getSendGroupMsgPool()->add_task(&CChannelNotify::sendChannelNotify, this, chatMsg, tmpMember);
 	vecMember.clear();
+	
+	if(im::SVRRADIO_TYPE_DISMISS == msg.notifytype())
+	{
+		CRedisMgr::getInstance()->deleteChannelUserKey(msg.sradioid());
+		CRedisMgr::getInstance()->deleteChannelOfflineUserKey(msg.sradioid());
+	}
 }
 
 void CChannelNotify::sendChannelNotify(im::RadioChat msg, std::vector<string> vecMember)
@@ -206,8 +212,6 @@ bool CChannelNotify::updateUserChannelInfo(const im::SVRRadioMsgNotify& msg)
 	else if(im::SVRRADIO_TYPE_DISMISS == type)
 	{
 		CRedisMgr::getInstance()->setChannelStatus(msg.sradioid(), CHNN_DISMISS);
-		CRedisMgr::getInstance()->deleteChannelUserKey(msg.sradioid());
-		CRedisMgr::getInstance()->deleteChannelOfflineUserKey(msg.sradioid());
 	}
 	else if(im::SVRRADIO_TYPE_CREATE == type)
 	{
@@ -261,7 +265,8 @@ bool CChannelNotify::packagingRadioChat(const im::SVRRadioMsgNotify& msg, im::Ra
 		msgContent["text"] = msg.scontent();
 	}
 	// 主动加入和退出频道、解散频道
-	else if(im::SVRRADIO_TYPE_MEMBER_QUIT == type || im::SVRRADIO_TYPE_APPLY == type || im::SVRRADIO_TYPE_DISMISS == type)
+	else if(im::SVRRADIO_TYPE_MEMBER_QUIT == type || im::SVRRADIO_TYPE_APPLY == type || im::SVRRADIO_TYPE_DISMISS == type 
+			|| im::SVRRADIO_TYPE_FORBID_INTERFACING_ON == type || im::SVRRADIO_TYPE_FORBID_INTERFACING_OFF == type)
 	{
 		msgContent["oprUserId"] = msg.sopruserid();
 	}
@@ -280,9 +285,57 @@ bool CChannelNotify::packagingRadioChat(const im::SVRRadioMsgNotify& msg, im::Ra
 	return true;
 }
 
+bool CChannelNotify::OnChannelPushSetNotify(std::shared_ptr<CImPdu> pPdu)
+{
+	assert(NULL != pPdu);
+	im::SVRRadioPushSetNotify msg;
+	if (!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+	{
+		return false;
+	}
+	DbgLog("user push set msg=%s user=%s push=%d", msg.smsgid().c_str(), msg.suserid().c_str(), msg.notifytype());
+
+	CThreadPoolManager::getInstance()->getInsertGroupMsgPool()->add_task(&CChannelNotify::setChannelPushStatus, this, msg);
+	
+	im::SVRMSGNotifyACK notifyAck;
+	notifyAck.set_smsgid(msg.smsgid());
+	notifyAck.set_msgtime(getCurrentTime());
+	notifyAck.set_errcode(im::NON_ERR);
+	sendAck(&notifyAck, im::SVR_RADIO_PUSHSET_NOTIFY_ACK, pPdu->GetSessionId());
+	return true;
+}
+
+void CChannelNotify::setChannelPushStatus(im::SVRRadioPushSetNotify msg)
+{
+	std::string sUserId = msg.suserid();
+	std::string sRadioId = msg.sradioid();
+	int nStatus = msg.status();
+
+	// 获取频道设置的状态
+	int nUndisturb = 0;
+	int nHide = 0;
+	int nSetOn = 0;
+	CRedisMgr::getInstance()->getChannelSetOnStatus(sUserId, sRadioId, nSetOn);
+	if(im::SVRPUSH_ISHIDE == msg.notifytype())
+	{
+		nUndisturb = nSetOn & CHNN_UNDISTURB;
+		nHide = nStatus ? 0x01 : 0x00;
+		
+	}
+	else
+	{
+		nHide = nSetOn & CHNN_ISHIDE;
+		nUndisturb =  nStatus ? 0x10 : 0x00;
+	}
+	nSetOn = nUndisturb | nHide;
+	CRedisMgr::getInstance()->addChannelToUser(sUserId, sRadioId, nSetOn);
+}
+
+
 bool CChannelNotify::RegistPacketExecutor(void)	 //Regist command process function to network frame. 
 {
 	CmdRegist(im::SVR_RADIO_RELATIN_NOTIFY, m_nNumberOfInst, CommandProc(&CChannelNotify::OnChannelNotify));
+	CmdRegist(im::SVR_RADIO_PUSHSET_NOTIFY, m_nNumberOfInst, CommandProc(&CChannelNotify::OnChannelPushSetNotify));
 	return true;
 }
 

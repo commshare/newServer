@@ -30,6 +30,16 @@ class RadioMsgNotifyACKDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<RadioMsgNotifyACK>
       _instance;
 } _RadioMsgNotifyACK_default_instance_;
+class RadioPushSetNotifyDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<RadioPushSetNotify>
+      _instance;
+} _RadioPushSetNotify_default_instance_;
+class RadioPushSetNotifyACKDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<RadioPushSetNotifyACK>
+      _instance;
+} _RadioPushSetNotifyACK_default_instance_;
 }  // namespace radionotify
 namespace protobuf_im_2eradio_2eproto {
 static void InitDefaultsRadioMsgNotify() {
@@ -60,13 +70,43 @@ static void InitDefaultsRadioMsgNotifyACK() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_RadioMsgNotifyACK =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsRadioMsgNotifyACK}, {}};
 
+static void InitDefaultsRadioPushSetNotify() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::radionotify::_RadioPushSetNotify_default_instance_;
+    new (ptr) ::radionotify::RadioPushSetNotify();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::radionotify::RadioPushSetNotify::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_RadioPushSetNotify =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsRadioPushSetNotify}, {}};
+
+static void InitDefaultsRadioPushSetNotifyACK() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::radionotify::_RadioPushSetNotifyACK_default_instance_;
+    new (ptr) ::radionotify::RadioPushSetNotifyACK();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::radionotify::RadioPushSetNotifyACK::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_RadioPushSetNotifyACK =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsRadioPushSetNotifyACK}, {}};
+
 void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_RadioMsgNotify.base);
   ::google::protobuf::internal::InitSCC(&scc_info_RadioMsgNotifyACK.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_RadioPushSetNotify.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_RadioPushSetNotifyACK.base);
 }
 
-::google::protobuf::Metadata file_level_metadata[2];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[2];
+::google::protobuf::Metadata file_level_metadata[4];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[3];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -90,15 +130,38 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioMsgNotifyACK, smsgid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioMsgNotifyACK, msgtime_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioMsgNotifyACK, expcode_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, smsgid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, suserid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, sradioid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, notifytype_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotify, msgtime_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotifyACK, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotifyACK, smsgid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotifyACK, msgtime_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::radionotify::RadioPushSetNotifyACK, expcode_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::radionotify::RadioMsgNotify)},
   { 13, -1, sizeof(::radionotify::RadioMsgNotifyACK)},
+  { 21, -1, sizeof(::radionotify::RadioPushSetNotify)},
+  { 32, -1, sizeof(::radionotify::RadioPushSetNotifyACK)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::radionotify::_RadioMsgNotify_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::radionotify::_RadioMsgNotifyACK_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::radionotify::_RadioPushSetNotify_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::radionotify::_RadioPushSetNotifyACK_default_instance_),
 };
 
 void protobuf_AssignDescriptors() {
@@ -116,7 +179,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 2);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 4);
 }
 
 void AddDescriptorsImpl() {
@@ -130,24 +193,38 @@ void AddDescriptorsImpl() {
       "NotifyType\022\016\n\006extend\030\010 \001(\t\"a\n\021RadioMsgNo"
       "tifyACK\022\016\n\006sMsgId\030\001 \001(\t\022\017\n\007msgTime\030\002 \001(\004"
       "\022+\n\007expcode\030\003 \001(\0162\032.radionotify.Exceptio"
-      "nCode*\236\003\n\017RadioNotifyType\022\026\n\022RADIO_TYPE_"
-      "UNKNOWN\020\000\022\033\n\027RADIO_TYPE_NAME_CHANGED\020\001\022\033"
-      "\n\027RADIO_TYPE_ICON_CHANGED\020\002\022\035\n\031RADIO_TYP"
-      "E_NOTICE_CHANGED\020\003\022\032\n\026RADIO_TYPE_MEMBER_"
-      "QUIT\020\004\022\034\n\030RADIO_TYPE_MEMBER_REMOVE\020\005\022\024\n\020"
-      "RADIO_TYPE_APPLY\020\006\022\025\n\021RADIO_TYPE_INVITE\020"
-      "\007\022\035\n\031RADIO_TYPE_MASTER_CHANGED\020\010\022\030\n\024RADI"
-      "O_TYPE_ADMIN_SET\020\t\022\032\n\026RADIO_TYPE_ADMIN_U"
-      "NSET\020\n\022\026\n\022RADIO_TYPE_DISMISS\020\013\022\026\n\022RADIO_"
-      "TYPE_NOSPEAK\020\014\022\027\n\023RADIO_TYPE_SPEAKING\020\r\022"
-      "\025\n\021RADIO_TYPE_CREATE\020\016*(\n\rExceptionCode\022"
-      "\n\n\006NO_EXP\020\000\022\013\n\007EXP_ERR\020\0012g\n\022RadioNotifyS"
-      "ervice\022Q\n\020OnRadioMsgNotify\022\033.radionotify"
-      ".RadioMsgNotify\032\036.radionotify.RadioMsgNo"
-      "tifyACK\"\000b\006proto3"
+      "nCode\"\241\001\n\022RadioPushSetNotify\022\016\n\006sMsgId\030\001"
+      " \001(\t\022\017\n\007sUserId\030\002 \001(\t\022\020\n\010sRadioId\030\003 \001(\t\022"
+      "7\n\nnotifyType\030\004 \001(\0162#.radionotify.RadioP"
+      "ushSetNotifyType\022\016\n\006status\030\005 \001(\r\022\017\n\007msgT"
+      "ime\030\006 \001(\004\"e\n\025RadioPushSetNotifyACK\022\016\n\006sM"
+      "sgId\030\001 \001(\t\022\017\n\007msgTime\030\002 \001(\004\022+\n\007expcode\030\003"
+      " \001(\0162\032.radionotify.ExceptionCode*\353\003\n\017Rad"
+      "ioNotifyType\022\026\n\022RADIO_TYPE_UNKNOWN\020\000\022\033\n\027"
+      "RADIO_TYPE_NAME_CHANGED\020\001\022\033\n\027RADIO_TYPE_"
+      "ICON_CHANGED\020\002\022\035\n\031RADIO_TYPE_NOTICE_CHAN"
+      "GED\020\003\022\032\n\026RADIO_TYPE_MEMBER_QUIT\020\004\022\034\n\030RAD"
+      "IO_TYPE_MEMBER_REMOVE\020\005\022\024\n\020RADIO_TYPE_AP"
+      "PLY\020\006\022\025\n\021RADIO_TYPE_INVITE\020\007\022\035\n\031RADIO_TY"
+      "PE_MASTER_CHANGED\020\010\022\030\n\024RADIO_TYPE_ADMIN_"
+      "SET\020\t\022\032\n\026RADIO_TYPE_ADMIN_UNSET\020\n\022\026\n\022RAD"
+      "IO_TYPE_DISMISS\020\013\022\026\n\022RADIO_TYPE_NOSPEAK\020"
+      "\014\022\027\n\023RADIO_TYPE_SPEAKING\020\r\022\025\n\021RADIO_TYPE"
+      "_CREATE\020\016\022$\n RADIO_TYPE_FORBID_INTERFACI"
+      "NG_ON\020\017\022%\n!RADIO_TYPE_FORBID_INTERFACING"
+      "_OFF\020\020*g\n\026RadioPushSetNotifyType\022\017\n\013PUSH"
+      "_NEWMSG\020\000\022\027\n\023PUSH_HIDEMSGSOUNDON\020\001\022\017\n\013PU"
+      "SH_ISHIDE\020\002\022\022\n\016PUSH_UNDISTURB\020\003*(\n\rExcep"
+      "tionCode\022\n\n\006NO_EXP\020\000\022\013\n\007EXP_ERR\020\0012\306\001\n\022Ra"
+      "dioNotifyService\022Q\n\020OnRadioMsgNotify\022\033.r"
+      "adionotify.RadioMsgNotify\032\036.radionotify."
+      "RadioMsgNotifyACK\"\000\022]\n\024OnRadioPushSetNot"
+      "ify\022\037.radionotify.RadioPushSetNotify\032\".r"
+      "adionotify.RadioPushSetNotifyACK\"\000b\006prot"
+      "o3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 897);
+      descriptor, 1442);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "im.radio.proto", &protobuf_RegisterTypes);
 }
@@ -185,6 +262,24 @@ bool RadioNotifyType_IsValid(int value) {
     case 12:
     case 13:
     case 14:
+    case 15:
+    case 16:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* RadioPushSetNotifyType_descriptor() {
+  protobuf_im_2eradio_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_im_2eradio_2eproto::file_level_enum_descriptors[1];
+}
+bool RadioPushSetNotifyType_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -193,7 +288,7 @@ bool RadioNotifyType_IsValid(int value) {
 
 const ::google::protobuf::EnumDescriptor* ExceptionCode_descriptor() {
   protobuf_im_2eradio_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_im_2eradio_2eproto::file_level_enum_descriptors[1];
+  return protobuf_im_2eradio_2eproto::file_level_enum_descriptors[2];
 }
 bool ExceptionCode_IsValid(int value) {
   switch (value) {
@@ -1138,6 +1233,808 @@ void RadioMsgNotifyACK::InternalSwap(RadioMsgNotifyACK* other) {
 }
 
 
+// ===================================================================
+
+void RadioPushSetNotify::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int RadioPushSetNotify::kSMsgIdFieldNumber;
+const int RadioPushSetNotify::kSUserIdFieldNumber;
+const int RadioPushSetNotify::kSRadioIdFieldNumber;
+const int RadioPushSetNotify::kNotifyTypeFieldNumber;
+const int RadioPushSetNotify::kStatusFieldNumber;
+const int RadioPushSetNotify::kMsgTimeFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+RadioPushSetNotify::RadioPushSetNotify()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_im_2eradio_2eproto::scc_info_RadioPushSetNotify.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:radionotify.RadioPushSetNotify)
+}
+RadioPushSetNotify::RadioPushSetNotify(const RadioPushSetNotify& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  smsgid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.smsgid().size() > 0) {
+    smsgid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.smsgid_);
+  }
+  suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.suserid().size() > 0) {
+    suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
+  }
+  sradioid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.sradioid().size() > 0) {
+    sradioid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.sradioid_);
+  }
+  ::memcpy(&notifytype_, &from.notifytype_,
+    static_cast<size_t>(reinterpret_cast<char*>(&msgtime_) -
+    reinterpret_cast<char*>(&notifytype_)) + sizeof(msgtime_));
+  // @@protoc_insertion_point(copy_constructor:radionotify.RadioPushSetNotify)
+}
+
+void RadioPushSetNotify::SharedCtor() {
+  smsgid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  sradioid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&notifytype_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&msgtime_) -
+      reinterpret_cast<char*>(&notifytype_)) + sizeof(msgtime_));
+}
+
+RadioPushSetNotify::~RadioPushSetNotify() {
+  // @@protoc_insertion_point(destructor:radionotify.RadioPushSetNotify)
+  SharedDtor();
+}
+
+void RadioPushSetNotify::SharedDtor() {
+  smsgid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  suserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  sradioid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void RadioPushSetNotify::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* RadioPushSetNotify::descriptor() {
+  ::protobuf_im_2eradio_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_im_2eradio_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const RadioPushSetNotify& RadioPushSetNotify::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_im_2eradio_2eproto::scc_info_RadioPushSetNotify.base);
+  return *internal_default_instance();
+}
+
+
+void RadioPushSetNotify::Clear() {
+// @@protoc_insertion_point(message_clear_start:radionotify.RadioPushSetNotify)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  smsgid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  sradioid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&notifytype_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&msgtime_) -
+      reinterpret_cast<char*>(&notifytype_)) + sizeof(msgtime_));
+  _internal_metadata_.Clear();
+}
+
+bool RadioPushSetNotify::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:radionotify.RadioPushSetNotify)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string sMsgId = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_smsgid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->smsgid().data(), static_cast<int>(this->smsgid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "radionotify.RadioPushSetNotify.sMsgId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string sUserId = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_suserid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->suserid().data(), static_cast<int>(this->suserid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "radionotify.RadioPushSetNotify.sUserId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string sRadioId = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_sradioid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->sradioid().data(), static_cast<int>(this->sradioid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "radionotify.RadioPushSetNotify.sRadioId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .radionotify.RadioPushSetNotifyType notifyType = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_notifytype(static_cast< ::radionotify::RadioPushSetNotifyType >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 status = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &status_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 msgTime = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &msgtime_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:radionotify.RadioPushSetNotify)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:radionotify.RadioPushSetNotify)
+  return false;
+#undef DO_
+}
+
+void RadioPushSetNotify::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:radionotify.RadioPushSetNotify)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string sMsgId = 1;
+  if (this->smsgid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->smsgid().data(), static_cast<int>(this->smsgid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotify.sMsgId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->smsgid(), output);
+  }
+
+  // string sUserId = 2;
+  if (this->suserid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->suserid().data(), static_cast<int>(this->suserid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotify.sUserId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->suserid(), output);
+  }
+
+  // string sRadioId = 3;
+  if (this->sradioid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->sradioid().data(), static_cast<int>(this->sradioid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotify.sRadioId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->sradioid(), output);
+  }
+
+  // .radionotify.RadioPushSetNotifyType notifyType = 4;
+  if (this->notifytype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      4, this->notifytype(), output);
+  }
+
+  // uint32 status = 5;
+  if (this->status() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->status(), output);
+  }
+
+  // uint64 msgTime = 6;
+  if (this->msgtime() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->msgtime(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:radionotify.RadioPushSetNotify)
+}
+
+::google::protobuf::uint8* RadioPushSetNotify::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:radionotify.RadioPushSetNotify)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string sMsgId = 1;
+  if (this->smsgid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->smsgid().data(), static_cast<int>(this->smsgid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotify.sMsgId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->smsgid(), target);
+  }
+
+  // string sUserId = 2;
+  if (this->suserid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->suserid().data(), static_cast<int>(this->suserid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotify.sUserId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->suserid(), target);
+  }
+
+  // string sRadioId = 3;
+  if (this->sradioid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->sradioid().data(), static_cast<int>(this->sradioid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotify.sRadioId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->sradioid(), target);
+  }
+
+  // .radionotify.RadioPushSetNotifyType notifyType = 4;
+  if (this->notifytype() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      4, this->notifytype(), target);
+  }
+
+  // uint32 status = 5;
+  if (this->status() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->status(), target);
+  }
+
+  // uint64 msgTime = 6;
+  if (this->msgtime() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(6, this->msgtime(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:radionotify.RadioPushSetNotify)
+  return target;
+}
+
+size_t RadioPushSetNotify::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:radionotify.RadioPushSetNotify)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string sMsgId = 1;
+  if (this->smsgid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->smsgid());
+  }
+
+  // string sUserId = 2;
+  if (this->suserid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->suserid());
+  }
+
+  // string sRadioId = 3;
+  if (this->sradioid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->sradioid());
+  }
+
+  // .radionotify.RadioPushSetNotifyType notifyType = 4;
+  if (this->notifytype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->notifytype());
+  }
+
+  // uint32 status = 5;
+  if (this->status() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->status());
+  }
+
+  // uint64 msgTime = 6;
+  if (this->msgtime() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->msgtime());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void RadioPushSetNotify::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:radionotify.RadioPushSetNotify)
+  GOOGLE_DCHECK_NE(&from, this);
+  const RadioPushSetNotify* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const RadioPushSetNotify>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:radionotify.RadioPushSetNotify)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:radionotify.RadioPushSetNotify)
+    MergeFrom(*source);
+  }
+}
+
+void RadioPushSetNotify::MergeFrom(const RadioPushSetNotify& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:radionotify.RadioPushSetNotify)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.smsgid().size() > 0) {
+
+    smsgid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.smsgid_);
+  }
+  if (from.suserid().size() > 0) {
+
+    suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
+  }
+  if (from.sradioid().size() > 0) {
+
+    sradioid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.sradioid_);
+  }
+  if (from.notifytype() != 0) {
+    set_notifytype(from.notifytype());
+  }
+  if (from.status() != 0) {
+    set_status(from.status());
+  }
+  if (from.msgtime() != 0) {
+    set_msgtime(from.msgtime());
+  }
+}
+
+void RadioPushSetNotify::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:radionotify.RadioPushSetNotify)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RadioPushSetNotify::CopyFrom(const RadioPushSetNotify& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:radionotify.RadioPushSetNotify)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RadioPushSetNotify::IsInitialized() const {
+  return true;
+}
+
+void RadioPushSetNotify::Swap(RadioPushSetNotify* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void RadioPushSetNotify::InternalSwap(RadioPushSetNotify* other) {
+  using std::swap;
+  smsgid_.Swap(&other->smsgid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  suserid_.Swap(&other->suserid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  sradioid_.Swap(&other->sradioid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(notifytype_, other->notifytype_);
+  swap(status_, other->status_);
+  swap(msgtime_, other->msgtime_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata RadioPushSetNotify::GetMetadata() const {
+  protobuf_im_2eradio_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_im_2eradio_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void RadioPushSetNotifyACK::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int RadioPushSetNotifyACK::kSMsgIdFieldNumber;
+const int RadioPushSetNotifyACK::kMsgTimeFieldNumber;
+const int RadioPushSetNotifyACK::kExpcodeFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+RadioPushSetNotifyACK::RadioPushSetNotifyACK()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_im_2eradio_2eproto::scc_info_RadioPushSetNotifyACK.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:radionotify.RadioPushSetNotifyACK)
+}
+RadioPushSetNotifyACK::RadioPushSetNotifyACK(const RadioPushSetNotifyACK& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  smsgid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.smsgid().size() > 0) {
+    smsgid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.smsgid_);
+  }
+  ::memcpy(&msgtime_, &from.msgtime_,
+    static_cast<size_t>(reinterpret_cast<char*>(&expcode_) -
+    reinterpret_cast<char*>(&msgtime_)) + sizeof(expcode_));
+  // @@protoc_insertion_point(copy_constructor:radionotify.RadioPushSetNotifyACK)
+}
+
+void RadioPushSetNotifyACK::SharedCtor() {
+  smsgid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&msgtime_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&expcode_) -
+      reinterpret_cast<char*>(&msgtime_)) + sizeof(expcode_));
+}
+
+RadioPushSetNotifyACK::~RadioPushSetNotifyACK() {
+  // @@protoc_insertion_point(destructor:radionotify.RadioPushSetNotifyACK)
+  SharedDtor();
+}
+
+void RadioPushSetNotifyACK::SharedDtor() {
+  smsgid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void RadioPushSetNotifyACK::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* RadioPushSetNotifyACK::descriptor() {
+  ::protobuf_im_2eradio_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_im_2eradio_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const RadioPushSetNotifyACK& RadioPushSetNotifyACK::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_im_2eradio_2eproto::scc_info_RadioPushSetNotifyACK.base);
+  return *internal_default_instance();
+}
+
+
+void RadioPushSetNotifyACK::Clear() {
+// @@protoc_insertion_point(message_clear_start:radionotify.RadioPushSetNotifyACK)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  smsgid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&msgtime_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&expcode_) -
+      reinterpret_cast<char*>(&msgtime_)) + sizeof(expcode_));
+  _internal_metadata_.Clear();
+}
+
+bool RadioPushSetNotifyACK::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:radionotify.RadioPushSetNotifyACK)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string sMsgId = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_smsgid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->smsgid().data(), static_cast<int>(this->smsgid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "radionotify.RadioPushSetNotifyACK.sMsgId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 msgTime = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &msgtime_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .radionotify.ExceptionCode expcode = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_expcode(static_cast< ::radionotify::ExceptionCode >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:radionotify.RadioPushSetNotifyACK)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:radionotify.RadioPushSetNotifyACK)
+  return false;
+#undef DO_
+}
+
+void RadioPushSetNotifyACK::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:radionotify.RadioPushSetNotifyACK)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string sMsgId = 1;
+  if (this->smsgid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->smsgid().data(), static_cast<int>(this->smsgid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotifyACK.sMsgId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->smsgid(), output);
+  }
+
+  // uint64 msgTime = 2;
+  if (this->msgtime() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(2, this->msgtime(), output);
+  }
+
+  // .radionotify.ExceptionCode expcode = 3;
+  if (this->expcode() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      3, this->expcode(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:radionotify.RadioPushSetNotifyACK)
+}
+
+::google::protobuf::uint8* RadioPushSetNotifyACK::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:radionotify.RadioPushSetNotifyACK)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string sMsgId = 1;
+  if (this->smsgid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->smsgid().data(), static_cast<int>(this->smsgid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "radionotify.RadioPushSetNotifyACK.sMsgId");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->smsgid(), target);
+  }
+
+  // uint64 msgTime = 2;
+  if (this->msgtime() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(2, this->msgtime(), target);
+  }
+
+  // .radionotify.ExceptionCode expcode = 3;
+  if (this->expcode() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      3, this->expcode(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:radionotify.RadioPushSetNotifyACK)
+  return target;
+}
+
+size_t RadioPushSetNotifyACK::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:radionotify.RadioPushSetNotifyACK)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string sMsgId = 1;
+  if (this->smsgid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->smsgid());
+  }
+
+  // uint64 msgTime = 2;
+  if (this->msgtime() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->msgtime());
+  }
+
+  // .radionotify.ExceptionCode expcode = 3;
+  if (this->expcode() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->expcode());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void RadioPushSetNotifyACK::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:radionotify.RadioPushSetNotifyACK)
+  GOOGLE_DCHECK_NE(&from, this);
+  const RadioPushSetNotifyACK* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const RadioPushSetNotifyACK>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:radionotify.RadioPushSetNotifyACK)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:radionotify.RadioPushSetNotifyACK)
+    MergeFrom(*source);
+  }
+}
+
+void RadioPushSetNotifyACK::MergeFrom(const RadioPushSetNotifyACK& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:radionotify.RadioPushSetNotifyACK)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.smsgid().size() > 0) {
+
+    smsgid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.smsgid_);
+  }
+  if (from.msgtime() != 0) {
+    set_msgtime(from.msgtime());
+  }
+  if (from.expcode() != 0) {
+    set_expcode(from.expcode());
+  }
+}
+
+void RadioPushSetNotifyACK::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:radionotify.RadioPushSetNotifyACK)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RadioPushSetNotifyACK::CopyFrom(const RadioPushSetNotifyACK& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:radionotify.RadioPushSetNotifyACK)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RadioPushSetNotifyACK::IsInitialized() const {
+  return true;
+}
+
+void RadioPushSetNotifyACK::Swap(RadioPushSetNotifyACK* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void RadioPushSetNotifyACK::InternalSwap(RadioPushSetNotifyACK* other) {
+  using std::swap;
+  smsgid_.Swap(&other->smsgid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(msgtime_, other->msgtime_);
+  swap(expcode_, other->expcode_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata RadioPushSetNotifyACK::GetMetadata() const {
+  protobuf_im_2eradio_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_im_2eradio_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace radionotify
 namespace google {
@@ -1147,6 +2044,12 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::radionotify::RadioMsgNotify* Are
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::radionotify::RadioMsgNotifyACK* Arena::CreateMaybeMessage< ::radionotify::RadioMsgNotifyACK >(Arena* arena) {
   return Arena::CreateInternal< ::radionotify::RadioMsgNotifyACK >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::radionotify::RadioPushSetNotify* Arena::CreateMaybeMessage< ::radionotify::RadioPushSetNotify >(Arena* arena) {
+  return Arena::CreateInternal< ::radionotify::RadioPushSetNotify >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::radionotify::RadioPushSetNotifyACK* Arena::CreateMaybeMessage< ::radionotify::RadioPushSetNotifyACK >(Arena* arena) {
+  return Arena::CreateInternal< ::radionotify::RadioPushSetNotifyACK >(arena);
 }
 }  // namespace protobuf
 }  // namespace google

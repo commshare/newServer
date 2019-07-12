@@ -16,10 +16,10 @@ const string CACHE_NAME_LOGIN = "loginDb";
 const string PRE_CM_ = "CM_";
 const string PRE_CHNN_ = "chnn_";
 const std::string PRE_CHNN_USER_ = "CHNN_USER_";
-const std::string PRE_USER_CHNN_ = "USER_CHNN_";
+const std::string PRE_CHNN_OFFLINE_USER_ = "CHNN_OFFLINE_USER_";
+const std::string PRE_USER_CHNN_ = "USER_CHNNSTATUS_";
 const std::string PRE_CHNN_INFO_ = "CHNN_INFO_";
 const std::string PRE_CHNN_ADMIN_ = "CHNN_ADMIN_";
-const std::string PRE_CHNN_OFFLINE_USER_ = "CHNN_OFFLINE_USER_";
 
 
 
@@ -276,7 +276,7 @@ bool CRedisMgr::getChannelOfflineUser(const std::string& radioId, std::vector<st
 bool CRedisMgr::getUserChannel(const std::string& userId, std::vector<std::string>& vecRadio)
 {
 	std::string key = getUserChannelKey(userId);
-	return getSetMembers(key, vecRadio);
+	return getSortedSetMember(key, vecRadio);
 }
 
 bool CRedisMgr::getChannelAdmin(const std::string& radioId, std::vector<std::string>& vecAdmin)
@@ -365,30 +365,31 @@ bool CRedisMgr::deleteChannelUserKey(const std::string& radioId)
 
 
 
-bool CRedisMgr::addChannelToUser(const std::string& userId, const std::string& radioId)
+bool CRedisMgr::addChannelToUser(const std::string& userId, const std::map<std::string, int>& mapRadio)
 {
 	CAutoCache cache(CACHE_NAME_CHNL);
 	CacheConn* conn = cache.getCacheConn();
 	std::string key = getUserChannelKey(userId);
-	return addMemberToSet(conn, key, radioId);
+	return addMemberListToSortedSet(conn, key, mapRadio);
 }
 
-bool CRedisMgr::addChannelToUser(const std::string& userId, const std::vector<std::string>& vecRadio)
+
+bool CRedisMgr::addChannelToUser(const std::string& userId, const std::string& radioId, int nStatus)
 {
 	CAutoCache cache(CACHE_NAME_CHNL);
 	CacheConn* conn = cache.getCacheConn();
 	std::string key = getUserChannelKey(userId);
-	return addMemberListToSet(conn, key, vecRadio);
+	return addMemberToSortedSet(conn, key, radioId, nStatus);
 }
 
-bool CRedisMgr::addChannelToUser(const std::vector<std::string>& vecUser, const std::string& radioId)
+bool CRedisMgr::addChannelToUser(const std::vector<std::string>& vecUser, const std::string& radioId, int nStatus)
 {
 	CAutoCache cache(CACHE_NAME_CHNL);
 	CacheConn* conn = cache.getCacheConn();
 	for(auto& itor : vecUser)
 	{
 		std::string key = getUserChannelKey(itor);
-		if(!addMemberToSet(conn, key, radioId))
+		if(!addMemberToSortedSet(conn, key, radioId, nStatus))
 			continue;
 	}
 	return true;
@@ -400,7 +401,7 @@ bool CRedisMgr::removeChannelToUser(const std::string& userId, const std::vector
 	CAutoCache cache(CACHE_NAME_CHNL);
 	CacheConn* conn = cache.getCacheConn();
 	std::string key = getUserChannelKey(userId);
-	return removeMemberListFromSet(conn, key, vecRadio);
+	return removeMemberListFromSortedSet(conn, key, vecRadio);
 }
 
 bool CRedisMgr::removeChannelToUser(const std::string& userId, const std::string& radioId)
@@ -408,7 +409,7 @@ bool CRedisMgr::removeChannelToUser(const std::string& userId, const std::string
 	CAutoCache cache(CACHE_NAME_CHNL);
 	CacheConn* conn = cache.getCacheConn();
 	std::string key = getUserChannelKey(userId);
-	return removeMemberFromSet(conn, key, radioId);
+	return removeMemberFromSortedSet(conn, key, radioId);
 }
 
 bool CRedisMgr::removeChannelToUser(const std::vector<std::string>& vecUser, const std::string& radioId)
@@ -418,11 +419,22 @@ bool CRedisMgr::removeChannelToUser(const std::vector<std::string>& vecUser, con
 	for(auto& itor : vecUser)
 	{
 		std::string key = getUserChannelKey(itor);
-		if(!removeMemberFromSet(conn, key, radioId))
+		if(!removeMemberFromSortedSet(conn, key, radioId))
 			continue;
 	}
 	return true;
 }
+
+bool CRedisMgr::getChannelSetOnStatus(const std::string& userId, const std::string& radioId, int nStatus)
+{
+	CAutoCache cache(CACHE_NAME_CHNL);
+	CacheConn* conn = cache.getCacheConn();
+	std::string key = getUserChannelKey(userId);
+	return getSortedSetMemberSocrt(conn, key, radioId, nStatus);
+}
+
+
+
 
 bool CRedisMgr::addChannelAdmin(const std::string& radioId, const std::string& admin)
 {
@@ -579,9 +591,6 @@ bool CRedisMgr::delKey(CacheConn* conn, const std::string& key)
 	return true;
 }
 
-
-
-
 bool CRedisMgr::getSetMembers(const std::string& key, std::vector<std::string>& vecMember)
 {
 	CAutoCache cache(CACHE_NAME_CHNL);
@@ -593,6 +602,91 @@ bool CRedisMgr::getSetMembers(const std::string& key, std::vector<std::string>& 
 		return false;
 	return true;
 }
+
+
+
+bool CRedisMgr::getSortedSetMember(const std::string& key, std::vector<std::string>& vecMember)
+{
+	CAutoCache cache(CACHE_NAME_CHNL);
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = cache.getCacheConn()->zrange(key, vecMember)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+bool CRedisMgr::getSortedSetMember(const std::string& key, std::map<std::string, int>& mapMember)
+{
+	CAutoCache cache(CACHE_NAME_CHNL);
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = cache.getCacheConn()->zrange(key, mapMember)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+bool CRedisMgr::addMemberToSortedSet(CacheConn* conn, const std::string& key, const std::string& member, int nSocre)
+{
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = conn->zadd(key, member, nSocre)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+bool CRedisMgr::addMemberListToSortedSet(CacheConn* conn, const std::string& key, const std::map<std::string, int>& mapMember)
+{
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = conn->zadd(key, mapMember)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+bool CRedisMgr::removeMemberFromSortedSet(CacheConn* conn, const std::string& key, const std::string& member)
+{
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = conn->zrem(key, member)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+bool CRedisMgr::removeMemberListFromSortedSet(CacheConn* conn, const std::string& key, const std::vector<std::string>& members)
+{
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = conn->zrem(key, members)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+bool CRedisMgr::getSortedSetMemberSocrt(CacheConn* conn, const std::string& key, const std::string& member, int& nSocre)
+{
+	int nTick = 0;
+	REDIS_OPER_CODE code = REDIS_OPER_OK;
+	while(REDIS_OPER_DISCONN == (code = conn->zscore(key, member, nSocre)) && nTick < 3)
+		nTick++;
+	if(REDIS_OPER_OK != code || nTick >= 3)
+		return false;
+	return true;
+}
+
+
+
+
 
 
 string CRedisMgr::getUserChannelKey(const std::string& userId)

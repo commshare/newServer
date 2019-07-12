@@ -49,12 +49,15 @@ public:
 	bool moveOnlineUserToChannel(const std::string& radioId, const std::string& userId);
 	bool deleteChannelUserKey(const std::string& radioId);
 
-	bool addChannelToUser(const std::string& userId, const std::string& radioId);
-	bool addChannelToUser(const std::string& userId, const std::vector<std::string>& vecRadio);
-	bool addChannelToUser(const std::vector<std::string>& vecUser, const std::string& radioId);
+	bool addChannelToUser(const std::string& userId, const std::map<std::string, int>& mapRadio);
+	bool addChannelToUser(const std::string& userId, const std::string& radioId, int nStatus = 0);
+	bool addChannelToUser(const std::vector<std::string>& vecUser, const std::string& radioId, int nStatus = 0);
 	bool removeChannelToUser(const std::string& userId, const std::string& radioId);
 	bool removeChannelToUser(const std::string& userId, const std::vector<std::string>& vecRadio);
 	bool removeChannelToUser(const std::vector<std::string>& vecUser, const std::string& radioId);
+	// 获取用户所在频道用户设置的状态
+	bool getChannelSetOnStatus(const std::string& userId, const std::string& radioId, int nStatus);
+	
 
 	bool addChannelAdmin(const std::string& radioId, const std::string& admin);
 	bool addChannelAdminList(const std::string& radioId, const std::vector<std::string>& vecAdmin);
@@ -68,6 +71,7 @@ public:
 	bool deleteChannelOfflineUserKey(const std::string& radioId);
 
 private:
+	// set
 	bool getSetMembers(const std::string& key, std::vector<std::string>& vecMember);
 	bool addMemberToSet(CacheConn* conn, const std::string& key, const std::string& member);
 	bool addMemberListToSet(CacheConn* conn, const std::string& key, const std::vector<std::string>& members);
@@ -75,6 +79,16 @@ private:
 	bool removeMemberListFromSet(CacheConn* conn, const std::string& key, const std::vector<std::string>& members);
 	bool moveSetMember(CacheConn* conn, const std::string& srcKey, const std::string& destKey, const std::string& member);
 	bool delKey(CacheConn* conn, const std::string& key);
+
+	// sorted set
+	bool getSortedSetMember(const std::string& key, std::vector<std::string>& vecMember);
+	bool getSortedSetMember(const std::string& key, std::map<std::string, int>& mapMember);
+	bool addMemberToSortedSet(CacheConn* conn, const std::string& key, const std::string& member, int nSocre);
+	bool addMemberListToSortedSet(CacheConn* conn, const std::string& key, const std::map<std::string, int>& mapMember);
+	bool removeMemberFromSortedSet(CacheConn* conn, const std::string& key, const std::string& member);
+	bool removeMemberListFromSortedSet(CacheConn* conn, const std::string& key, const std::vector<std::string>& members);
+	bool getSortedSetMemberSocrt(CacheConn* conn, const std::string& key, const std::string& member, int& nSocre);
+	
 	
 	string getUserChannelKey(const std::string& userId);
 	string getChannelUserKey(const std::string& radioId);

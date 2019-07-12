@@ -13,6 +13,7 @@ CLoginHandle::CLoginHandle(CConfigFileReader* pConfigReader,int nNumOfInst)
 	, m_pCache(nullptr)
 	, m_nNumberOfInst(nNumOfInst)
 	, m_sUserChannelsUrl("")
+	, m_sUserInfoUrl("")
 	
 {
 
@@ -65,6 +66,10 @@ bool CLoginHandle::SetCheckAuth()
 	if(pAuth == nullptr)
 		return false;
 	m_sUserChannelsUrl = pAuth;
+	pAuth = m_pConfigReader->GetConfigName("usrInfoUrl");
+	if(pAuth == nullptr)
+		return false;
+	m_sUserInfoUrl = pAuth;
 	return true;
 }
 
@@ -75,7 +80,8 @@ bool CLoginHandle::RegistPacketExecutor(void)	 //Regist command process function
 	CmdRegist(im::CM_LOGIN_NOTIFY, m_nNumberOfInst,CommandProc(&CLoginHandle::OnCmLoginNotify));
 	CmdRegist(im::CM_PHP_LOGIN_NOTIFY, m_nNumberOfInst,CommandProc(&CLoginHandle::OnPHPLoginNotify));
 	CmdRegist(im::LOGIN_CM_NOTIFY_ACK, m_nNumberOfInst,CommandProc(&CLoginHandle::OnLoginCMNotifyAck));
-	CmdRegist(im::SVR_USER_PUSHSET_NOTIFY, m_nNumberOfInst,CommandProc(&CLoginHandle::OnUserPushSetNotify));
+	CmdRegist(im::SVR_RADIO_PUSHSET_NOTIFY, m_nNumberOfInst,CommandProc(&CLoginHandle::OnUserPushSetNotify));
+	CmdRegist(im::CM_PUSHTOKENSYNC, m_nNumberOfInst,CommandProc(&CLoginHandle::OnPushTokenSync));
 	return true;
 }
 
@@ -376,7 +382,9 @@ bool CLoginHandle::OnLogin(std::shared_ptr<CImPdu> pPdu)
 	std::string strUserId = "";
 	UidCode_t sessionId = pPdu->GetSessionId();
 	uint64_t nLastLoginTime = 0;
-	string linkHost = "";
+	std::string linkHost = "";
+	bool newLogin = false;
+	std::string sUserId = "";
 	do
 	{
 		
@@ -394,7 +402,8 @@ bool CLoginHandle::OnLogin(std::shared_ptr<CImPdu> pPdu)
 		}
 		strUserId = loginTrans.suserid();
 		linkHost = loginTrans.shost();
-
+		DbgLog("login userId=%s loginToken=%s deviceToken=%s pushType=%d pushToken=%s", 
+			loginTrans.suserid().c_str(), loginTrans.slogintoken().c_str(), loginTrans.sdevicetoken().c_str(), loginTrans.npushtype(), loginTrans.spushtoken().c_str());
 		if(!VerifyDeviceToken(loginTrans.sdevicetoken()))
 		{
 			ErrLog("client login device token fromat error");
@@ -409,7 +418,7 @@ bool CLoginHandle::OnLogin(std::shared_ptr<CImPdu> pPdu)
 		
 		UserCache_t userCache;
 		err = im::NON_ERR;
-		string sUserId = PREFIX_CM_STR + loginTrans.suserid(); //UserId with 'CM' plugin to use in redis cache. 
+		sUserId = PREFIX_CM_STR + strUserId; //UserId with 'CM' plugin to use in redis cache. 
 		if(m_pCache->GetUserRecord(sUserId.c_str(),userCache))
 		{
 			if(loginTrans.sdevicetoken().compare(userCache.sDeviceToken.c_str()) != 0 || !(bAuthCheck = CheckAuthInterval(userCache,userAuth.sLoginToken)))
@@ -457,12 +466,17 @@ bool CLoginHandle::OnLogin(std::shared_ptr<CImPdu> pPdu)
 				break;
 			}
 			bRest = true;
+			newLogin = true;
 			DbgLog("new user %s login successfully! host=%s", strUserId.c_str(), linkHost.c_str()); 
 		}
 	
 	}while(0);
 	
 	LoginRsp(strUserId, sessionId, err, linkHost);
+
+	// 新登录预热频道相关数据
+	if(newLogin)
+		CThreadPoolManager::getInstance()->getLoginCacheMgrPool()->add_task(&CLoginHandle::loginChannelPush, this, strUserId);
 
 	if(im::NON_ERR == err)
 		CThreadPoolManager::getInstance()->getLoginCacheMgrPool()->add_task(&CLoginHandle::addLoginCacheInfo, this, strUserId);
@@ -610,15 +624,6 @@ bool CLoginHandle::OnPHPLoginNotify(std::shared_ptr<CImPdu> pPdu)
 		strUserId = phploginNotify.suserid();
 		string sUserId = PREFIX_CM_STR + strUserId;
 
-		// 同步用户所在的所有频道
-		if(phploginNotify.logintype() == im::PHP_NOTIFY_TYPE_LOGIN)
-		{
-			std::vector<std::string> vecChnn;
-			getUserRadioIds(strUserId, vecChnn);
-			if(!vecChnn.empty())
-				CRedisManager::getInstance()->addChannelToUser(strUserId, vecChnn);
-		}
-
 		UserCache_t userRec;
 		if(!m_pCache->GetUserRecord(sUserId.c_str(),userRec))
 		{
@@ -694,30 +699,60 @@ bool CLoginHandle::OnUserPushSetNotify(std::shared_ptr<CImPdu> pPdu)
 		ErrLog("Recv a null pdu when processing user overtime event!");
 		return false;
 	}
-	im::SVRUserPushSetNotify pushNotify;
+	im::SVRRadioPushSetNotify pushNotify;
 	uchar_t* pContent = pPdu->GetBodyData();
 	if (!pContent || !pushNotify.ParseFromArray(pContent, pPdu->GetBodyLength()))
 	{
 		ErrLog("notify parameter error!");
 		return false;
 	}
-	DbgLog("user push set msg=%s user=%s push=%d", pushNotify.smsgid().c_str(), pushNotify.suserid().c_str(), pushNotify.pushtype());
+	DbgLog("user push set msg=%s user=%s push=%d", pushNotify.smsgid().c_str(), pushNotify.suserid().c_str(), pushNotify.notifytype());
 	string sUserId = PREFIX_CM_STR + pushNotify.suserid();
-	
-	if(!m_pCache->SetUserPushState(sUserId.c_str(), (int)pushNotify.pushtype()))
+	if(im::SVRPUSH_NEWMSG == pushNotify.notifytype())
 	{
-		ErrLog("set user push status fail %s", sUserId.c_str());
-		return false;
+		m_pCache->SetIsNewMsgStatus(sUserId.c_str(), (int)pushNotify.status());
 	}
-
+	else
+	{
+		m_pCache->SetHideMsgOnStatus(sUserId.c_str(), (int)pushNotify.status());
+	}
+	
 	im::SVRMSGNotifyACK notifyAck;
 	notifyAck.set_smsgid(pushNotify.smsgid());
 	notifyAck.set_msgtime(getCurrentTime());
 	notifyAck.set_errcode(im::NON_ERR);
 	UidCode_t sessionId = pPdu->GetSessionId();
-	sendAck(&notifyAck, im::SVR_USER_PUSHSET_NOTIFY_ACK, sessionId);
+	sendAck(&notifyAck, im::SVR_RADIO_PUSHSET_NOTIFY_ACK, sessionId);
 	return true;
 }
+
+bool CLoginHandle::OnPushTokenSync(std::shared_ptr<CImPdu> pPdu)
+{
+	if(!pPdu)
+	{
+		ErrLog("Recv a null pdu when processing user overtime event!");
+		return false;
+	}
+
+	im::CMPushTokenSync syncMsg;
+	uchar_t* pContent = pPdu->GetBodyData();
+	if (!pContent || !syncMsg.ParseFromArray(pContent, pPdu->GetBodyLength()))
+	{
+		ErrLog("notify parameter error!");
+		return false;
+	}
+	DbgLog("user push set user=%s pushType=%d pushToken=%s", syncMsg.suserid().c_str(), syncMsg.npushtype(), syncMsg.spushtoken().c_str());
+	string sUserId = PREFIX_CM_STR + syncMsg.suserid();
+	if(syncMsg.npushtype() != 0 && !syncMsg.spushtoken().empty())
+		m_pCache->SetPushTypeAndToken(sUserId.c_str(), std::to_string(syncMsg.npushtype()).c_str(), syncMsg.spushtoken().c_str());
+	im::CCMPushTokenSyncAck ackMsg;
+	ackMsg.set_suserid(syncMsg.suserid());
+	ackMsg.set_nerr(im::NON_ERR);
+	UidCode_t sessionId = pPdu->GetSessionId();
+	sendAck(&ackMsg, im::CM_PUSHTOKENSYNC_ACK, sessionId);
+	return true;
+}
+
 
 
 void CLoginHandle::LoginRsp(string& sUserId,UidCode_t sessionId, im::ErrCode bCode, string& linkSession)
@@ -763,33 +798,72 @@ bool CLoginHandle::sendAck(const google::protobuf::MessageLite* pMsg, uint16_t c
 
 void CLoginHandle::addLoginCacheInfo(std::string userId)
 {
-	std::vector<std::string> vecChnn;
-	CRedisManager::getInstance()->getUserChannel(userId, vecChnn);
-	if(vecChnn.empty())
+	std::map<std::string, int> mapChnn;
+	CRedisManager::getInstance()->getUserChannel(userId, mapChnn);
+	if(mapChnn.empty())
 	{// http 获取所在频道
-		getUserRadioIds(userId, vecChnn);
-		if(!vecChnn.empty())
-			CRedisManager::getInstance()->addChannelToUser(userId, vecChnn);
+		getUserRadioIds(userId, mapChnn);
+		if(!mapChnn.empty())
+			CRedisManager::getInstance()->addChannelToUser(userId, mapChnn);
 	}
-	if(!vecChnn.empty())
-		CRedisManager::getInstance()->moveOnlineUserToChannel(vecChnn, userId);
+	if(!mapChnn.empty())
+		CRedisManager::getInstance()->moveOnlineUserToChannel(mapChnn, userId);
+	mapChnn.clear();
 }
 
 void CLoginHandle::removeLoginCacheInfo(std::string userId)
 {
-	std::vector<std::string> vecChnn;
-	CRedisManager::getInstance()->getUserChannel(userId, vecChnn);
-	if(vecChnn.empty())
+	std::map<std::string, int> mapChnn;
+	CRedisManager::getInstance()->getUserChannel(userId, mapChnn);
+	if(mapChnn.empty())
 	{
-		getUserRadioIds(userId, vecChnn);
-		if(!vecChnn.empty())
-			CRedisManager::getInstance()->addChannelToUser(userId, vecChnn);
+		getUserRadioIds(userId,mapChnn);
+		if(!mapChnn.empty())
+			CRedisManager::getInstance()->addChannelToUser(userId, mapChnn);
+		mapChnn.clear();
 	}
-	if(!vecChnn.empty())
-		CRedisManager::getInstance()->moveOfflineUserToChannel(vecChnn, userId);
+	if(!mapChnn.empty())
+	{
+		string sUserId = PREFIX_CM_STR + userId;
+		bool bNewMsg = true;
+		bool bHideSound = true;
+		m_pCache->GetMsgPushStatus(sUserId.c_str(), bNewMsg, bHideSound);
+		CRedisManager::getInstance()->moveOfflineUserToChannel(mapChnn, userId, bNewMsg, bHideSound);
+	}
+	mapChnn.clear();
 }
 
-bool CLoginHandle::getUserRadioIds(const std::string& sUserId, std::vector<std::string>& vecChnn)
+void CLoginHandle::loginChannelPush(std::string userId)
+{
+	std::map<std::string, int> mapChnn;
+	getUserRadioIds(userId, mapChnn);
+	if(!mapChnn.empty())
+		CRedisManager::getInstance()->addChannelToUser(userId, mapChnn);
+	// 获取用户的新消息设置和隐藏模式新消息设置
+	std::string sUserId = PREFIX_CM_STR + userId;
+	bool newMsg = true;
+	bool hideSoundOn = true;
+	if(!getUserSetOn(userId, newMsg, hideSoundOn))
+		ErrLog("get user info set on fail");
+	m_pCache->SetIsNewMsgStatus(sUserId.c_str(), (int)newMsg);
+	m_pCache->SetHideMsgOnStatus(sUserId.c_str(), (int)hideSoundOn);
+}
+
+
+bool CLoginHandle::getUserRadioIds(const std::string& sUserId, std::map<std::string, int>& mapChnn)
+{
+	std::vector<RadioSetOn_t> vecRadioSetOn;
+	if(!httpUserRadioIds(sUserId, vecRadioSetOn))
+		return false;
+	for(auto& itor : vecRadioSetOn)
+	{
+		int nSetOn = (itor.isHidden ? 0x01 : 0x00) | (itor.isUndisturb ? 0x10 : 0x00);
+		mapChnn.emplace(itor.sRadioId, nSetOn);
+	}
+	return true;
+}
+
+bool CLoginHandle::httpUserRadioIds(const std::string& sUserId, std::vector<RadioSetOn_t>& vecRadioSetOn)
 {
 	string str = m_sAppSecretChecking + "app_id2user_id" + sUserId + m_sAppSecretChecking;
 	std::string strMD5 = MD5Str(str);
@@ -807,12 +881,13 @@ bool CLoginHandle::getUserRadioIds(const std::string& sUserId, std::vector<std::
 	}
 	
 	DbgLog("url:%s post:%s response:%s", m_sUserChannelsUrl.c_str(), strPost.c_str(), strReponse.c_str());
-	if(!parseRadioList(sUserId, strReponse, vecChnn))
+	if(!parseRadioList(sUserId, strReponse, vecRadioSetOn) && vecRadioSetOn.empty())
 		return false;
 	return true;
 }
 
-bool CLoginHandle::parseRadioList(const std::string& sUserId, const std::string& strData, std::vector<std::string>& vecChnn)
+
+bool CLoginHandle::parseRadioList(const std::string& sUserId, const std::string& strData, std::vector<RadioSetOn_t>& vecRadioSetOn)
 {
 	Json::Value valRepns;
 	Json::Reader readRep;
@@ -824,14 +899,50 @@ bool CLoginHandle::parseRadioList(const std::string& sUserId, const std::string&
 		ErrLog("htpp response fail! code=%s erro=%s radio_id=%s response=%s", strCode.c_str(), valRepns["msg"].asString().c_str(), sUserId.c_str(), strData.c_str());
 		return false;
 	}
-
+	RadioSetOn_t radioSetOn;
 	int  nSize = valRepns["data"].size();
 	for(int i = 0; i < nSize; ++i)
 	{
-		vecChnn.emplace_back(valRepns["data"][i].asString());
+		radioSetOn.sRadioId = valRepns["data"][i]["radio_id"].asString();
+		radioSetOn.isHidden = atoi(valRepns["data"][i]["is_hidden"].asString().c_str());
+		radioSetOn.isUndisturb = atoi(valRepns["data"][i]["is_undisturb"].asString().c_str());
+		vecRadioSetOn.emplace_back(radioSetOn);
 	}
 	return true;
 }
+
+bool CLoginHandle::getUserSetOn(const std::string& sUserId, bool& newMsg, bool& hideSound)
+{
+	string str = m_sAppSecretChecking + "app_id2user_id" + sUserId + m_sAppSecretChecking;
+	std::string strMD5 = MD5Str(str);
+	std::transform(strMD5.begin(), strMD5.end(), strMD5.begin(), ::toupper);
+	string strPost = "app_id=2&sign=" + strMD5 +  "&user_id=" + sUserId;
+	
+	std::string strReponse = "";
+	CHttpClient httpClient;
+	CURLcode code = CURLE_OK;
+	code = httpClient.Post(m_sUserInfoUrl, strPost, strReponse);
+	DbgLog("url:%s post:%s response:%s", m_sUserChannelsUrl.c_str(), strPost.c_str(), strReponse.c_str());
+	if(CURLE_OK != code || strReponse.empty())
+	{
+		ErrLog("http request fail! user_id=%s, code=%d", sUserId.c_str(), code);
+		return false;
+	}
+	Json::Value valRepns;
+	Json::Reader readRep;
+	if(!readRep.parse(strReponse, valRepns))
+		return false;
+	std::string strCode = valRepns["code"].asString();
+	if(strCode != "200")
+	{
+		ErrLog("htpp response fail! code=%s erro=%s user_id=%s response=%s", strCode.c_str(), valRepns["msg"].asString().c_str(), sUserId.c_str(), strReponse.c_str());
+		return false;
+	}
+	newMsg = (valRepns["data"]["is_notice_newmsg"].asString() == "0") ? false : true;
+	hideSound = (valRepns["data"]["is_hidden_msgtocomm"].asString() == "0") ? false : true;
+	return true;
+}
+
 
 
 

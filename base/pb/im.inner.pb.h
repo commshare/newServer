@@ -85,9 +85,9 @@ extern SVRMSGNotifyACKDefaultTypeInternal _SVRMSGNotifyACK_default_instance_;
 class SVRRadioMsgNotify;
 class SVRRadioMsgNotifyDefaultTypeInternal;
 extern SVRRadioMsgNotifyDefaultTypeInternal _SVRRadioMsgNotify_default_instance_;
-class SVRUserPushSetNotify;
-class SVRUserPushSetNotifyDefaultTypeInternal;
-extern SVRUserPushSetNotifyDefaultTypeInternal _SVRUserPushSetNotify_default_instance_;
+class SVRRadioPushSetNotify;
+class SVRRadioPushSetNotifyDefaultTypeInternal;
+extern SVRRadioPushSetNotifyDefaultTypeInternal _SVRRadioPushSetNotify_default_instance_;
 }  // namespace im
 namespace google {
 namespace protobuf {
@@ -104,7 +104,7 @@ template<> ::im::SVRMSGFriendRelationNotify* Arena::CreateMaybeMessage<::im::SVR
 template<> ::im::SVRMSGGroupRelationNotify* Arena::CreateMaybeMessage<::im::SVRMSGGroupRelationNotify>(Arena*);
 template<> ::im::SVRMSGNotifyACK* Arena::CreateMaybeMessage<::im::SVRMSGNotifyACK>(Arena*);
 template<> ::im::SVRRadioMsgNotify* Arena::CreateMaybeMessage<::im::SVRRadioMsgNotify>(Arena*);
-template<> ::im::SVRUserPushSetNotify* Arena::CreateMaybeMessage<::im::SVRUserPushSetNotify>(Arena*);
+template<> ::im::SVRRadioPushSetNotify* Arena::CreateMaybeMessage<::im::SVRRadioPushSetNotify>(Arena*);
 }  // namespace protobuf
 }  // namespace google
 namespace im {
@@ -210,24 +210,28 @@ enum SVRRadioNotifyType {
   SVRRADIO_TYPE_NOSPEAK = 12,
   SVRRADIO_TYPE_SPEAKING = 13,
   SVRRADIO_TYPE_CREATE = 14,
+  SVRRADIO_TYPE_FORBID_INTERFACING_ON = 15,
+  SVRRADIO_TYPE_FORBID_INTERFACING_OFF = 16,
   SVRRadioNotifyType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   SVRRadioNotifyType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool SVRRadioNotifyType_IsValid(int value);
 const SVRRadioNotifyType SVRRadioNotifyType_MIN = SVRRADIO_TYPE_UNKNOWN;
-const SVRRadioNotifyType SVRRadioNotifyType_MAX = SVRRADIO_TYPE_CREATE;
+const SVRRadioNotifyType SVRRadioNotifyType_MAX = SVRRADIO_TYPE_FORBID_INTERFACING_OFF;
 const int SVRRadioNotifyType_ARRAYSIZE = SVRRadioNotifyType_MAX + 1;
 
-enum SVRUserPushNotifyType {
-  SVRUSER_UNPUSH = 0,
-  SVRUSER_ISPUSH = 1,
-  SVRUserPushNotifyType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  SVRUserPushNotifyType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+enum SVRRadioPushSetNotifyType {
+  SVRPUSH_NEWMSG = 0,
+  SVRPUSH_HIDEMSGSOUNDON = 1,
+  SVRPUSH_ISHIDE = 2,
+  SVRPUSH_UNDISTURB = 3,
+  SVRRadioPushSetNotifyType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  SVRRadioPushSetNotifyType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
-bool SVRUserPushNotifyType_IsValid(int value);
-const SVRUserPushNotifyType SVRUserPushNotifyType_MIN = SVRUSER_UNPUSH;
-const SVRUserPushNotifyType SVRUserPushNotifyType_MAX = SVRUSER_ISPUSH;
-const int SVRUserPushNotifyType_ARRAYSIZE = SVRUserPushNotifyType_MAX + 1;
+bool SVRRadioPushSetNotifyType_IsValid(int value);
+const SVRRadioPushSetNotifyType SVRRadioPushSetNotifyType_MIN = SVRPUSH_NEWMSG;
+const SVRRadioPushSetNotifyType SVRRadioPushSetNotifyType_MAX = SVRPUSH_UNDISTURB;
+const int SVRRadioPushSetNotifyType_ARRAYSIZE = SVRRadioPushSetNotifyType_MAX + 1;
 
 enum LoginResultType {
   LOGIN_ACK = 0,
@@ -2078,24 +2082,24 @@ class SVRRadioMsgNotify : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class SVRUserPushSetNotify : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:im.SVRUserPushSetNotify) */ {
+class SVRRadioPushSetNotify : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:im.SVRRadioPushSetNotify) */ {
  public:
-  SVRUserPushSetNotify();
-  virtual ~SVRUserPushSetNotify();
+  SVRRadioPushSetNotify();
+  virtual ~SVRRadioPushSetNotify();
 
-  SVRUserPushSetNotify(const SVRUserPushSetNotify& from);
+  SVRRadioPushSetNotify(const SVRRadioPushSetNotify& from);
 
-  inline SVRUserPushSetNotify& operator=(const SVRUserPushSetNotify& from) {
+  inline SVRRadioPushSetNotify& operator=(const SVRRadioPushSetNotify& from) {
     CopyFrom(from);
     return *this;
   }
   #if LANG_CXX11
-  SVRUserPushSetNotify(SVRUserPushSetNotify&& from) noexcept
-    : SVRUserPushSetNotify() {
+  SVRRadioPushSetNotify(SVRRadioPushSetNotify&& from) noexcept
+    : SVRRadioPushSetNotify() {
     *this = ::std::move(from);
   }
 
-  inline SVRUserPushSetNotify& operator=(SVRUserPushSetNotify&& from) noexcept {
+  inline SVRRadioPushSetNotify& operator=(SVRRadioPushSetNotify&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -2104,34 +2108,34 @@ class SVRUserPushSetNotify : public ::google::protobuf::MessageLite /* @@protoc_
     return *this;
   }
   #endif
-  static const SVRUserPushSetNotify& default_instance();
+  static const SVRRadioPushSetNotify& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const SVRUserPushSetNotify* internal_default_instance() {
-    return reinterpret_cast<const SVRUserPushSetNotify*>(
-               &_SVRUserPushSetNotify_default_instance_);
+  static inline const SVRRadioPushSetNotify* internal_default_instance() {
+    return reinterpret_cast<const SVRRadioPushSetNotify*>(
+               &_SVRRadioPushSetNotify_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     11;
 
-  void Swap(SVRUserPushSetNotify* other);
-  friend void swap(SVRUserPushSetNotify& a, SVRUserPushSetNotify& b) {
+  void Swap(SVRRadioPushSetNotify* other);
+  friend void swap(SVRRadioPushSetNotify& a, SVRRadioPushSetNotify& b) {
     a.Swap(&b);
   }
 
   // implements Message ----------------------------------------------
 
-  inline SVRUserPushSetNotify* New() const final {
-    return CreateMaybeMessage<SVRUserPushSetNotify>(NULL);
+  inline SVRRadioPushSetNotify* New() const final {
+    return CreateMaybeMessage<SVRRadioPushSetNotify>(NULL);
   }
 
-  SVRUserPushSetNotify* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<SVRUserPushSetNotify>(arena);
+  SVRRadioPushSetNotify* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<SVRRadioPushSetNotify>(arena);
   }
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
     final;
-  void CopyFrom(const SVRUserPushSetNotify& from);
-  void MergeFrom(const SVRUserPushSetNotify& from);
+  void CopyFrom(const SVRRadioPushSetNotify& from);
+  void MergeFrom(const SVRRadioPushSetNotify& from);
   void Clear() final;
   bool IsInitialized() const final;
 
@@ -2147,7 +2151,7 @@ class SVRUserPushSetNotify : public ::google::protobuf::MessageLite /* @@protoc_
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(SVRUserPushSetNotify* other);
+  void InternalSwap(SVRRadioPushSetNotify* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -2191,26 +2195,48 @@ class SVRUserPushSetNotify : public ::google::protobuf::MessageLite /* @@protoc_
   ::std::string* release_suserid();
   void set_allocated_suserid(::std::string* suserid);
 
-  // uint64 msgTime = 4;
+  // string sRadioId = 3;
+  void clear_sradioid();
+  static const int kSRadioIdFieldNumber = 3;
+  const ::std::string& sradioid() const;
+  void set_sradioid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_sradioid(::std::string&& value);
+  #endif
+  void set_sradioid(const char* value);
+  void set_sradioid(const char* value, size_t size);
+  ::std::string* mutable_sradioid();
+  ::std::string* release_sradioid();
+  void set_allocated_sradioid(::std::string* sradioid);
+
+  // .im.SVRRadioPushSetNotifyType notifyType = 4;
+  void clear_notifytype();
+  static const int kNotifyTypeFieldNumber = 4;
+  ::im::SVRRadioPushSetNotifyType notifytype() const;
+  void set_notifytype(::im::SVRRadioPushSetNotifyType value);
+
+  // uint32 status = 5;
+  void clear_status();
+  static const int kStatusFieldNumber = 5;
+  ::google::protobuf::uint32 status() const;
+  void set_status(::google::protobuf::uint32 value);
+
+  // uint64 msgTime = 6;
   void clear_msgtime();
-  static const int kMsgTimeFieldNumber = 4;
+  static const int kMsgTimeFieldNumber = 6;
   ::google::protobuf::uint64 msgtime() const;
   void set_msgtime(::google::protobuf::uint64 value);
 
-  // .im.SVRUserPushNotifyType pushType = 3;
-  void clear_pushtype();
-  static const int kPushTypeFieldNumber = 3;
-  ::im::SVRUserPushNotifyType pushtype() const;
-  void set_pushtype(::im::SVRUserPushNotifyType value);
-
-  // @@protoc_insertion_point(class_scope:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(class_scope:im.SVRRadioPushSetNotify)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr smsgid_;
   ::google::protobuf::internal::ArenaStringPtr suserid_;
+  ::google::protobuf::internal::ArenaStringPtr sradioid_;
+  int notifytype_;
+  ::google::protobuf::uint32 status_;
   ::google::protobuf::uint64 msgtime_;
-  int pushtype_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_im_2einner_2eproto::TableStruct;
 };
@@ -5098,140 +5124,207 @@ inline void SVRRadioMsgNotify::set_allocated_extend(::std::string* extend) {
 
 // -------------------------------------------------------------------
 
-// SVRUserPushSetNotify
+// SVRRadioPushSetNotify
 
 // string sMsgId = 1;
-inline void SVRUserPushSetNotify::clear_smsgid() {
+inline void SVRRadioPushSetNotify::clear_smsgid() {
   smsgid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& SVRUserPushSetNotify::smsgid() const {
-  // @@protoc_insertion_point(field_get:im.SVRUserPushSetNotify.sMsgId)
+inline const ::std::string& SVRRadioPushSetNotify::smsgid() const {
+  // @@protoc_insertion_point(field_get:im.SVRRadioPushSetNotify.sMsgId)
   return smsgid_.GetNoArena();
 }
-inline void SVRUserPushSetNotify::set_smsgid(const ::std::string& value) {
+inline void SVRRadioPushSetNotify::set_smsgid(const ::std::string& value) {
   
   smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:im.SVRUserPushSetNotify.sMsgId)
+  // @@protoc_insertion_point(field_set:im.SVRRadioPushSetNotify.sMsgId)
 }
 #if LANG_CXX11
-inline void SVRUserPushSetNotify::set_smsgid(::std::string&& value) {
+inline void SVRRadioPushSetNotify::set_smsgid(::std::string&& value) {
   
   smsgid_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:im.SVRUserPushSetNotify.sMsgId)
+  // @@protoc_insertion_point(field_set_rvalue:im.SVRRadioPushSetNotify.sMsgId)
 }
 #endif
-inline void SVRUserPushSetNotify::set_smsgid(const char* value) {
+inline void SVRRadioPushSetNotify::set_smsgid(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:im.SVRUserPushSetNotify.sMsgId)
+  // @@protoc_insertion_point(field_set_char:im.SVRRadioPushSetNotify.sMsgId)
 }
-inline void SVRUserPushSetNotify::set_smsgid(const char* value, size_t size) {
+inline void SVRRadioPushSetNotify::set_smsgid(const char* value, size_t size) {
   
   smsgid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:im.SVRUserPushSetNotify.sMsgId)
+  // @@protoc_insertion_point(field_set_pointer:im.SVRRadioPushSetNotify.sMsgId)
 }
-inline ::std::string* SVRUserPushSetNotify::mutable_smsgid() {
+inline ::std::string* SVRRadioPushSetNotify::mutable_smsgid() {
   
-  // @@protoc_insertion_point(field_mutable:im.SVRUserPushSetNotify.sMsgId)
+  // @@protoc_insertion_point(field_mutable:im.SVRRadioPushSetNotify.sMsgId)
   return smsgid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* SVRUserPushSetNotify::release_smsgid() {
-  // @@protoc_insertion_point(field_release:im.SVRUserPushSetNotify.sMsgId)
+inline ::std::string* SVRRadioPushSetNotify::release_smsgid() {
+  // @@protoc_insertion_point(field_release:im.SVRRadioPushSetNotify.sMsgId)
   
   return smsgid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void SVRUserPushSetNotify::set_allocated_smsgid(::std::string* smsgid) {
+inline void SVRRadioPushSetNotify::set_allocated_smsgid(::std::string* smsgid) {
   if (smsgid != NULL) {
     
   } else {
     
   }
   smsgid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), smsgid);
-  // @@protoc_insertion_point(field_set_allocated:im.SVRUserPushSetNotify.sMsgId)
+  // @@protoc_insertion_point(field_set_allocated:im.SVRRadioPushSetNotify.sMsgId)
 }
 
 // string sUserId = 2;
-inline void SVRUserPushSetNotify::clear_suserid() {
+inline void SVRRadioPushSetNotify::clear_suserid() {
   suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& SVRUserPushSetNotify::suserid() const {
-  // @@protoc_insertion_point(field_get:im.SVRUserPushSetNotify.sUserId)
+inline const ::std::string& SVRRadioPushSetNotify::suserid() const {
+  // @@protoc_insertion_point(field_get:im.SVRRadioPushSetNotify.sUserId)
   return suserid_.GetNoArena();
 }
-inline void SVRUserPushSetNotify::set_suserid(const ::std::string& value) {
+inline void SVRRadioPushSetNotify::set_suserid(const ::std::string& value) {
   
   suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:im.SVRUserPushSetNotify.sUserId)
+  // @@protoc_insertion_point(field_set:im.SVRRadioPushSetNotify.sUserId)
 }
 #if LANG_CXX11
-inline void SVRUserPushSetNotify::set_suserid(::std::string&& value) {
+inline void SVRRadioPushSetNotify::set_suserid(::std::string&& value) {
   
   suserid_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:im.SVRUserPushSetNotify.sUserId)
+  // @@protoc_insertion_point(field_set_rvalue:im.SVRRadioPushSetNotify.sUserId)
 }
 #endif
-inline void SVRUserPushSetNotify::set_suserid(const char* value) {
+inline void SVRRadioPushSetNotify::set_suserid(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   
   suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:im.SVRUserPushSetNotify.sUserId)
+  // @@protoc_insertion_point(field_set_char:im.SVRRadioPushSetNotify.sUserId)
 }
-inline void SVRUserPushSetNotify::set_suserid(const char* value, size_t size) {
+inline void SVRRadioPushSetNotify::set_suserid(const char* value, size_t size) {
   
   suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:im.SVRUserPushSetNotify.sUserId)
+  // @@protoc_insertion_point(field_set_pointer:im.SVRRadioPushSetNotify.sUserId)
 }
-inline ::std::string* SVRUserPushSetNotify::mutable_suserid() {
+inline ::std::string* SVRRadioPushSetNotify::mutable_suserid() {
   
-  // @@protoc_insertion_point(field_mutable:im.SVRUserPushSetNotify.sUserId)
+  // @@protoc_insertion_point(field_mutable:im.SVRRadioPushSetNotify.sUserId)
   return suserid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* SVRUserPushSetNotify::release_suserid() {
-  // @@protoc_insertion_point(field_release:im.SVRUserPushSetNotify.sUserId)
+inline ::std::string* SVRRadioPushSetNotify::release_suserid() {
+  // @@protoc_insertion_point(field_release:im.SVRRadioPushSetNotify.sUserId)
   
   return suserid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void SVRUserPushSetNotify::set_allocated_suserid(::std::string* suserid) {
+inline void SVRRadioPushSetNotify::set_allocated_suserid(::std::string* suserid) {
   if (suserid != NULL) {
     
   } else {
     
   }
   suserid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), suserid);
-  // @@protoc_insertion_point(field_set_allocated:im.SVRUserPushSetNotify.sUserId)
+  // @@protoc_insertion_point(field_set_allocated:im.SVRRadioPushSetNotify.sUserId)
 }
 
-// .im.SVRUserPushNotifyType pushType = 3;
-inline void SVRUserPushSetNotify::clear_pushtype() {
-  pushtype_ = 0;
+// string sRadioId = 3;
+inline void SVRRadioPushSetNotify::clear_sradioid() {
+  sradioid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::im::SVRUserPushNotifyType SVRUserPushSetNotify::pushtype() const {
-  // @@protoc_insertion_point(field_get:im.SVRUserPushSetNotify.pushType)
-  return static_cast< ::im::SVRUserPushNotifyType >(pushtype_);
+inline const ::std::string& SVRRadioPushSetNotify::sradioid() const {
+  // @@protoc_insertion_point(field_get:im.SVRRadioPushSetNotify.sRadioId)
+  return sradioid_.GetNoArena();
 }
-inline void SVRUserPushSetNotify::set_pushtype(::im::SVRUserPushNotifyType value) {
+inline void SVRRadioPushSetNotify::set_sradioid(const ::std::string& value) {
   
-  pushtype_ = value;
-  // @@protoc_insertion_point(field_set:im.SVRUserPushSetNotify.pushType)
+  sradioid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:im.SVRRadioPushSetNotify.sRadioId)
+}
+#if LANG_CXX11
+inline void SVRRadioPushSetNotify::set_sradioid(::std::string&& value) {
+  
+  sradioid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:im.SVRRadioPushSetNotify.sRadioId)
+}
+#endif
+inline void SVRRadioPushSetNotify::set_sradioid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  sradioid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:im.SVRRadioPushSetNotify.sRadioId)
+}
+inline void SVRRadioPushSetNotify::set_sradioid(const char* value, size_t size) {
+  
+  sradioid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:im.SVRRadioPushSetNotify.sRadioId)
+}
+inline ::std::string* SVRRadioPushSetNotify::mutable_sradioid() {
+  
+  // @@protoc_insertion_point(field_mutable:im.SVRRadioPushSetNotify.sRadioId)
+  return sradioid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* SVRRadioPushSetNotify::release_sradioid() {
+  // @@protoc_insertion_point(field_release:im.SVRRadioPushSetNotify.sRadioId)
+  
+  return sradioid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void SVRRadioPushSetNotify::set_allocated_sradioid(::std::string* sradioid) {
+  if (sradioid != NULL) {
+    
+  } else {
+    
+  }
+  sradioid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sradioid);
+  // @@protoc_insertion_point(field_set_allocated:im.SVRRadioPushSetNotify.sRadioId)
 }
 
-// uint64 msgTime = 4;
-inline void SVRUserPushSetNotify::clear_msgtime() {
+// .im.SVRRadioPushSetNotifyType notifyType = 4;
+inline void SVRRadioPushSetNotify::clear_notifytype() {
+  notifytype_ = 0;
+}
+inline ::im::SVRRadioPushSetNotifyType SVRRadioPushSetNotify::notifytype() const {
+  // @@protoc_insertion_point(field_get:im.SVRRadioPushSetNotify.notifyType)
+  return static_cast< ::im::SVRRadioPushSetNotifyType >(notifytype_);
+}
+inline void SVRRadioPushSetNotify::set_notifytype(::im::SVRRadioPushSetNotifyType value) {
+  
+  notifytype_ = value;
+  // @@protoc_insertion_point(field_set:im.SVRRadioPushSetNotify.notifyType)
+}
+
+// uint32 status = 5;
+inline void SVRRadioPushSetNotify::clear_status() {
+  status_ = 0u;
+}
+inline ::google::protobuf::uint32 SVRRadioPushSetNotify::status() const {
+  // @@protoc_insertion_point(field_get:im.SVRRadioPushSetNotify.status)
+  return status_;
+}
+inline void SVRRadioPushSetNotify::set_status(::google::protobuf::uint32 value) {
+  
+  status_ = value;
+  // @@protoc_insertion_point(field_set:im.SVRRadioPushSetNotify.status)
+}
+
+// uint64 msgTime = 6;
+inline void SVRRadioPushSetNotify::clear_msgtime() {
   msgtime_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::uint64 SVRUserPushSetNotify::msgtime() const {
-  // @@protoc_insertion_point(field_get:im.SVRUserPushSetNotify.msgTime)
+inline ::google::protobuf::uint64 SVRRadioPushSetNotify::msgtime() const {
+  // @@protoc_insertion_point(field_get:im.SVRRadioPushSetNotify.msgTime)
   return msgtime_;
 }
-inline void SVRUserPushSetNotify::set_msgtime(::google::protobuf::uint64 value) {
+inline void SVRRadioPushSetNotify::set_msgtime(::google::protobuf::uint64 value) {
   
   msgtime_ = value;
-  // @@protoc_insertion_point(field_set:im.SVRUserPushSetNotify.msgTime)
+  // @@protoc_insertion_point(field_set:im.SVRRadioPushSetNotify.msgTime)
 }
 
 // -------------------------------------------------------------------
@@ -5502,7 +5595,7 @@ template <> struct is_proto_enum< ::im::SVRGroupRelationNotifyType> : ::std::tru
 template <> struct is_proto_enum< ::im::SVRFriendRelationNotifyType> : ::std::true_type {};
 template <> struct is_proto_enum< ::im::SVRCommonNotifyType> : ::std::true_type {};
 template <> struct is_proto_enum< ::im::SVRRadioNotifyType> : ::std::true_type {};
-template <> struct is_proto_enum< ::im::SVRUserPushNotifyType> : ::std::true_type {};
+template <> struct is_proto_enum< ::im::SVRRadioPushSetNotifyType> : ::std::true_type {};
 template <> struct is_proto_enum< ::im::LoginResultType> : ::std::true_type {};
 
 }  // namespace protobuf

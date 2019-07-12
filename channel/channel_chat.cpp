@@ -135,10 +135,7 @@ void CChannelChat::insertChannelChatMsgToDataBase(im::RadioChat msg, const UidCo
 //	}
 
 	if(!CRedisMgr::getInstance()->getChannelUser(msg.sradioid(), vecMember) || vecMember.empty())
-	{
 		ErrLog("get channel member list fail! radioid= %s", msg.sradioid().c_str());
-		return;
-	}
 
 	DbgLog("%s channel msg get radio member list end", msg.smsgid().c_str());
 	std::vector<string> tmpMember;
@@ -162,10 +159,8 @@ void CChannelChat::insertChannelChatMsgToDataBase(im::RadioChat msg, const UidCo
 	tmpMember.clear();
 	// 离线推送
 	if(!CRedisMgr::getInstance()->getChannelOfflineUser(msg.sradioid(), vecMember) || vecMember.empty())
-	{
 		ErrLog("get channel offline member list fail! radioid= %s", msg.sradioid().c_str());
-		return;
-	}
+	
 	for(auto& itor : vecMember)
 	{
 		nTick++;
@@ -234,8 +229,6 @@ bool CChannelChat::OnChannelCancelChat(std::shared_ptr<CImPdu> pPdu)
 
 void CChannelChat::channelCancelChatHandle(const im::RadioCancelChat msg, const UidCode_t sessionId)
 {
-	if(!checkCancelMsgIsAdmin(msg, sessionId))
-		return;
 	cancelChatMsgToDataBase(msg, sessionId, false);
 }
 
@@ -301,7 +294,7 @@ void CChannelChat::cancelChatMsgToDataBase(const im::RadioCancelChat& msg, const
 		CRedisMgr::getInstance()->removeMsgFromMsgQueue(msg.sradioid(), restMsg);
 		
 	}
-	if(ChannelMongoOperator::getInstance()->UpdateChannelOfflineMsg(dirCollectionName, msg.smsgid(), msg.extend()) <= 0)
+	if(ChannelMongoOperator::getInstance()->UpdateChannelOfflineMsg(dirCollectionName, msg.smsgid(), msg.extend(), isAdmin) <= 0)
 	{
 		sendCancelChatAck(msg, sessionId, cmdId, EXCEPT_ERR);
 		return;
@@ -320,10 +313,7 @@ void CChannelChat::cancelChatMsgToDataBase(const im::RadioCancelChat& msg, const
 //	}
 	
 	if(!CRedisMgr::getInstance()->getChannelUser(msg.sradioid(), vecMember) || vecMember.empty())
-	{
 		ErrLog("get channel member list fail! radioid= %s", msg.sradioid().c_str());
-		return;
-	}
 	
 	DbgLog("%s channel msg get radio member list end", msg.smsgid().c_str());
 	std::vector<string> tmpMember;
@@ -347,10 +337,8 @@ void CChannelChat::cancelChatMsgToDataBase(const im::RadioCancelChat& msg, const
 	tmpMember.clear();
 	// 离线推送
 	if(!CRedisMgr::getInstance()->getChannelOfflineUser(msg.sradioid(), vecMember) || vecMember.empty())
-	{
 		ErrLog("get channel offline member list fail! radioid= %s", msg.sradioid().c_str());
-		return;
-	}
+
 	for(auto& itor : vecMember)
 	{
 		nTick++;
@@ -425,9 +413,6 @@ void CChannelChat::pushChannelChat(const string& fromId, const string& msgId, co
 		if(itor.pushToken.empty() || 1 == itor.status || itor.userId == fromId)
 			continue;
 		sendPush(fromId, itor.userId, msgId, CHNN_TALK, NewMsgStr, itor.nPushType, itor.pushToken);
-//		msg.set_stoid(itor.userId);
-//		sendReq(&msg, RADIO_CHAT_DELIVER, itor.strIp, itor.nPort);
-		
 	}
 	DbgLog("%s channel msg push to members end", msgId.c_str());
 }

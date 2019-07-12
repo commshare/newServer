@@ -17,6 +17,9 @@ public:
 	void insertChannelNotifyToDataBase(im::SVRRadioMsgNotify msg);
 	void sendChannelNotify(im::RadioChat msg, std::vector<string> vecMember);
 
+	bool OnChannelPushSetNotify(std::shared_ptr<CImPdu> pPdu);
+	void setChannelPushStatus(im::SVRRadioPushSetNotify msg);
+
 private:
 	bool updateUserChannelInfo(const im::SVRRadioMsgNotify& msg);
 	bool packagingRadioChat(const im::SVRRadioMsgNotify& msg, im::RadioChat& chat);

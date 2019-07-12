@@ -14,7 +14,8 @@ const char* sRedisFields[REDIS_FIELDS_COUNT] =
 	"session_id",
 	"push_type",
 	"push_token",
-	"is_push"
+	"is_newmsg",
+	"hidemsg_on"
 };
 const char* sDeviceUserFields =  "subscriber";
 CLoginCache::CLoginCache(CConfigFileReader* pConfigReader)
@@ -277,9 +278,13 @@ bool CLoginCache::UpdateUserRec(UserCache_t &rec)
 	snprintf(tBuf, sizeof(tBuf), "%d",(int)time(0));
 	mFields[sRedisFields[RELOGINTIME_FIELD]]=tBuf;
 	mFields[sRedisFields[SESSION_ID_FIELD]]=rec.sSessionId;
-	snprintf(tBuf, sizeof(tBuf), "%d", rec.nPushType);
-	mFields[sRedisFields[PUSHTYPE_FIELD]]=tBuf;
-	mFields[sRedisFields[PUSHTOKEN_FIELD]]=rec.sPushToken;
+	if(rec.nPushType != 0)
+	{
+		snprintf(tBuf, sizeof(tBuf), "%d", rec.nPushType);
+		mFields[sRedisFields[PUSHTYPE_FIELD]]=tBuf;
+	}
+	if(!rec.sPushToken.empty())
+		mFields[sRedisFields[PUSHTOKEN_FIELD]]=rec.sPushToken;
 	m_hashRedis.clear();
 	if (m_hashRedis.hmset(rec.sUserId.c_str(), mFields) == false)
 	{
@@ -312,9 +317,13 @@ bool CLoginCache::InsertUserRec(UserCache_t &rec)							 // Insert a new user re
 	mFields[sRedisFields[RELOGINTIME_FIELD]]=tBuf;
 	mFields[sRedisFields[LOGINTIME_FIELD]]= tBuf;
 	mFields[sRedisFields[SESSION_ID_FIELD]]=rec.sSessionId;
-	snprintf(tBuf, sizeof(tBuf), "%d", rec.nPushType);
-	mFields[sRedisFields[PUSHTYPE_FIELD]]=tBuf;
-	mFields[sRedisFields[PUSHTOKEN_FIELD]]=rec.sPushToken;
+	if(rec.nPushType != 0)
+	{
+		snprintf(tBuf, sizeof(tBuf), "%d", rec.nPushType);
+		mFields[sRedisFields[PUSHTYPE_FIELD]]=tBuf;
+	}
+	if(!rec.sPushToken.empty())
+		mFields[sRedisFields[PUSHTOKEN_FIELD]]=rec.sPushToken;
 
 	key=rec.sUserId;
 	m_hashRedis.clear();
@@ -381,15 +390,59 @@ bool CLoginCache::DelDeviceRec(acl::string sDeviceToken)
 	return true;
 }
 
-bool CLoginCache::SetUserPushState(acl::string sUserId, int push)
+bool CLoginCache::SetIsNewMsgStatus(acl::string sUserId, int status)
 {
 	m_hashRedis.clear();
-	if (m_hashRedis.hset(sUserId.c_str(), sRedisFields[ISPUSH_FIELD], std::to_string(push).c_str()) == false)
+	int nSize = m_hashRedis.hset(sUserId.c_str(), sRedisFields[ISNEWMSG_FIELD], std::to_string(status).c_str());
+	if (nSize < 0)
 	{
-		ErrLog("Failed to set user %s push status , hset error: %s", sUserId.c_str(), m_hashRedis.result_error());
+		ErrLog("Failed to set user %s new msg status , hset error: %s", sUserId.c_str(), m_hashRedis.result_error());
 		return false;
 	}
 	return true;
+}
+
+bool CLoginCache::SetHideMsgOnStatus(acl::string sUserId, int status)
+{
+	m_hashRedis.clear();
+	int nSize = m_hashRedis.hset(sUserId.c_str(), sRedisFields[HIDEMSGON_FIELD], std::to_string(status).c_str());
+	if (nSize < 0)
+	{
+		ErrLog("Failed to set user %s hide msg sound on status , hset error: %s", sUserId.c_str(), m_hashRedis.result_error());
+		return false;
+	}
+	return true;
+}
+
+bool CLoginCache::GetMsgPushStatus(acl::string sUserId, bool& bNewMsg, bool& bHideSound)
+{
+	m_hashRedis.clear();
+	std::vector<acl::string> key;
+	key.emplace_back(sRedisFields[HIDEMSGON_FIELD]);
+	key.emplace_back(sRedisFields[ISNEWMSG_FIELD]);
+	std::vector<acl::string> values;
+	m_hashRedis.clear();
+	if (m_hashRedis.hmget(sUserId.c_str(), key, &values) == false)
+	{
+		ErrLog("Failed to set user %s hide msg sound on status , hset error: %s", sUserId.c_str(), m_hashRedis.result_error());
+		return false;
+	}
+	bHideSound = atoi(values[0].c_str()) ? true : false;
+	bNewMsg = atoi(values[1].c_str()) ? true : false;
+	return true;
+}
+
+bool CLoginCache::SetPushTypeAndToken(const acl::string& sUserId, const acl::string& sType, const acl::string& sToken)
+{
+	std::map<acl::string, acl::string> fields;
+	fields[sRedisFields[PUSHTYPE_FIELD]] = sType;
+	fields[sRedisFields[PUSHTOKEN_FIELD]] = sToken;
+	m_hashRedis.clear();
+	bool ret = m_hashRedis.hmset(sUserId, fields);
+	if(!ret)
+		ErrLog("Failed to set user %s push type and token , hset error: %s", sUserId.c_str(), m_hashRedis.result_error());
+	fields.clear();
+	return ret;
 }
 
 

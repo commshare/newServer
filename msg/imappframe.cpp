@@ -14,6 +14,7 @@
 #include "notify_handle.h"
 #include "groupChatHandle.h"
 #include "exchangeKeyHandle.h"
+#include "thread_pool_manager.h"
 
 CIMAppFrame::CIMAppFrame(CConfigFileReader * pReader)
 	: m_pConfigReader(pReader), m_nActualServiceInst(1)
@@ -100,6 +101,11 @@ bool CIMAppFrame::Initialize()
 		delete pRedisDbManager;
 		return false;
 	}
+
+	char* cache_size = m_pConfigReader->GetConfigName("group_msg_thread_num");
+	int nCount = cache_size ? atoi(cache_size) : 40;
+	CThreadPoolManager::getInstance()->initGroupMsgSendPoolPtr(nCount, "sendGroupMsg");
+	
 	return true;
 }
 

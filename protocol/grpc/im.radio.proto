@@ -4,7 +4,7 @@ package radionotify;
 
 service RadioNotifyService {
 	rpc OnRadioMsgNotify (RadioMsgNotify) returns (RadioMsgNotifyACK) {};
-	rpc OnUserPushSetNotify (UserPushSetNotify) returns (UserPushSetNotifyACK) {};
+	rpc OnRadioPushSetNotify (RadioPushSetNotify) returns (RadioPushSetNotifyACK) {};
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -31,41 +31,47 @@ message RadioMsgNotifyACK
 
 enum RadioNotifyType
 {
-	RADIO_TYPE_UNKNOWN 			= 0;
-	RADIO_TYPE_NAME_CHANGED 	= 1;		//修改频道名称，通知成员
-	RADIO_TYPE_ICON_CHANGED 	= 2;		//修改  频道头像，通知成员
-	RADIO_TYPE_NOTICE_CHANGED 	= 3;		//修改频道公告，通知成员
-	RADIO_TYPE_MEMBER_QUIT 		= 4;		//退出频道通知，发送给成员
-	RADIO_TYPE_MEMBER_REMOVE 	= 5;		//踢人通知，发送给被移除人及成员
-	RADIO_TYPE_APPLY			= 6;		//主动加入频道，发送给成员
-	RADIO_TYPE_INVITE		 	= 7;		//被动加入频道，发送给成员
-	RADIO_TYPE_MASTER_CHANGED 	= 8;		//频道主发生变更，发送给成员
-	RADIO_TYPE_ADMIN_SET 		= 9;		//设置频道管理员，发送给成员
-	RADIO_TYPE_ADMIN_UNSET	 	= 10;		//取消频道管理员，发送给成员
-	RADIO_TYPE_DISMISS		 	= 11;		//解散频道，发送给成员
-	RADIO_TYPE_NOSPEAK		 	= 12;		//禁言，发送给成员
-	RADIO_TYPE_SPEAKING		 	= 13;		//取消禁言，发送给成员
-	RADIO_TYPE_CREATE		 	= 14;		//频道创建
+	RADIO_TYPE_UNKNOWN 					= 0;
+	RADIO_TYPE_NAME_CHANGED 			= 1;		//修改频道名称，通知成员
+	RADIO_TYPE_ICON_CHANGED 			= 2;		//修改  频道头像，通知成员
+	RADIO_TYPE_NOTICE_CHANGED		 	= 3;		//修改频道公告，通知成员
+	RADIO_TYPE_MEMBER_QUIT 				= 4;		//退出频道通知，发送给成员
+	RADIO_TYPE_MEMBER_REMOVE 			= 5;		//踢人通知，发送给被移除人及成员
+	RADIO_TYPE_APPLY					= 6;		//主动加入频道，发送给成员
+	RADIO_TYPE_INVITE		 			= 7;		//被动加入频道，发送给成员
+	RADIO_TYPE_MASTER_CHANGED 			= 8;		//频道主发生变更，发送给成员
+	RADIO_TYPE_ADMIN_SET 				= 9;		//设置频道管理员，发送给成员
+	RADIO_TYPE_ADMIN_UNSET	 			= 10;		//取消频道管理员，发送给成员
+	RADIO_TYPE_DISMISS		 			= 11;		//解散频道，发送给成员
+	RADIO_TYPE_NOSPEAK		 			= 12;		//禁言，发送给成员
+	RADIO_TYPE_SPEAKING		 			= 13;		//取消禁言，发送给成员
+	RADIO_TYPE_CREATE		 			= 14;		//频道创建
+	RADIO_TYPE_FORBID_INTERFACING_ON	= 15;		//开启全员禁私聊
+	RADIO_TYPE_FORBID_INTERFACING_OFF	= 16;		//关闭全员禁私聊
 }
 
 ////////////////////////////////////////////////////////////
 // 推送用户设置通知
 ////////////////////////////////////////////////////////////
-message UserPushSetNotify
+message RadioPushSetNotify
 {
-	string  sMsgId       			= 1;  // 消息Id
-	string	sUserId					= 2;  // 用户ID
-	UserPushNotifyType	pushType	= 3;  // 是否推送
-	uint64  msgTime 				= 4;  // 消息时间
+	string  sMsgId       				= 1;  // 消息Id
+	string	sUserId						= 2;  // 用户ID
+	string	sRadioId					= 3;  // 频道id
+	RadioPushSetNotifyType	notifyType	= 4;  // 通知类型
+	uint32	status						= 5;  // 状态
+	uint64  msgTime 					= 6;  // 消息时间
 }
 
-enum UserPushNotifyType
+enum RadioPushSetNotifyType
 {
-	USER_UNPUSH = 0;				// 不推送
-	USER_ISPUSH = 1;				// 推送
+	PUSH_NEWMSG = 0;				// 接受新消息通知
+	PUSH_HIDEMSGSOUNDON = 1;		// 隐藏模式下接受新消息通知
+	PUSH_ISHIDE = 2;				// 频道是否加入隐藏模式
+	PUSH_UNDISTURB= 3;				// 频道是否开启免打扰 
 }
 
-message UserPushSetNotifyACK
+message RadioPushSetNotifyACK
 {
 	string sMsgId = 1;
 	uint64  msgTime = 2;

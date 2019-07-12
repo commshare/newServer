@@ -13,7 +13,6 @@
 #include <grpcpp/impl/codegen/method_handler_impl.h>
 #include <grpcpp/impl/codegen/proto_utils.h>
 #include <grpcpp/impl/codegen/rpc_method.h>
-#include <grpcpp/impl/codegen/server_callback.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/status.h>
 #include <grpcpp/impl/codegen/stub_options.h>
@@ -155,57 +154,6 @@ class Statistic final {
   };
   typedef WithAsyncMethod_UpdateUserContext<WithAsyncMethod_PushUserAction<Service > > AsyncService;
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod_UpdateUserContext : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    ExperimentalWithCallbackMethod_UpdateUserContext() {
-      ::grpc::Service::experimental().MarkMethodCallback(0,
-        new ::grpc::internal::CallbackUnaryHandler< ExperimentalWithCallbackMethod_UpdateUserContext<BaseClass>, ::bi_analysis::UserContext, ::bi_analysis::CommonRsp>(
-          [this](::grpc::ServerContext* context,
-                 const ::bi_analysis::UserContext* request,
-                 ::bi_analysis::CommonRsp* response,
-                 ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->UpdateUserContext(context, request, response, controller);
-                 }, this));
-    }
-    ~ExperimentalWithCallbackMethod_UpdateUserContext() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdateUserContext(::grpc::ServerContext* context, const ::bi_analysis::UserContext* request, ::bi_analysis::CommonRsp* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual void UpdateUserContext(::grpc::ServerContext* context, const ::bi_analysis::UserContext* request, ::bi_analysis::CommonRsp* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
-  };
-  template <class BaseClass>
-  class ExperimentalWithCallbackMethod_PushUserAction : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    ExperimentalWithCallbackMethod_PushUserAction() {
-      ::grpc::Service::experimental().MarkMethodCallback(1,
-        new ::grpc::internal::CallbackUnaryHandler< ExperimentalWithCallbackMethod_PushUserAction<BaseClass>, ::bi_analysis::UserActions, ::bi_analysis::CommonRsp>(
-          [this](::grpc::ServerContext* context,
-                 const ::bi_analysis::UserActions* request,
-                 ::bi_analysis::CommonRsp* response,
-                 ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->PushUserAction(context, request, response, controller);
-                 }, this));
-    }
-    ~ExperimentalWithCallbackMethod_PushUserAction() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status PushUserAction(::grpc::ServerContext* context, const ::bi_analysis::UserActions* request, ::bi_analysis::CommonRsp* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual void PushUserAction(::grpc::ServerContext* context, const ::bi_analysis::UserActions* request, ::bi_analysis::CommonRsp* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
-  };
-  typedef ExperimentalWithCallbackMethod_UpdateUserContext<ExperimentalWithCallbackMethod_PushUserAction<Service > > ExperimentalCallbackService;
-  template <class BaseClass>
   class WithGenericMethod_UpdateUserContext : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
@@ -278,56 +226,6 @@ class Statistic final {
     void RequestPushUserAction(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
-  };
-  template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_UpdateUserContext : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    ExperimentalWithRawCallbackMethod_UpdateUserContext() {
-      ::grpc::Service::experimental().MarkMethodRawCallback(0,
-        new ::grpc::internal::CallbackUnaryHandler< ExperimentalWithRawCallbackMethod_UpdateUserContext<BaseClass>, ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-          [this](::grpc::ServerContext* context,
-                 const ::grpc::ByteBuffer* request,
-                 ::grpc::ByteBuffer* response,
-                 ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->UpdateUserContext(context, request, response, controller);
-                 }, this));
-    }
-    ~ExperimentalWithRawCallbackMethod_UpdateUserContext() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdateUserContext(::grpc::ServerContext* context, const ::bi_analysis::UserContext* request, ::bi_analysis::CommonRsp* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual void UpdateUserContext(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
-  };
-  template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_PushUserAction : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    ExperimentalWithRawCallbackMethod_PushUserAction() {
-      ::grpc::Service::experimental().MarkMethodRawCallback(1,
-        new ::grpc::internal::CallbackUnaryHandler< ExperimentalWithRawCallbackMethod_PushUserAction<BaseClass>, ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-          [this](::grpc::ServerContext* context,
-                 const ::grpc::ByteBuffer* request,
-                 ::grpc::ByteBuffer* response,
-                 ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->PushUserAction(context, request, response, controller);
-                 }, this));
-    }
-    ~ExperimentalWithRawCallbackMethod_PushUserAction() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status PushUserAction(::grpc::ServerContext* context, const ::bi_analysis::UserActions* request, ::bi_analysis::CommonRsp* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual void PushUserAction(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_UpdateUserContext : public BaseClass {

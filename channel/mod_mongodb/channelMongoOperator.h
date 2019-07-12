@@ -1,5 +1,11 @@
 #ifndef _H_CHANNEL_MONGO_OP_
 #define _H_CHANNEL_MONGO_OP_
+
+#include <bsoncxx/builder/basic/kvp.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
+#include <mongocxx/exception/bulk_write_exception.hpp>
+#include <mongocxx/database.hpp>
+
 #include <string>
 #include <set>
 #include<vector>
@@ -25,7 +31,8 @@ public:
 	bool HasCollection(const string& collectionName);
 
 	string InsertChannelOfflineMsg(const CChannelOfflineMsg& offlineMsg, const string& collectionName);
-	int UpdateChannelOfflineMsg(const std::string& collectionName, const std::string& msgId, const std::string& extend);
+	int UpdateChannelOfflineMsg(const std::string& collectionName, const std::string& msgId, const std::string& extend, bool isAdmin);
+	int update_one(const std::string& collectionName, const bsoncxx::builder::basic::document& key, const bsoncxx::builder::basic::document& doc);
 	bool getChannelOfflineMsg(const std::string& collectionName, std::vector<std::string>& vecResult, int limitNum);
 	string GetChannelOfflineMsg(const std::string& collectionName, const std::string& msgId);
 	bool DelOfflineMsg(const string& collectionName, const string& msgId);

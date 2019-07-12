@@ -18,6 +18,7 @@ public:
 public:
 	void OnGrpMsgChat(std::shared_ptr<CImPdu> pPdu);						// 响应群聊消息
 	void OnGrpMsgChatDeliverAck(std::shared_ptr<CImPdu> pPdu);				// 收到消息接收方聊天消息推送应答
+	void sendGroupMsg(const im::MESGrpChat msg, const MAP_GRP_MEMBER_INFO mapMemberInfo);
 	
 	void OnGrpMsgChatCancel(std::shared_ptr<CImPdu> pPdu);					// 响应群聊撤回消息
 	void OnGrpMsgChatCancelDeliverAck(std::shared_ptr<CImPdu> pPdu);		// 收到消息接收方撤销聊天消息推送应答
@@ -27,7 +28,6 @@ public:
 	bool HandleMsgChatCancelTask(const im::GroupChatCancel& msg, const UidCode_t& sessionID);
 
 private:
-	void sendGroupMsg(const im::MESGrpChat& msg, const MAP_GRP_MEMBER_INFO& mapMemberInfo);
 	void sendGroupCancelMsg(const im::GroupChatCancel& msg, const MAP_GRP_MEMBER_INFO& mapMemberInfo);
 
 private:

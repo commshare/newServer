@@ -62,4 +62,22 @@ message  CheckAppActiveAck
     string  sfromid  =2;
     uint64  time    =3;
 }
+//接口:PcStatusSynToApp
+//cmdid:0xb0e5
+message  PcStatusSynToApp 
+{
+    string  msgid  = 1;
+    string  userid  = 2;
+    uint32  pcstatus  = 3; // 0：pc不在线，1: pc登录在线
+    uint64  time = 4;
+
+}
+//接口：PcStatusSynToAppAck
+//cmdid:0xb0e6
+message  PcStatusSynToAppAck
+{
+    string  msgid  = 1;
+    string  userid  = 2;
+    uint64  time = 3;
+}
 

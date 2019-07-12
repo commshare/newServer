@@ -38,13 +38,16 @@ namespace protobuf_im_2ecm_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[5];
+  static const ::google::protobuf::internal::ParseTable schema[7];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
 };
 }  // namespace protobuf_im_2ecm_2eproto
 namespace im {
+class CCMPushTokenSyncAck;
+class CCMPushTokenSyncAckDefaultTypeInternal;
+extern CCMPushTokenSyncAckDefaultTypeInternal _CCMPushTokenSyncAck_default_instance_;
 class CMKickoutNotification;
 class CMKickoutNotificationDefaultTypeInternal;
 extern CMKickoutNotificationDefaultTypeInternal _CMKickoutNotification_default_instance_;
@@ -60,14 +63,19 @@ extern CMLogoutDefaultTypeInternal _CMLogout_default_instance_;
 class CMLogoutAck;
 class CMLogoutAckDefaultTypeInternal;
 extern CMLogoutAckDefaultTypeInternal _CMLogoutAck_default_instance_;
+class CMPushTokenSync;
+class CMPushTokenSyncDefaultTypeInternal;
+extern CMPushTokenSyncDefaultTypeInternal _CMPushTokenSync_default_instance_;
 }  // namespace im
 namespace google {
 namespace protobuf {
+template<> ::im::CCMPushTokenSyncAck* Arena::CreateMaybeMessage<::im::CCMPushTokenSyncAck>(Arena*);
 template<> ::im::CMKickoutNotification* Arena::CreateMaybeMessage<::im::CMKickoutNotification>(Arena*);
 template<> ::im::CMLogin* Arena::CreateMaybeMessage<::im::CMLogin>(Arena*);
 template<> ::im::CMLoginAck* Arena::CreateMaybeMessage<::im::CMLoginAck>(Arena*);
 template<> ::im::CMLogout* Arena::CreateMaybeMessage<::im::CMLogout>(Arena*);
 template<> ::im::CMLogoutAck* Arena::CreateMaybeMessage<::im::CMLogoutAck>(Arena*);
+template<> ::im::CMPushTokenSync* Arena::CreateMaybeMessage<::im::CMPushTokenSync>(Arena*);
 }  // namespace protobuf
 }  // namespace google
 namespace im {
@@ -719,6 +727,260 @@ class CMKickoutNotification : public ::google::protobuf::MessageLite /* @@protoc
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_im_2ecm_2eproto::TableStruct;
 };
+// -------------------------------------------------------------------
+
+class CMPushTokenSync : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:im.CMPushTokenSync) */ {
+ public:
+  CMPushTokenSync();
+  virtual ~CMPushTokenSync();
+
+  CMPushTokenSync(const CMPushTokenSync& from);
+
+  inline CMPushTokenSync& operator=(const CMPushTokenSync& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  CMPushTokenSync(CMPushTokenSync&& from) noexcept
+    : CMPushTokenSync() {
+    *this = ::std::move(from);
+  }
+
+  inline CMPushTokenSync& operator=(CMPushTokenSync&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const CMPushTokenSync& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CMPushTokenSync* internal_default_instance() {
+    return reinterpret_cast<const CMPushTokenSync*>(
+               &_CMPushTokenSync_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  void Swap(CMPushTokenSync* other);
+  friend void swap(CMPushTokenSync& a, CMPushTokenSync& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CMPushTokenSync* New() const final {
+    return CreateMaybeMessage<CMPushTokenSync>(NULL);
+  }
+
+  CMPushTokenSync* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<CMPushTokenSync>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const CMPushTokenSync& from);
+  void MergeFrom(const CMPushTokenSync& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(CMPushTokenSync* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string sUserId = 1;
+  void clear_suserid();
+  static const int kSUserIdFieldNumber = 1;
+  const ::std::string& suserid() const;
+  void set_suserid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_suserid(::std::string&& value);
+  #endif
+  void set_suserid(const char* value);
+  void set_suserid(const char* value, size_t size);
+  ::std::string* mutable_suserid();
+  ::std::string* release_suserid();
+  void set_allocated_suserid(::std::string* suserid);
+
+  // string sPushToken = 3;
+  void clear_spushtoken();
+  static const int kSPushTokenFieldNumber = 3;
+  const ::std::string& spushtoken() const;
+  void set_spushtoken(const ::std::string& value);
+  #if LANG_CXX11
+  void set_spushtoken(::std::string&& value);
+  #endif
+  void set_spushtoken(const char* value);
+  void set_spushtoken(const char* value, size_t size);
+  ::std::string* mutable_spushtoken();
+  ::std::string* release_spushtoken();
+  void set_allocated_spushtoken(::std::string* spushtoken);
+
+  // uint32 nPushType = 2;
+  void clear_npushtype();
+  static const int kNPushTypeFieldNumber = 2;
+  ::google::protobuf::uint32 npushtype() const;
+  void set_npushtype(::google::protobuf::uint32 value);
+
+  // uint32 nPushTokenType = 4;
+  void clear_npushtokentype();
+  static const int kNPushTokenTypeFieldNumber = 4;
+  ::google::protobuf::uint32 npushtokentype() const;
+  void set_npushtokentype(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:im.CMPushTokenSync)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr suserid_;
+  ::google::protobuf::internal::ArenaStringPtr spushtoken_;
+  ::google::protobuf::uint32 npushtype_;
+  ::google::protobuf::uint32 npushtokentype_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_im_2ecm_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class CCMPushTokenSyncAck : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:im.CCMPushTokenSyncAck) */ {
+ public:
+  CCMPushTokenSyncAck();
+  virtual ~CCMPushTokenSyncAck();
+
+  CCMPushTokenSyncAck(const CCMPushTokenSyncAck& from);
+
+  inline CCMPushTokenSyncAck& operator=(const CCMPushTokenSyncAck& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  CCMPushTokenSyncAck(CCMPushTokenSyncAck&& from) noexcept
+    : CCMPushTokenSyncAck() {
+    *this = ::std::move(from);
+  }
+
+  inline CCMPushTokenSyncAck& operator=(CCMPushTokenSyncAck&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const CCMPushTokenSyncAck& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const CCMPushTokenSyncAck* internal_default_instance() {
+    return reinterpret_cast<const CCMPushTokenSyncAck*>(
+               &_CCMPushTokenSyncAck_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  void Swap(CCMPushTokenSyncAck* other);
+  friend void swap(CCMPushTokenSyncAck& a, CCMPushTokenSyncAck& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline CCMPushTokenSyncAck* New() const final {
+    return CreateMaybeMessage<CCMPushTokenSyncAck>(NULL);
+  }
+
+  CCMPushTokenSyncAck* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<CCMPushTokenSyncAck>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const CCMPushTokenSyncAck& from);
+  void MergeFrom(const CCMPushTokenSyncAck& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(CCMPushTokenSyncAck* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string sUserId = 1;
+  void clear_suserid();
+  static const int kSUserIdFieldNumber = 1;
+  const ::std::string& suserid() const;
+  void set_suserid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_suserid(::std::string&& value);
+  #endif
+  void set_suserid(const char* value);
+  void set_suserid(const char* value, size_t size);
+  ::std::string* mutable_suserid();
+  ::std::string* release_suserid();
+  void set_allocated_suserid(::std::string* suserid);
+
+  // .im.ErrCode nErr = 2;
+  void clear_nerr();
+  static const int kNErrFieldNumber = 2;
+  ::im::ErrCode nerr() const;
+  void set_nerr(::im::ErrCode value);
+
+  // @@protoc_insertion_point(class_scope:im.CCMPushTokenSyncAck)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr suserid_;
+  int nerr_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_im_2ecm_2eproto::TableStruct;
+};
 // ===================================================================
 
 
@@ -1307,9 +1569,222 @@ inline void CMKickoutNotification::set_port(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:im.CMKickoutNotification.port)
 }
 
+// -------------------------------------------------------------------
+
+// CMPushTokenSync
+
+// string sUserId = 1;
+inline void CMPushTokenSync::clear_suserid() {
+  suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& CMPushTokenSync::suserid() const {
+  // @@protoc_insertion_point(field_get:im.CMPushTokenSync.sUserId)
+  return suserid_.GetNoArena();
+}
+inline void CMPushTokenSync::set_suserid(const ::std::string& value) {
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:im.CMPushTokenSync.sUserId)
+}
+#if LANG_CXX11
+inline void CMPushTokenSync::set_suserid(::std::string&& value) {
+  
+  suserid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:im.CMPushTokenSync.sUserId)
+}
+#endif
+inline void CMPushTokenSync::set_suserid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:im.CMPushTokenSync.sUserId)
+}
+inline void CMPushTokenSync::set_suserid(const char* value, size_t size) {
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:im.CMPushTokenSync.sUserId)
+}
+inline ::std::string* CMPushTokenSync::mutable_suserid() {
+  
+  // @@protoc_insertion_point(field_mutable:im.CMPushTokenSync.sUserId)
+  return suserid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* CMPushTokenSync::release_suserid() {
+  // @@protoc_insertion_point(field_release:im.CMPushTokenSync.sUserId)
+  
+  return suserid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void CMPushTokenSync::set_allocated_suserid(::std::string* suserid) {
+  if (suserid != NULL) {
+    
+  } else {
+    
+  }
+  suserid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), suserid);
+  // @@protoc_insertion_point(field_set_allocated:im.CMPushTokenSync.sUserId)
+}
+
+// uint32 nPushType = 2;
+inline void CMPushTokenSync::clear_npushtype() {
+  npushtype_ = 0u;
+}
+inline ::google::protobuf::uint32 CMPushTokenSync::npushtype() const {
+  // @@protoc_insertion_point(field_get:im.CMPushTokenSync.nPushType)
+  return npushtype_;
+}
+inline void CMPushTokenSync::set_npushtype(::google::protobuf::uint32 value) {
+  
+  npushtype_ = value;
+  // @@protoc_insertion_point(field_set:im.CMPushTokenSync.nPushType)
+}
+
+// string sPushToken = 3;
+inline void CMPushTokenSync::clear_spushtoken() {
+  spushtoken_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& CMPushTokenSync::spushtoken() const {
+  // @@protoc_insertion_point(field_get:im.CMPushTokenSync.sPushToken)
+  return spushtoken_.GetNoArena();
+}
+inline void CMPushTokenSync::set_spushtoken(const ::std::string& value) {
+  
+  spushtoken_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:im.CMPushTokenSync.sPushToken)
+}
+#if LANG_CXX11
+inline void CMPushTokenSync::set_spushtoken(::std::string&& value) {
+  
+  spushtoken_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:im.CMPushTokenSync.sPushToken)
+}
+#endif
+inline void CMPushTokenSync::set_spushtoken(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  spushtoken_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:im.CMPushTokenSync.sPushToken)
+}
+inline void CMPushTokenSync::set_spushtoken(const char* value, size_t size) {
+  
+  spushtoken_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:im.CMPushTokenSync.sPushToken)
+}
+inline ::std::string* CMPushTokenSync::mutable_spushtoken() {
+  
+  // @@protoc_insertion_point(field_mutable:im.CMPushTokenSync.sPushToken)
+  return spushtoken_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* CMPushTokenSync::release_spushtoken() {
+  // @@protoc_insertion_point(field_release:im.CMPushTokenSync.sPushToken)
+  
+  return spushtoken_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void CMPushTokenSync::set_allocated_spushtoken(::std::string* spushtoken) {
+  if (spushtoken != NULL) {
+    
+  } else {
+    
+  }
+  spushtoken_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), spushtoken);
+  // @@protoc_insertion_point(field_set_allocated:im.CMPushTokenSync.sPushToken)
+}
+
+// uint32 nPushTokenType = 4;
+inline void CMPushTokenSync::clear_npushtokentype() {
+  npushtokentype_ = 0u;
+}
+inline ::google::protobuf::uint32 CMPushTokenSync::npushtokentype() const {
+  // @@protoc_insertion_point(field_get:im.CMPushTokenSync.nPushTokenType)
+  return npushtokentype_;
+}
+inline void CMPushTokenSync::set_npushtokentype(::google::protobuf::uint32 value) {
+  
+  npushtokentype_ = value;
+  // @@protoc_insertion_point(field_set:im.CMPushTokenSync.nPushTokenType)
+}
+
+// -------------------------------------------------------------------
+
+// CCMPushTokenSyncAck
+
+// string sUserId = 1;
+inline void CCMPushTokenSyncAck::clear_suserid() {
+  suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& CCMPushTokenSyncAck::suserid() const {
+  // @@protoc_insertion_point(field_get:im.CCMPushTokenSyncAck.sUserId)
+  return suserid_.GetNoArena();
+}
+inline void CCMPushTokenSyncAck::set_suserid(const ::std::string& value) {
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:im.CCMPushTokenSyncAck.sUserId)
+}
+#if LANG_CXX11
+inline void CCMPushTokenSyncAck::set_suserid(::std::string&& value) {
+  
+  suserid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:im.CCMPushTokenSyncAck.sUserId)
+}
+#endif
+inline void CCMPushTokenSyncAck::set_suserid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:im.CCMPushTokenSyncAck.sUserId)
+}
+inline void CCMPushTokenSyncAck::set_suserid(const char* value, size_t size) {
+  
+  suserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:im.CCMPushTokenSyncAck.sUserId)
+}
+inline ::std::string* CCMPushTokenSyncAck::mutable_suserid() {
+  
+  // @@protoc_insertion_point(field_mutable:im.CCMPushTokenSyncAck.sUserId)
+  return suserid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* CCMPushTokenSyncAck::release_suserid() {
+  // @@protoc_insertion_point(field_release:im.CCMPushTokenSyncAck.sUserId)
+  
+  return suserid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void CCMPushTokenSyncAck::set_allocated_suserid(::std::string* suserid) {
+  if (suserid != NULL) {
+    
+  } else {
+    
+  }
+  suserid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), suserid);
+  // @@protoc_insertion_point(field_set_allocated:im.CCMPushTokenSyncAck.sUserId)
+}
+
+// .im.ErrCode nErr = 2;
+inline void CCMPushTokenSyncAck::clear_nerr() {
+  nerr_ = 0;
+}
+inline ::im::ErrCode CCMPushTokenSyncAck::nerr() const {
+  // @@protoc_insertion_point(field_get:im.CCMPushTokenSyncAck.nErr)
+  return static_cast< ::im::ErrCode >(nerr_);
+}
+inline void CCMPushTokenSyncAck::set_nerr(::im::ErrCode value) {
+  
+  nerr_ = value;
+  // @@protoc_insertion_point(field_set:im.CCMPushTokenSyncAck.nErr)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

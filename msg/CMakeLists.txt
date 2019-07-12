@@ -44,7 +44,7 @@ INCLUDE_DIRECTORIES(
 	${COMMON_LIB_DIR}
 )
 
-LINK_DIRECTORIES(. ./../lib ./../../lib /usr/local/lib)
+LINK_DIRECTORIES(. ./../lib  /usr/local/lib)
 
 #ADD_XXXX指示要生成什么库或者执行文件，必须在TARGET_LINK_LIBRARIES前面，否则会报错
 #ADD_LIBRARY(${PROJECTNAME} SHARED/STATIC ${SRC_LIST})

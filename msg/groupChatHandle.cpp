@@ -9,6 +9,7 @@
 #include "redisLoginInfoMgr.h"
 #include "im_loginInfo.h"
 #include "commonTaskMgr.h"
+#include "thread_pool_manager.h"
 
 CGroupChatHandle::CGroupChatHandle(CConfigFileReader* pConfigReader, int nNumOfInst)
 	: CBaseHandle(pConfigReader)
@@ -157,12 +158,13 @@ bool CGroupChatHandle::OnGrpChatInserted(const CGrpOfflineMsg& offlineMsg, unsig
 	
 	im::MESGrpChat msg;
 	msg.ParseFromString(offlineMsg.GetMsgData());
-	sendGroupMsg(msg, mapMemberInfo);
+	CThreadPoolManager::getInstance()->getGroupMsgSendPool()->add_task(&CGroupChatHandle::sendGroupMsg, this,  msg, mapMemberInfo);
+//	sendGroupMsg(msg, mapMemberInfo);
 	DbgLog("process msg[%s] end",msg.smsgid().c_str());
 	return true;
 }
 
-void CGroupChatHandle::sendGroupMsg(const im::MESGrpChat& msg, const MAP_GRP_MEMBER_INFO& mapMemberInfo)
+void CGroupChatHandle::sendGroupMsg(const im::MESGrpChat msg, const MAP_GRP_MEMBER_INFO mapMemberInfo)
 {
 	std::vector<im::MESGrpChat> deliverToGrpMemMsgs;
 	

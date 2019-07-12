@@ -20,6 +20,7 @@
 #include "CApnsPostData.h"
 #include "ssl_post_mgr.h"
 #include "configfilereader.h"
+#include "im_time.h"
 
 #define CONFIG_FILE "server.conf"
 
@@ -49,6 +50,17 @@ time_t	CHead::m_timestampSecAuth = 0;
 CLock	CHead::m_AuthorLock;
 char	CHead::m_sAuthorization[u16AUTHJWTLEN] = { 0 };//Providertokenofjwt,https必须设置,ce如果设置,请求将被忽略!!
 
+//pushType 消息类型 0:普通消息   1:p2p音频 2:好友邀请 3:群邀请 4:会议呼叫 5:频道聊天
+enum IOS_PUSH_TYPE
+{
+	PUSH_TYPE_CHAT = 0,
+	PUSH_TYPE_P2P_CALL = 1,
+	PUSH_TYPE_CONTACTS = 2,
+	PUSH_TYPE_GRP_CONTACTS = 3,
+	PUSH_TYPE_REFERENCE_CALL = 4,
+	PUSH_TYPE_CHNN_CHAT = 5,
+    PUSH_TYPE_APPWAKEUP = 6
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 const char CAppOpenJson::type[12] = "notify_type";
@@ -886,30 +898,34 @@ string getPayLoadJsonStr(int nMsgType, const string& message)
 {
 	Json::Value extendValue;
 	Json::Value categoryValue;
-	categoryValue["pushType"] = 0;
+	categoryValue["pushType"] = PUSH_TYPE_CHAT;
 	categoryValue["action"] = 0;
 	//pushType 消息类型 0:普通消息   1:p2p音频 2:好友邀请 3:群邀请 4:会议呼叫 5:运营公告类型 6:PC Wakeup
 	if(nMsgType == im::P2P_CALL)
 	{
-		categoryValue["pushType"] = 1;
+		categoryValue["pushType"] = PUSH_TYPE_P2P_CALL;
 		if(message.compare("cancel_p2p_call") == 0)
 			categoryValue["action"] = 1;
 	}
 	else if(nMsgType == im::CONTACTS)
 	{
-		categoryValue["pushType"] = 2;
+		categoryValue["pushType"] = PUSH_TYPE_CONTACTS;
 	}
 	else if(nMsgType == im::GRP_CONTACTS)
 	{
-		categoryValue["pushType"] = 3;
+		categoryValue["pushType"] = PUSH_TYPE_GRP_CONTACTS;
 	}
 	else if(nMsgType == im::REFERENCE_CALL)
 	{
-		categoryValue["pushType"] = 4;
+		categoryValue["pushType"] = PUSH_TYPE_REFERENCE_CALL;
+	}
+	else if(nMsgType == im::CHNN_TALK)
+	{
+		categoryValue["pushType"] = PUSH_TYPE_CHNN_CHAT;
 	}
     else if (nMsgType == im::APP_WAKEUP)
     {
-		categoryValue["pushType"] = 6;
+		categoryValue["pushType"] = PUSH_TYPE_APPWAKEUP;
     }
 	categoryValue["extend"] = extendValue;
 	Json::Value apsValue;
@@ -990,8 +1006,57 @@ std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipPostData(const PSv
 	return pPostData;
 
 }
+//new fun
+string getiOSPayLoadJsonStr(const im::PSvrMsg& msg)
+{
+	Json::Value extendValue;
+	Json::Value categoryValue;
+	categoryValue["pushType"] = PUSH_TYPE_CHAT;
+	categoryValue["action"] = 0;
+	if(msg.emsgtype() == im::P2P_CALL)
+	{
+		categoryValue["pushType"] = PUSH_TYPE_P2P_CALL;
+		Json::Value p2pValue;
+		p2pValue["fromId"] = msg.sfromid();
+		p2pValue["callId"] = msg.scallid();
+		p2pValue["callType"] = msg.calltype();
+		p2pValue["msgTime"] = (long long)getCurrentTime();
+		extendValue["p2p_call"] = p2pValue;
+	}
+	else if(msg.emsgtype() == im::CONTACTS)
+	{
+		categoryValue["pushType"] = PUSH_TYPE_CONTACTS;
+	}
+	else if(msg.emsgtype() == im::GRP_CONTACTS)
+	{
+		categoryValue["pushType"] = PUSH_TYPE_GRP_CONTACTS;
+	}
+	else if(msg.emsgtype() == im::REFERENCE_CALL)
+	{
+		categoryValue["pushType"] = PUSH_TYPE_REFERENCE_CALL;
+	}
+	else if(msg.emsgtype() == im::CHNN_TALK)
+	{
+		categoryValue["pushType"] = PUSH_TYPE_CHNN_CHAT;
+	}
+    else if (msg.emsgtype() == im::APP_WAKEUP)
+    {
+		categoryValue["pushType"] = PUSH_TYPE_APPWAKEUP;
+    }
+	categoryValue["extend"] = extendValue;
+	Json::Value apsValue;
+	apsValue["alert"] = msg.sbody();
+	apsValue["sound"] = "default";
+	apsValue["category"] = categoryValue;
+	Json::Value 	root;
+	root["aps"] = apsValue;
+	
+	return root.toStyledString();
+}
 
-std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipHttp2PostData(const PSvrMsg& msg) {
+
+std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipHttp2PostData(const PSvrMsg& msg)
+{
 
 	std::shared_ptr<CApnsPostData> pPostData(NULL);
 
@@ -1029,7 +1094,8 @@ std::shared_ptr<CApnsPostData> PostDataGenerator::GenerateVoipHttp2PostData(cons
 	pPostData->sMsgId = msg.smsgid();
 
 //	string jsonStr = payLoad.GetJson_s();
-    string jsonStr = getPayLoadJsonStr(msg.emsgtype(), msg.sbody());//get json payload
+//  string jsonStr = getPayLoadJsonStr(msg.emsgtype(), msg.sbody());//get json payload
+	string jsonStr = getiOSPayLoadJsonStr(msg);
 	if (jsonStr.empty())
 	{
 		InfoLog("payload GetJson false!\n");

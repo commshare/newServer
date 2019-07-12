@@ -35,7 +35,8 @@ typedef enum _cache_fields
 	SESSION_ID_FIELD,
 	PUSHTYPE_FIELD,
 	PUSHTOKEN_FIELD,
-	ISPUSH_FIELD,
+	ISNEWMSG_FIELD,
+	HIDEMSGON_FIELD,
 	REDIS_FIELDS_COUNT		//!!!这个用来计数，一定要放在最后
 } cache_fields;
 
@@ -94,7 +95,11 @@ public:
 	bool DelUserRec(acl::string sUserId);
 	bool DelDeviceRec(acl::string sDeviceToken);
 
-	bool SetUserPushState(acl::string sUserId, int push);
+	bool SetIsNewMsgStatus(acl::string sUserId, int status);
+	bool SetHideMsgOnStatus(acl::string sUserId, int status);
+	bool GetMsgPushStatus(acl::string sUserId, bool& bNewMsg, bool& bHideSound);
+	bool SetPushTypeAndToken(const acl::string& sUserId, const acl::string& sType, const acl::string& sToken);
+	
 protected:
 	bool SetRedisPara(void);	
 private:

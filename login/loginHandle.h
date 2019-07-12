@@ -37,6 +37,13 @@ typedef struct _UserAuth
 	uint64_t nLastLoginTime;  //Return by user center if auth checking fail;
 } UserAuth_t;
 
+typedef struct _RadioSetOn
+{
+	string sRadioId;
+	int isHidden;
+	int isUndisturb;
+}RadioSetOn_t;
+
 class CLoginHandle : public CPacket
 {
 public:
@@ -51,10 +58,12 @@ public:
 	bool OnPHPLoginNotify(std::shared_ptr<CImPdu> pPdu);	// php登陸通知
 	bool OnLoginCMNotifyAck(std::shared_ptr<CImPdu> pPdu);
 	bool OnUserPushSetNotify(std::shared_ptr<CImPdu> pPdu);		// 用户推送设置开关通知
+	bool OnPushTokenSync(std::shared_ptr<CImPdu> pPdu);			// push异步同步
 
 public:
 	void addLoginCacheInfo(std::string userId);
 	void removeLoginCacheInfo(std::string userId);
+	void loginChannelPush(std::string userId);
 	
 protected:
 	virtual bool RegistPacketExecutor(void);
@@ -80,8 +89,10 @@ private:
 
 	bool sendAck(const google::protobuf::MessageLite* pMsg, uint16_t command_id, const UidCode_t& sessionId);
 
-	bool getUserRadioIds(const std::string& sUserId, std::vector<std::string>& vecChnn);
-	bool parseRadioList(const std::string& sUserId, const std::string& strData, std::vector<std::string>& vecChnn);
+	bool getUserRadioIds(const std::string& sUserId, std::map<std::string, int>& mapChnn);
+	bool httpUserRadioIds(const std::string& sUserId, std::vector<RadioSetOn_t>& vecRadioSetOn);
+	bool parseRadioList(const std::string& sUserId, const std::string& strData, std::vector<RadioSetOn_t>& vecRadioSetOn);
+	bool getUserSetOn(const std::string& sUserId, bool& newMsg, bool& hideSound);
 	
 	
 private:
@@ -92,6 +103,7 @@ private:
 	CLoginCache* m_pCache;		//Redis cache pointer . 
 	int m_nNumberOfInst;
 	string m_sUserChannelsUrl;
+	std::string m_sUserInfoUrl;
 
 };
 

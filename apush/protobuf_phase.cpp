@@ -197,6 +197,8 @@ vector<shared_ptr<HTTP_REQDATA_>> CProtoHandele::GetAndroidPushData(const char *
 	shared_APushData->toId = m_pbMsg.stoid();
 	shared_APushData->msgId = m_pbMsg.smsgid();
 
+	DbgLog("android push data! msgId=%s toId=%s pushType=%d pushToken=%s", m_pbMsg.smsgid().c_str(), m_pbMsg.stoid().c_str(), m_pbMsg.edivece_type(), m_pbMsg.sdivece_token().c_str());
+	
 	switch (m_pbMsg.edivece_type())
 	{
 		case HW_PUSH:

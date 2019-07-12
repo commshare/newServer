@@ -137,54 +137,117 @@ void DesktopMsgTran::OnKitout(std::shared_ptr<CImPdu> pPdu)
     {
         case SVR_LOGIN_RESULT://app kitout
         {
-            im::LoginCMNotify msg;
+            im::OnLoginResult msg;
+//            im::LoginCMNotify msg;
             if(!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
             {
                 ErrLog("pb phrase is error!"); 
                 return;
 
             }
-           // uuid_t out;
-           // char buf[64];
-           // uuid_generate_random(out);
-           // uuid_unparse_lower(out, buf);
-           // string msgId = buf;
-            string msgId = getuuid();
-            string userId = msg.suserid();//for get user link
-            string pcUserId = string(PREFIX_PC_STR) + userId;//for get pcLink;
-            InfoLog("ready to kickout %s", pcUserId.c_str());
-            CClientLink* pUserLink = CClientLinkMgr::GetInstance()->GetLinkByUserId(userId); 
-            if(pUserLink!=NULL) 
+
+            if(im::LOGIN_ACK == msg.type())
             {
-                UserCache_t userCache;
-                if(m_pCache->GetUserRecord(pcUserId.c_str(), userCache))
+                DbgLog("login ack user id %s code %d", msg.suserid().c_str(), msg.nerr());
+                if(im::NON_ERR == msg.nerr())
                 {
-                    string registerId = userCache.sDeviceToken.c_str();//registerId store as token;
-                    char *kickoutRsp = NULL;
-                    asprintf(&kickoutRsp, "{\"msgid\":\"%s\", \"registerid\":\"%s\", \"userid\":\"%s\"}",
-                             msgId.c_str(), registerId.c_str(), userId.c_str());
-                    sendAck(kickoutRsp, PC_KITOUT, pUserLink->GetSessionId());
-                    InfoLog("pc_kitout  with sessionid = %s", pUserLink->GetSessionId().toString().c_str());
-                    free(kickoutRsp);
-                    kickoutRsp= NULL;
-                    //del cache 
-                    m_pCache->DelUserRec(pcUserId.c_str());
+                    string msgId = getuuid();
+                    string userId = msg.suserid();//for get user link
+                    string pcUserId = string(PREFIX_PC_STR) + userId;//for get pcLink;
+                    int vstatus = 0;
+                    InfoLog("ready to check %s status info", pcUserId.c_str());
+
+                    UserCache_t userCache;
+                    if(m_pCache->GetUserRecord(pcUserId.c_str(), userCache))
                     {
-                        InfoLog("successfully kitout , and del user cache well");
+                        //report app pc's status and tell pc app online.
+                        vstatus = userCache.bStatus;
+                        string ip= "";
+                        int port = 0;
+                        std::string cmUserId = string(PREFIX_CM_STR) + userId;
+                        std::shared_ptr<CLoginInfo> pLogin =  m_pCache->GetLoginInfo(cmUserId);
+                        if(pLogin) 
+                        {
+                            if(pLogin->IsLogin())
+                            {
+                                ip = pLogin->GetCmIp();
+                                port = atoi(pLogin->GetCmPort().c_str());
+
+                                im::PcStatusSynToApp msg;
+                                msg.set_msgid(msgId);
+                                msg.set_userid(userId);
+                                msg.set_pcstatus(vstatus);
+                                msg.set_time(getCurrentTime());
+                                if(vstatus) 
+                                {
+                                    //usleep(50*1000);
+                                    sendReq(&msg, PC_PCSTATUSSYNTOAPP, ip, port);
+                                    InfoLog("send pc's status = %d to app", vstatus);
+                                }
+                                else 
+                                {
+                                    InfoLog("no send  pc's status = %d , because pc offline", vstatus);
+                                }
+                            }
+                            else
+                            {
+                                InfoLog("app offline, drop the msg and wakeup app or store for resending");
+                            }
+                        }
+                        else
+                        {
+
+                            InfoLog("App offline, Cache clean, do nothing");
+                        }
+
                     }
-                    //close link
-                    pUserLink->CloseLink();
-                }   
-            }
-            else 
+
+                    CClientLink* pUserLink = CClientLinkMgr::GetInstance()->GetLinkByUserId(userId); 
+                    if(pUserLink!=NULL) 
+                    {
+
+                    }
+                }
+            } 
+            else if (im::LOGIN_KICKOUT == msg.type())
             {
-                InfoLog("the linker has lost");
+                string msgId = getuuid();
+                string userId = msg.suserid();//for get user link
+                string pcUserId = string(PREFIX_PC_STR) + userId;//for get pcLink;
+                InfoLog("ready to kickout %s", pcUserId.c_str());
+                CClientLink* pUserLink = CClientLinkMgr::GetInstance()->GetLinkByUserId(userId); 
+                if(pUserLink!=NULL) 
+                {
+                    UserCache_t userCache;
+                    if(m_pCache->GetUserRecord(pcUserId.c_str(), userCache))
+                    {
+                        string registerId = userCache.sDeviceToken.c_str();//registerId store as token;
+                        char *kickoutRsp = NULL;
+                        asprintf(&kickoutRsp, "{\"msgid\":\"%s\", \"registerid\":\"%s\", \"userid\":\"%s\"}",
+                                 msgId.c_str(), registerId.c_str(), userId.c_str());
+                        sendAck(kickoutRsp, PC_KITOUT, pUserLink->GetSessionId());
+                        InfoLog("pc_kitout  with sessionid = %s", pUserLink->GetSessionId().toString().c_str());
+                        free(kickoutRsp);
+                        kickoutRsp= NULL;
+                        //del cache 
+                        m_pCache->DelUserRec(pcUserId.c_str());
+                        {
+                            InfoLog("successfully kitout , and del user cache well");
+                        }
+                        //close link
+                        //pUserLink->CloseLink(); let client to close link
+                    }   
+                }
+                else 
+                {
+                    InfoLog("the linker has lost");
+                }
             }
         }
         break;
         case LOGIN_CM_NOTIFY: //app logout
         {
-            im::OnLoginResult msg;
+            im::LoginCMNotify msg;
             if(!pPdu->GetBodyData() || !msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
             {
                 ErrLog("pb phrase is error!"); 
@@ -220,7 +283,7 @@ void DesktopMsgTran::OnKitout(std::shared_ptr<CImPdu> pPdu)
                         InfoLog("successfully kitout , and del user cache well");
                     }
                     //close link
-                    pUserLink->CloseLink();
+                    //pUserLink->CloseLink(); let client to close link
                 }   
             }
             else 
@@ -254,6 +317,7 @@ bool DesktopMsgTran::RegistPacketExecutor(void)
 	CmdRegist(PC_PCSYNMESSAGETOGW,	m_nNumberOfInst,  CommandProc(&DesktopMsgTran::OnMessageFromPC));
 	CmdRegist(PC_GWSYNMESSAGETOPCACK,	m_nNumberOfInst,  CommandProc(&DesktopMsgTran::OnMessageFromPC));
 	CmdRegist(PC_HEARTBEART,	m_nNumberOfInst,  CommandProc(&DesktopMsgTran::OnMessageFromPC));
+
 
 	CmdRegist(PC_APPSYNMESSAGETOGW,	m_nNumberOfInst,  CommandProc(&DesktopMsgTran::OnMessageFromCM));
 	CmdRegist(PC_CHECKAPPACTIVEACK,	m_nNumberOfInst,  CommandProc(&DesktopMsgTran::OnMessageFromCM));
@@ -811,6 +875,7 @@ void DesktopMsgTran::OnAppSynMessageToGw(std::shared_ptr<CImPdu> pPdu)
     if(pLink)
     {    
         sendAck(longJson, PC_GWSYNMESSAGETOPC, pLink->GetSessionId());
+        InfoLog("send %d to pc", PC_GWSYNMESSAGETOPC);
     }
     
     free(longJson);

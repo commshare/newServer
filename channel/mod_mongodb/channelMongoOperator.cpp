@@ -1,7 +1,3 @@
-#include <bsoncxx/builder/basic/kvp.hpp>
-#include <bsoncxx/builder/stream/document.hpp>
-#include <mongocxx/exception/bulk_write_exception.hpp>
-#include <mongocxx/database.hpp>
 #include "threadpool.h"
 #include "mongoDbManager.h"
 #include "mongoTask.h"
@@ -282,7 +278,19 @@ string ChannelMongoOperator::InsertChannelOfflineMsg(const CChannelOfflineMsg& o
     }
 }
 
-int ChannelMongoOperator::UpdateChannelOfflineMsg(const std::string& collectionName, const std::string& msgId, const std::string& extend)
+int ChannelMongoOperator::UpdateChannelOfflineMsg(const std::string& collectionName, const std::string& msgId, const std::string& extend, bool isAdmin)
+{
+	int nCancel = isAdmin ? 1 : 2;
+	bsoncxx::builder::basic::document key{};
+	key.append( kvp("msgId", msgId) );
+	
+	bsoncxx::builder::basic::document doc{};
+	doc.append( kvp("$set", [extend](sub_document subdoc) {subdoc.append(kvp("extend", extend));}),
+				kvp("$set", [nCancel](sub_document subdoc) {subdoc.append(kvp("isCancel", nCancel));}));
+	return update_one(collectionName, key, doc);
+}
+
+int ChannelMongoOperator::update_one(const std::string& collectionName, const bsoncxx::builder::basic::document& key, const bsoncxx::builder::basic::document& doc)
 {
 	std::unique_ptr<CMongoDbConn> pConn = CMongoDbManager::getInstance()->GetDBConn();
 	if (!pConn)
@@ -293,13 +301,6 @@ int ChannelMongoOperator::UpdateChannelOfflineMsg(const std::string& collectionN
 
 	try
 	{
-		bsoncxx::builder::basic::document key{};
-		key.append( kvp("msgId", msgId) );
-		
-		bsoncxx::builder::basic::document doc{};
-		doc.append( /*kvp("extend", extend),*/
-					kvp("$inc", [](sub_document subdoc) {subdoc.append(kvp("isCancel", 1));}));
-	
 		bsoncxx::stdx::optional< mongocxx::result::update > result = 
 						pConn->GetCollection(m_sCurrDbName, collectionName).update_one(key.view(), doc.view());
 		if (result)
@@ -318,6 +319,7 @@ int ChannelMongoOperator::UpdateChannelOfflineMsg(const std::string& collectionN
 	    return -1;
 	}
 }
+
 
 bool ChannelMongoOperator::getChannelOfflineMsg(const std::string& collectionName, std::vector<std::string>& vecResult, int limitNum)
 {
@@ -352,6 +354,7 @@ bool ChannelMongoOperator::getChannelOfflineMsg(const std::string& collectionNam
 		WarnLog("get offlineMsg failed, exception catched:%s", xcp.what());
 		return false;
 	}
+	return true;
 }
 
 string ChannelMongoOperator::GetChannelOfflineMsg(const std::string& collectionName, const std::string& msgId)

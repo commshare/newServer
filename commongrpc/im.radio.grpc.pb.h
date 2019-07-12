@@ -13,7 +13,6 @@
 #include <grpcpp/impl/codegen/method_handler_impl.h>
 #include <grpcpp/impl/codegen/proto_utils.h>
 #include <grpcpp/impl/codegen/rpc_method.h>
-#include <grpcpp/impl/codegen/server_callback.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/status.h>
 #include <grpcpp/impl/codegen/stub_options.h>
@@ -43,15 +42,25 @@ class RadioNotifyService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioMsgNotifyACK>> PrepareAsyncOnRadioMsgNotify(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioMsgNotifyACK>>(PrepareAsyncOnRadioMsgNotifyRaw(context, request, cq));
     }
+    virtual ::grpc::Status OnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::radionotify::RadioPushSetNotifyACK* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioPushSetNotifyACK>> AsyncOnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioPushSetNotifyACK>>(AsyncOnRadioPushSetNotifyRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioPushSetNotifyACK>> PrepareAsyncOnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioPushSetNotifyACK>>(PrepareAsyncOnRadioPushSetNotifyRaw(context, request, cq));
+    }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
       virtual void OnRadioMsgNotify(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void OnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response, std::function<void(::grpc::Status)>) = 0;
     };
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioMsgNotifyACK>* AsyncOnRadioMsgNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioMsgNotifyACK>* PrepareAsyncOnRadioMsgNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioPushSetNotifyACK>* AsyncOnRadioPushSetNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::radionotify::RadioPushSetNotifyACK>* PrepareAsyncOnRadioPushSetNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -63,10 +72,18 @@ class RadioNotifyService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::radionotify::RadioMsgNotifyACK>> PrepareAsyncOnRadioMsgNotify(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::radionotify::RadioMsgNotifyACK>>(PrepareAsyncOnRadioMsgNotifyRaw(context, request, cq));
     }
+    ::grpc::Status OnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::radionotify::RadioPushSetNotifyACK* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>> AsyncOnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>>(AsyncOnRadioPushSetNotifyRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>> PrepareAsyncOnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>>(PrepareAsyncOnRadioPushSetNotifyRaw(context, request, cq));
+    }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
       void OnRadioMsgNotify(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response, std::function<void(::grpc::Status)>) override;
+      void OnRadioPushSetNotify(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response, std::function<void(::grpc::Status)>) override;
      private:
       friend class Stub;
       explicit experimental_async(Stub* stub): stub_(stub) { }
@@ -80,7 +97,10 @@ class RadioNotifyService final {
     class experimental_async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::radionotify::RadioMsgNotifyACK>* AsyncOnRadioMsgNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::radionotify::RadioMsgNotifyACK>* PrepareAsyncOnRadioMsgNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioMsgNotify& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>* AsyncOnRadioPushSetNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::radionotify::RadioPushSetNotifyACK>* PrepareAsyncOnRadioPushSetNotifyRaw(::grpc::ClientContext* context, const ::radionotify::RadioPushSetNotify& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_OnRadioMsgNotify_;
+    const ::grpc::internal::RpcMethod rpcmethod_OnRadioPushSetNotify_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -89,6 +109,7 @@ class RadioNotifyService final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status OnRadioMsgNotify(::grpc::ServerContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response);
+    virtual ::grpc::Status OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_OnRadioMsgNotify : public BaseClass {
@@ -110,33 +131,27 @@ class RadioNotifyService final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_OnRadioMsgNotify<Service > AsyncService;
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod_OnRadioMsgNotify : public BaseClass {
+  class WithAsyncMethod_OnRadioPushSetNotify : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    ExperimentalWithCallbackMethod_OnRadioMsgNotify() {
-      ::grpc::Service::experimental().MarkMethodCallback(0,
-        new ::grpc::internal::CallbackUnaryHandler< ExperimentalWithCallbackMethod_OnRadioMsgNotify<BaseClass>, ::radionotify::RadioMsgNotify, ::radionotify::RadioMsgNotifyACK>(
-          [this](::grpc::ServerContext* context,
-                 const ::radionotify::RadioMsgNotify* request,
-                 ::radionotify::RadioMsgNotifyACK* response,
-                 ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->OnRadioMsgNotify(context, request, response, controller);
-                 }, this));
+    WithAsyncMethod_OnRadioPushSetNotify() {
+      ::grpc::Service::MarkMethodAsync(1);
     }
-    ~ExperimentalWithCallbackMethod_OnRadioMsgNotify() override {
+    ~WithAsyncMethod_OnRadioPushSetNotify() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status OnRadioMsgNotify(::grpc::ServerContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response) override {
+    ::grpc::Status OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual void OnRadioMsgNotify(::grpc::ServerContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+    void RequestOnRadioPushSetNotify(::grpc::ServerContext* context, ::radionotify::RadioPushSetNotify* request, ::grpc::ServerAsyncResponseWriter< ::radionotify::RadioPushSetNotifyACK>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
   };
-  typedef ExperimentalWithCallbackMethod_OnRadioMsgNotify<Service > ExperimentalCallbackService;
+  typedef WithAsyncMethod_OnRadioMsgNotify<WithAsyncMethod_OnRadioPushSetNotify<Service > > AsyncService;
   template <class BaseClass>
   class WithGenericMethod_OnRadioMsgNotify : public BaseClass {
    private:
@@ -150,6 +165,23 @@ class RadioNotifyService final {
     }
     // disable synchronous version of this method
     ::grpc::Status OnRadioMsgNotify(::grpc::ServerContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_OnRadioPushSetNotify : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithGenericMethod_OnRadioPushSetNotify() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_OnRadioPushSetNotify() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -175,29 +207,24 @@ class RadioNotifyService final {
     }
   };
   template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_OnRadioMsgNotify : public BaseClass {
+  class WithRawMethod_OnRadioPushSetNotify : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    ExperimentalWithRawCallbackMethod_OnRadioMsgNotify() {
-      ::grpc::Service::experimental().MarkMethodRawCallback(0,
-        new ::grpc::internal::CallbackUnaryHandler< ExperimentalWithRawCallbackMethod_OnRadioMsgNotify<BaseClass>, ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-          [this](::grpc::ServerContext* context,
-                 const ::grpc::ByteBuffer* request,
-                 ::grpc::ByteBuffer* response,
-                 ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->OnRadioMsgNotify(context, request, response, controller);
-                 }, this));
+    WithRawMethod_OnRadioPushSetNotify() {
+      ::grpc::Service::MarkMethodRaw(1);
     }
-    ~ExperimentalWithRawCallbackMethod_OnRadioMsgNotify() override {
+    ~WithRawMethod_OnRadioPushSetNotify() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status OnRadioMsgNotify(::grpc::ServerContext* context, const ::radionotify::RadioMsgNotify* request, ::radionotify::RadioMsgNotifyACK* response) override {
+    ::grpc::Status OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual void OnRadioMsgNotify(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+    void RequestOnRadioPushSetNotify(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_OnRadioMsgNotify : public BaseClass {
@@ -219,9 +246,29 @@ class RadioNotifyService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedOnRadioMsgNotify(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::radionotify::RadioMsgNotify,::radionotify::RadioMsgNotifyACK>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_OnRadioMsgNotify<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_OnRadioPushSetNotify : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithStreamedUnaryMethod_OnRadioPushSetNotify() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler< ::radionotify::RadioPushSetNotify, ::radionotify::RadioPushSetNotifyACK>(std::bind(&WithStreamedUnaryMethod_OnRadioPushSetNotify<BaseClass>::StreamedOnRadioPushSetNotify, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_OnRadioPushSetNotify() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status OnRadioPushSetNotify(::grpc::ServerContext* context, const ::radionotify::RadioPushSetNotify* request, ::radionotify::RadioPushSetNotifyACK* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedOnRadioPushSetNotify(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::radionotify::RadioPushSetNotify,::radionotify::RadioPushSetNotifyACK>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_OnRadioMsgNotify<WithStreamedUnaryMethod_OnRadioPushSetNotify<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_OnRadioMsgNotify<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_OnRadioMsgNotify<WithStreamedUnaryMethod_OnRadioPushSetNotify<Service > > StreamedService;
 };
 
 }  // namespace radionotify

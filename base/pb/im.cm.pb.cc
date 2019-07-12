@@ -42,6 +42,16 @@ class CMKickoutNotificationDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<CMKickoutNotification>
       _instance;
 } _CMKickoutNotification_default_instance_;
+class CMPushTokenSyncDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<CMPushTokenSync>
+      _instance;
+} _CMPushTokenSync_default_instance_;
+class CCMPushTokenSyncAckDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<CCMPushTokenSyncAck>
+      _instance;
+} _CCMPushTokenSyncAck_default_instance_;
 }  // namespace im
 namespace protobuf_im_2ecm_2eproto {
 static void InitDefaultsCMLogin() {
@@ -114,12 +124,42 @@ static void InitDefaultsCMKickoutNotification() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_CMKickoutNotification =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsCMKickoutNotification}, {}};
 
+static void InitDefaultsCMPushTokenSync() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::im::_CMPushTokenSync_default_instance_;
+    new (ptr) ::im::CMPushTokenSync();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::im::CMPushTokenSync::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_CMPushTokenSync =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsCMPushTokenSync}, {}};
+
+static void InitDefaultsCCMPushTokenSyncAck() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::im::_CCMPushTokenSyncAck_default_instance_;
+    new (ptr) ::im::CCMPushTokenSyncAck();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::im::CCMPushTokenSyncAck::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_CCMPushTokenSyncAck =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsCCMPushTokenSyncAck}, {}};
+
 void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_CMLogin.base);
   ::google::protobuf::internal::InitSCC(&scc_info_CMLoginAck.base);
   ::google::protobuf::internal::InitSCC(&scc_info_CMLogout.base);
   ::google::protobuf::internal::InitSCC(&scc_info_CMLogoutAck.base);
   ::google::protobuf::internal::InitSCC(&scc_info_CMKickoutNotification.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMPushTokenSync.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CCMPushTokenSyncAck.base);
 }
 
 }  // namespace protobuf_im_2ecm_2eproto
@@ -1492,6 +1532,547 @@ void CMKickoutNotification::InternalSwap(CMKickoutNotification* other) {
 }
 
 
+// ===================================================================
+
+void CMPushTokenSync::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CMPushTokenSync::kSUserIdFieldNumber;
+const int CMPushTokenSync::kNPushTypeFieldNumber;
+const int CMPushTokenSync::kSPushTokenFieldNumber;
+const int CMPushTokenSync::kNPushTokenTypeFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CMPushTokenSync::CMPushTokenSync()
+  : ::google::protobuf::MessageLite(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_im_2ecm_2eproto::scc_info_CMPushTokenSync.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:im.CMPushTokenSync)
+}
+CMPushTokenSync::CMPushTokenSync(const CMPushTokenSync& from)
+  : ::google::protobuf::MessageLite(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.suserid().size() > 0) {
+    suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
+  }
+  spushtoken_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.spushtoken().size() > 0) {
+    spushtoken_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spushtoken_);
+  }
+  ::memcpy(&npushtype_, &from.npushtype_,
+    static_cast<size_t>(reinterpret_cast<char*>(&npushtokentype_) -
+    reinterpret_cast<char*>(&npushtype_)) + sizeof(npushtokentype_));
+  // @@protoc_insertion_point(copy_constructor:im.CMPushTokenSync)
+}
+
+void CMPushTokenSync::SharedCtor() {
+  suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  spushtoken_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&npushtype_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&npushtokentype_) -
+      reinterpret_cast<char*>(&npushtype_)) + sizeof(npushtokentype_));
+}
+
+CMPushTokenSync::~CMPushTokenSync() {
+  // @@protoc_insertion_point(destructor:im.CMPushTokenSync)
+  SharedDtor();
+}
+
+void CMPushTokenSync::SharedDtor() {
+  suserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  spushtoken_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void CMPushTokenSync::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const CMPushTokenSync& CMPushTokenSync::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_im_2ecm_2eproto::scc_info_CMPushTokenSync.base);
+  return *internal_default_instance();
+}
+
+
+void CMPushTokenSync::Clear() {
+// @@protoc_insertion_point(message_clear_start:im.CMPushTokenSync)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  spushtoken_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&npushtype_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&npushtokentype_) -
+      reinterpret_cast<char*>(&npushtype_)) + sizeof(npushtokentype_));
+  _internal_metadata_.Clear();
+}
+
+bool CMPushTokenSync::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::LiteUnknownFieldSetter unknown_fields_setter(
+      &_internal_metadata_);
+  ::google::protobuf::io::StringOutputStream unknown_fields_output(
+      unknown_fields_setter.buffer());
+  ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
+      &unknown_fields_output, false);
+  // @@protoc_insertion_point(parse_start:im.CMPushTokenSync)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string sUserId = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_suserid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->suserid().data(), static_cast<int>(this->suserid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "im.CMPushTokenSync.sUserId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 nPushType = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &npushtype_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string sPushToken = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_spushtoken()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->spushtoken().data(), static_cast<int>(this->spushtoken().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "im.CMPushTokenSync.sPushToken"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 nPushTokenType = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &npushtokentype_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(
+            input, tag, &unknown_fields_stream));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:im.CMPushTokenSync)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:im.CMPushTokenSync)
+  return false;
+#undef DO_
+}
+
+void CMPushTokenSync::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:im.CMPushTokenSync)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string sUserId = 1;
+  if (this->suserid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->suserid().data(), static_cast<int>(this->suserid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "im.CMPushTokenSync.sUserId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->suserid(), output);
+  }
+
+  // uint32 nPushType = 2;
+  if (this->npushtype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->npushtype(), output);
+  }
+
+  // string sPushToken = 3;
+  if (this->spushtoken().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spushtoken().data(), static_cast<int>(this->spushtoken().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "im.CMPushTokenSync.sPushToken");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->spushtoken(), output);
+  }
+
+  // uint32 nPushTokenType = 4;
+  if (this->npushtokentype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->npushtokentype(), output);
+  }
+
+  output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
+                   static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
+  // @@protoc_insertion_point(serialize_end:im.CMPushTokenSync)
+}
+
+size_t CMPushTokenSync::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:im.CMPushTokenSync)
+  size_t total_size = 0;
+
+  total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
+
+  // string sUserId = 1;
+  if (this->suserid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->suserid());
+  }
+
+  // string sPushToken = 3;
+  if (this->spushtoken().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->spushtoken());
+  }
+
+  // uint32 nPushType = 2;
+  if (this->npushtype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->npushtype());
+  }
+
+  // uint32 nPushTokenType = 4;
+  if (this->npushtokentype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->npushtokentype());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CMPushTokenSync::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const CMPushTokenSync*>(&from));
+}
+
+void CMPushTokenSync::MergeFrom(const CMPushTokenSync& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:im.CMPushTokenSync)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.suserid().size() > 0) {
+
+    suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
+  }
+  if (from.spushtoken().size() > 0) {
+
+    spushtoken_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spushtoken_);
+  }
+  if (from.npushtype() != 0) {
+    set_npushtype(from.npushtype());
+  }
+  if (from.npushtokentype() != 0) {
+    set_npushtokentype(from.npushtokentype());
+  }
+}
+
+void CMPushTokenSync::CopyFrom(const CMPushTokenSync& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:im.CMPushTokenSync)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CMPushTokenSync::IsInitialized() const {
+  return true;
+}
+
+void CMPushTokenSync::Swap(CMPushTokenSync* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CMPushTokenSync::InternalSwap(CMPushTokenSync* other) {
+  using std::swap;
+  suserid_.Swap(&other->suserid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  spushtoken_.Swap(&other->spushtoken_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(npushtype_, other->npushtype_);
+  swap(npushtokentype_, other->npushtokentype_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::std::string CMPushTokenSync::GetTypeName() const {
+  return "im.CMPushTokenSync";
+}
+
+
+// ===================================================================
+
+void CCMPushTokenSyncAck::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int CCMPushTokenSyncAck::kSUserIdFieldNumber;
+const int CCMPushTokenSyncAck::kNErrFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+CCMPushTokenSyncAck::CCMPushTokenSyncAck()
+  : ::google::protobuf::MessageLite(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_im_2ecm_2eproto::scc_info_CCMPushTokenSyncAck.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:im.CCMPushTokenSyncAck)
+}
+CCMPushTokenSyncAck::CCMPushTokenSyncAck(const CCMPushTokenSyncAck& from)
+  : ::google::protobuf::MessageLite(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.suserid().size() > 0) {
+    suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
+  }
+  nerr_ = from.nerr_;
+  // @@protoc_insertion_point(copy_constructor:im.CCMPushTokenSyncAck)
+}
+
+void CCMPushTokenSyncAck::SharedCtor() {
+  suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nerr_ = 0;
+}
+
+CCMPushTokenSyncAck::~CCMPushTokenSyncAck() {
+  // @@protoc_insertion_point(destructor:im.CCMPushTokenSyncAck)
+  SharedDtor();
+}
+
+void CCMPushTokenSyncAck::SharedDtor() {
+  suserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void CCMPushTokenSyncAck::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const CCMPushTokenSyncAck& CCMPushTokenSyncAck::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_im_2ecm_2eproto::scc_info_CCMPushTokenSyncAck.base);
+  return *internal_default_instance();
+}
+
+
+void CCMPushTokenSyncAck::Clear() {
+// @@protoc_insertion_point(message_clear_start:im.CCMPushTokenSyncAck)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  nerr_ = 0;
+  _internal_metadata_.Clear();
+}
+
+bool CCMPushTokenSyncAck::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::LiteUnknownFieldSetter unknown_fields_setter(
+      &_internal_metadata_);
+  ::google::protobuf::io::StringOutputStream unknown_fields_output(
+      unknown_fields_setter.buffer());
+  ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
+      &unknown_fields_output, false);
+  // @@protoc_insertion_point(parse_start:im.CCMPushTokenSyncAck)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string sUserId = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_suserid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->suserid().data(), static_cast<int>(this->suserid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "im.CCMPushTokenSyncAck.sUserId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .im.ErrCode nErr = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_nerr(static_cast< ::im::ErrCode >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(
+            input, tag, &unknown_fields_stream));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:im.CCMPushTokenSyncAck)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:im.CCMPushTokenSyncAck)
+  return false;
+#undef DO_
+}
+
+void CCMPushTokenSyncAck::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:im.CCMPushTokenSyncAck)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string sUserId = 1;
+  if (this->suserid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->suserid().data(), static_cast<int>(this->suserid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "im.CCMPushTokenSyncAck.sUserId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->suserid(), output);
+  }
+
+  // .im.ErrCode nErr = 2;
+  if (this->nerr() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->nerr(), output);
+  }
+
+  output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
+                   static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
+  // @@protoc_insertion_point(serialize_end:im.CCMPushTokenSyncAck)
+}
+
+size_t CCMPushTokenSyncAck::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:im.CCMPushTokenSyncAck)
+  size_t total_size = 0;
+
+  total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
+
+  // string sUserId = 1;
+  if (this->suserid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->suserid());
+  }
+
+  // .im.ErrCode nErr = 2;
+  if (this->nerr() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->nerr());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void CCMPushTokenSyncAck::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const CCMPushTokenSyncAck*>(&from));
+}
+
+void CCMPushTokenSyncAck::MergeFrom(const CCMPushTokenSyncAck& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:im.CCMPushTokenSyncAck)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.suserid().size() > 0) {
+
+    suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
+  }
+  if (from.nerr() != 0) {
+    set_nerr(from.nerr());
+  }
+}
+
+void CCMPushTokenSyncAck::CopyFrom(const CCMPushTokenSyncAck& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:im.CCMPushTokenSyncAck)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CCMPushTokenSyncAck::IsInitialized() const {
+  return true;
+}
+
+void CCMPushTokenSyncAck::Swap(CCMPushTokenSyncAck* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void CCMPushTokenSyncAck::InternalSwap(CCMPushTokenSyncAck* other) {
+  using std::swap;
+  suserid_.Swap(&other->suserid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(nerr_, other->nerr_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::std::string CCMPushTokenSyncAck::GetTypeName() const {
+  return "im.CCMPushTokenSyncAck";
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace im
 namespace google {
@@ -1510,6 +2091,12 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::CMLogoutAck* Arena::CreateMa
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::CMKickoutNotification* Arena::CreateMaybeMessage< ::im::CMKickoutNotification >(Arena* arena) {
   return Arena::CreateInternal< ::im::CMKickoutNotification >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::CMPushTokenSync* Arena::CreateMaybeMessage< ::im::CMPushTokenSync >(Arena* arena) {
+  return Arena::CreateInternal< ::im::CMPushTokenSync >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::CCMPushTokenSyncAck* Arena::CreateMaybeMessage< ::im::CCMPushTokenSyncAck >(Arena* arena) {
+  return Arena::CreateInternal< ::im::CCMPushTokenSyncAck >(arena);
 }
 }  // namespace protobuf
 }  // namespace google

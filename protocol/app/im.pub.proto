@@ -28,8 +28,8 @@ enum CmdId{
 	CM_LOGIN_ACK						= 0xa002;					//CM回应移动端登录
 	CM_LOGOUT							= 0xa003;						//移动端登出CM接入服务器
 	CM_LOGOUT_ACK						= 0xa004;					//CM回应移动端登出
-	CM_DEVICETOKENSYNC					= 0xa005;					//设备信息同步
-	CM_DEVICETOKENSYNC_ACK				= 0xa006;					//设备信息同步ACK
+	CM_PUSHTOKENSYNC					= 0xa005;					//推送设备信息同步
+	CM_PUSHTOKENSYNC_ACK				= 0xa006;					//推送设备信息同步ACK
 	CM_LOGOUT_CONFIRM					= 0xa007;					//移动端登出CM接入服务器确认
 	CM_LOGOUT_CONFIRM_ACK				= 0xa008;					//CM回应移动端登出确认
 	CM_KICKOUT_NOTIFICATION				= 0xa010;		//同一账号不同设备登录CM服务器，CM服务强制另一设备下线，并发出踢出通知。
@@ -55,8 +55,8 @@ enum CmdId{
 	SVR_LOGIN_RESULT_ACK				= 0xa026;
 	SVR_RADIO_RELATIN_NOTIFY			= 0xa027;		// 频道操作通知
 	SVR_RADIO_RELATIN_NOTIFY_ACK		= 0xa028;
-	SVR_USER_PUSHSET_NOTIFY				= 0xa029;		// 用户推送设置开关通知
-	SVR_USER_PUSHSET_NOTIFY_ACK			= 0xa030;
+	SVR_RADIO_PUSHSET_NOTIFY			= 0xa029;		// 频道推送设置开关通知
+	SVR_RADIO_PUSHSET_NOTIFY_ACK		= 0xa030;
 	
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +192,11 @@ enum CmdId{
     PC_CHECKAPPACTIVE    = 0xb0e2;
     PC_CHECKAPPACTIVEACK = 0xb0e3;
     PC_REPORTAPPACTIVE   = 0xb0e4;
+    
+    PC_PCSTATUSSYNTOAPP  = 0xb0e5;
+    PC_PCSTATUSSYNTOAPPACK = 0xb0e6;
+    PC_APPSTATUSSYNTOPC  = 0xb0e7;
+    PC_APPSTATUSSYNTOPCACK= 0xb0e8;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //MES消息服务协议命令字定义

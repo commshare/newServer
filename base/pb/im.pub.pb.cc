@@ -204,6 +204,27 @@ bool CmdId_IsValid(int value) {
     case 45250:
     case 45251:
     case 45252:
+    case 45265:
+    case 45266:
+    case 45268:
+    case 45269:
+    case 45271:
+    case 45272:
+    case 45273:
+    case 45274:
+    case 45275:
+    case 45276:
+    case 45277:
+    case 45278:
+    case 45280:
+    case 45281:
+    case 45282:
+    case 45283:
+    case 45284:
+    case 45285:
+    case 45286:
+    case 45287:
+    case 45288:
     case 49153:
     case 49154:
     case 49155:
@@ -232,6 +253,10 @@ bool CmdId_IsValid(int value) {
     case 49416:
     case 49417:
     case 49424:
+    case 49425:
+    case 49426:
+    case 49427:
+    case 49428:
     case 53249:
     case 53250:
     case 53252:
@@ -325,6 +350,7 @@ bool MsgType_IsValid(int value) {
     case 8:
     case 16:
     case 17:
+    case 18:
       return true;
     default:
       return false;

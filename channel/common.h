@@ -37,4 +37,10 @@ typedef struct struct_chnn_info_
 	}
 }CHANNEL_INIFO_, *P_CHANNEL_INIFO_;
 
+enum CHNN_SET_UP_
+{
+	CHNN_ISHIDE = 0x01,
+	CHNN_UNDISTURB = 0x10
+};
+
 #endif // __COMMON_H__

@@ -40,12 +40,12 @@ public:
 		::grpc::Status OnRadioMsgNotify(::grpc::ServerContext* context,
 										const ::radionotify::RadioMsgNotify* request,
 										::radionotify::RadioMsgNotifyACK* response);
-		::grpc::Status OnUserPushSetNotify(::grpc::ServerContext* context,
-											const ::radionotify::UserPushSetNotify* request,
-											::radionotify::UserPushSetNotifyACK* response);
+		::grpc::Status OnRadioPushSetNotify(::grpc::ServerContext* context,
+											const ::radionotify::RadioPushSetNotify* request,
+											::radionotify::RadioPushSetNotifyACK* response);
 	private:	
 			void radioMsgNotify(const radionotify::RadioMsgNotify *request, radionotify::RadioMsgNotifyACK *response);
-			void userPushSetNotify(const radionotify::UserPushSetNotify* request, radionotify::UserPushSetNotifyACK* response);
+			void radioPushSetNotify(const radionotify::RadioPushSetNotify* request, radionotify::RadioPushSetNotifyACK* response);
 	};
 
 	class NotifyServiceImpl final : public imnotify::NotifyService::Service {

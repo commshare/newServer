@@ -72,11 +72,11 @@ class SVRRadioMsgNotifyDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<SVRRadioMsgNotify>
       _instance;
 } _SVRRadioMsgNotify_default_instance_;
-class SVRUserPushSetNotifyDefaultTypeInternal {
+class SVRRadioPushSetNotifyDefaultTypeInternal {
  public:
-  ::google::protobuf::internal::ExplicitlyConstructed<SVRUserPushSetNotify>
+  ::google::protobuf::internal::ExplicitlyConstructed<SVRRadioPushSetNotify>
       _instance;
-} _SVRUserPushSetNotify_default_instance_;
+} _SVRRadioPushSetNotify_default_instance_;
 class SVRMSGNotifyACKDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<SVRMSGNotifyACK>
@@ -243,19 +243,19 @@ static void InitDefaultsSVRRadioMsgNotify() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_SVRRadioMsgNotify =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSVRRadioMsgNotify}, {}};
 
-static void InitDefaultsSVRUserPushSetNotify() {
+static void InitDefaultsSVRRadioPushSetNotify() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::im::_SVRUserPushSetNotify_default_instance_;
-    new (ptr) ::im::SVRUserPushSetNotify();
+    void* ptr = &::im::_SVRRadioPushSetNotify_default_instance_;
+    new (ptr) ::im::SVRRadioPushSetNotify();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::im::SVRUserPushSetNotify::InitAsDefaultInstance();
+  ::im::SVRRadioPushSetNotify::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_SVRUserPushSetNotify =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSVRUserPushSetNotify}, {}};
+::google::protobuf::internal::SCCInfo<0> scc_info_SVRRadioPushSetNotify =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSVRRadioPushSetNotify}, {}};
 
 static void InitDefaultsSVRMSGNotifyACK() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -297,7 +297,7 @@ void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_SVRMSGFriendRelationNotify.base);
   ::google::protobuf::internal::InitSCC(&scc_info_SVRMSGCommonMsgNotify.base);
   ::google::protobuf::internal::InitSCC(&scc_info_SVRRadioMsgNotify.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_SVRUserPushSetNotify.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SVRRadioPushSetNotify.base);
   ::google::protobuf::internal::InitSCC(&scc_info_SVRMSGNotifyACK.base);
   ::google::protobuf::internal::InitSCC(&scc_info_OnLoginResult.base);
 }
@@ -399,16 +399,20 @@ bool SVRRadioNotifyType_IsValid(int value) {
     case 12:
     case 13:
     case 14:
+    case 15:
+    case 16:
       return true;
     default:
       return false;
   }
 }
 
-bool SVRUserPushNotifyType_IsValid(int value) {
+bool SVRRadioPushSetNotifyType_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
+    case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -4703,23 +4707,25 @@ void SVRRadioMsgNotify::InternalSwap(SVRRadioMsgNotify* other) {
 
 // ===================================================================
 
-void SVRUserPushSetNotify::InitAsDefaultInstance() {
+void SVRRadioPushSetNotify::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int SVRUserPushSetNotify::kSMsgIdFieldNumber;
-const int SVRUserPushSetNotify::kSUserIdFieldNumber;
-const int SVRUserPushSetNotify::kPushTypeFieldNumber;
-const int SVRUserPushSetNotify::kMsgTimeFieldNumber;
+const int SVRRadioPushSetNotify::kSMsgIdFieldNumber;
+const int SVRRadioPushSetNotify::kSUserIdFieldNumber;
+const int SVRRadioPushSetNotify::kSRadioIdFieldNumber;
+const int SVRRadioPushSetNotify::kNotifyTypeFieldNumber;
+const int SVRRadioPushSetNotify::kStatusFieldNumber;
+const int SVRRadioPushSetNotify::kMsgTimeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-SVRUserPushSetNotify::SVRUserPushSetNotify()
+SVRRadioPushSetNotify::SVRRadioPushSetNotify()
   : ::google::protobuf::MessageLite(), _internal_metadata_(NULL) {
   ::google::protobuf::internal::InitSCC(
-      &protobuf_im_2einner_2eproto::scc_info_SVRUserPushSetNotify.base);
+      &protobuf_im_2einner_2eproto::scc_info_SVRRadioPushSetNotify.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(constructor:im.SVRRadioPushSetNotify)
 }
-SVRUserPushSetNotify::SVRUserPushSetNotify(const SVRUserPushSetNotify& from)
+SVRRadioPushSetNotify::SVRRadioPushSetNotify(const SVRRadioPushSetNotify& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
@@ -4731,54 +4737,61 @@ SVRUserPushSetNotify::SVRUserPushSetNotify(const SVRUserPushSetNotify& from)
   if (from.suserid().size() > 0) {
     suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
   }
-  ::memcpy(&msgtime_, &from.msgtime_,
-    static_cast<size_t>(reinterpret_cast<char*>(&pushtype_) -
-    reinterpret_cast<char*>(&msgtime_)) + sizeof(pushtype_));
-  // @@protoc_insertion_point(copy_constructor:im.SVRUserPushSetNotify)
+  sradioid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.sradioid().size() > 0) {
+    sradioid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.sradioid_);
+  }
+  ::memcpy(&notifytype_, &from.notifytype_,
+    static_cast<size_t>(reinterpret_cast<char*>(&msgtime_) -
+    reinterpret_cast<char*>(&notifytype_)) + sizeof(msgtime_));
+  // @@protoc_insertion_point(copy_constructor:im.SVRRadioPushSetNotify)
 }
 
-void SVRUserPushSetNotify::SharedCtor() {
+void SVRRadioPushSetNotify::SharedCtor() {
   smsgid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   suserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&msgtime_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&pushtype_) -
-      reinterpret_cast<char*>(&msgtime_)) + sizeof(pushtype_));
+  sradioid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&notifytype_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&msgtime_) -
+      reinterpret_cast<char*>(&notifytype_)) + sizeof(msgtime_));
 }
 
-SVRUserPushSetNotify::~SVRUserPushSetNotify() {
-  // @@protoc_insertion_point(destructor:im.SVRUserPushSetNotify)
+SVRRadioPushSetNotify::~SVRRadioPushSetNotify() {
+  // @@protoc_insertion_point(destructor:im.SVRRadioPushSetNotify)
   SharedDtor();
 }
 
-void SVRUserPushSetNotify::SharedDtor() {
+void SVRRadioPushSetNotify::SharedDtor() {
   smsgid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   suserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  sradioid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-void SVRUserPushSetNotify::SetCachedSize(int size) const {
+void SVRRadioPushSetNotify::SetCachedSize(int size) const {
   _cached_size_.Set(size);
 }
-const SVRUserPushSetNotify& SVRUserPushSetNotify::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_im_2einner_2eproto::scc_info_SVRUserPushSetNotify.base);
+const SVRRadioPushSetNotify& SVRRadioPushSetNotify::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_im_2einner_2eproto::scc_info_SVRRadioPushSetNotify.base);
   return *internal_default_instance();
 }
 
 
-void SVRUserPushSetNotify::Clear() {
-// @@protoc_insertion_point(message_clear_start:im.SVRUserPushSetNotify)
+void SVRRadioPushSetNotify::Clear() {
+// @@protoc_insertion_point(message_clear_start:im.SVRRadioPushSetNotify)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   smsgid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   suserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&msgtime_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&pushtype_) -
-      reinterpret_cast<char*>(&msgtime_)) + sizeof(pushtype_));
+  sradioid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&notifytype_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&msgtime_) -
+      reinterpret_cast<char*>(&notifytype_)) + sizeof(msgtime_));
   _internal_metadata_.Clear();
 }
 
-bool SVRUserPushSetNotify::MergePartialFromCodedStream(
+bool SVRRadioPushSetNotify::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
@@ -4788,7 +4801,7 @@ bool SVRUserPushSetNotify::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(parse_start:im.SVRRadioPushSetNotify)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -4803,7 +4816,7 @@ bool SVRUserPushSetNotify::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->smsgid().data(), static_cast<int>(this->smsgid().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "im.SVRUserPushSetNotify.sMsgId"));
+            "im.SVRRadioPushSetNotify.sMsgId"));
         } else {
           goto handle_unusual;
         }
@@ -4819,32 +4832,62 @@ bool SVRUserPushSetNotify::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->suserid().data(), static_cast<int>(this->suserid().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "im.SVRUserPushSetNotify.sUserId"));
+            "im.SVRRadioPushSetNotify.sUserId"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .im.SVRUserPushNotifyType pushType = 3;
+      // string sRadioId = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_sradioid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->sradioid().data(), static_cast<int>(this->sradioid().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "im.SVRRadioPushSetNotify.sRadioId"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .im.SVRRadioPushSetNotifyType notifyType = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_pushtype(static_cast< ::im::SVRUserPushNotifyType >(value));
+          set_notifytype(static_cast< ::im::SVRRadioPushSetNotifyType >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // uint64 msgTime = 4;
-      case 4: {
+      // uint32 status = 5;
+      case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(40u /* 40 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &status_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 msgTime = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(48u /* 48 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
@@ -4867,17 +4910,17 @@ bool SVRUserPushSetNotify::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(parse_success:im.SVRRadioPushSetNotify)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(parse_failure:im.SVRRadioPushSetNotify)
   return false;
 #undef DO_
 }
 
-void SVRUserPushSetNotify::SerializeWithCachedSizes(
+void SVRRadioPushSetNotify::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(serialize_start:im.SVRRadioPushSetNotify)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -4886,7 +4929,7 @@ void SVRUserPushSetNotify::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->smsgid().data(), static_cast<int>(this->smsgid().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "im.SVRUserPushSetNotify.sMsgId");
+      "im.SVRRadioPushSetNotify.sMsgId");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->smsgid(), output);
   }
@@ -4896,29 +4939,44 @@ void SVRUserPushSetNotify::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->suserid().data(), static_cast<int>(this->suserid().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "im.SVRUserPushSetNotify.sUserId");
+      "im.SVRRadioPushSetNotify.sUserId");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->suserid(), output);
   }
 
-  // .im.SVRUserPushNotifyType pushType = 3;
-  if (this->pushtype() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      3, this->pushtype(), output);
+  // string sRadioId = 3;
+  if (this->sradioid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->sradioid().data(), static_cast<int>(this->sradioid().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "im.SVRRadioPushSetNotify.sRadioId");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->sradioid(), output);
   }
 
-  // uint64 msgTime = 4;
+  // .im.SVRRadioPushSetNotifyType notifyType = 4;
+  if (this->notifytype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      4, this->notifytype(), output);
+  }
+
+  // uint32 status = 5;
+  if (this->status() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->status(), output);
+  }
+
+  // uint64 msgTime = 6;
   if (this->msgtime() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt64(4, this->msgtime(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->msgtime(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:im.SVRUserPushSetNotify)
+  // @@protoc_insertion_point(serialize_end:im.SVRRadioPushSetNotify)
 }
 
-size_t SVRUserPushSetNotify::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:im.SVRUserPushSetNotify)
+size_t SVRRadioPushSetNotify::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:im.SVRRadioPushSetNotify)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -4937,17 +4995,31 @@ size_t SVRUserPushSetNotify::ByteSizeLong() const {
         this->suserid());
   }
 
-  // uint64 msgTime = 4;
+  // string sRadioId = 3;
+  if (this->sradioid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->sradioid());
+  }
+
+  // .im.SVRRadioPushSetNotifyType notifyType = 4;
+  if (this->notifytype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->notifytype());
+  }
+
+  // uint32 status = 5;
+  if (this->status() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->status());
+  }
+
+  // uint64 msgTime = 6;
   if (this->msgtime() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt64Size(
         this->msgtime());
-  }
-
-  // .im.SVRUserPushNotifyType pushType = 3;
-  if (this->pushtype() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::EnumSize(this->pushtype());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -4955,13 +5027,13 @@ size_t SVRUserPushSetNotify::ByteSizeLong() const {
   return total_size;
 }
 
-void SVRUserPushSetNotify::CheckTypeAndMergeFrom(
+void SVRRadioPushSetNotify::CheckTypeAndMergeFrom(
     const ::google::protobuf::MessageLite& from) {
-  MergeFrom(*::google::protobuf::down_cast<const SVRUserPushSetNotify*>(&from));
+  MergeFrom(*::google::protobuf::down_cast<const SVRRadioPushSetNotify*>(&from));
 }
 
-void SVRUserPushSetNotify::MergeFrom(const SVRUserPushSetNotify& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:im.SVRUserPushSetNotify)
+void SVRRadioPushSetNotify::MergeFrom(const SVRRadioPushSetNotify& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:im.SVRRadioPushSetNotify)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4975,42 +5047,52 @@ void SVRUserPushSetNotify::MergeFrom(const SVRUserPushSetNotify& from) {
 
     suserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.suserid_);
   }
+  if (from.sradioid().size() > 0) {
+
+    sradioid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.sradioid_);
+  }
+  if (from.notifytype() != 0) {
+    set_notifytype(from.notifytype());
+  }
+  if (from.status() != 0) {
+    set_status(from.status());
+  }
   if (from.msgtime() != 0) {
     set_msgtime(from.msgtime());
   }
-  if (from.pushtype() != 0) {
-    set_pushtype(from.pushtype());
-  }
 }
 
-void SVRUserPushSetNotify::CopyFrom(const SVRUserPushSetNotify& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:im.SVRUserPushSetNotify)
+void SVRRadioPushSetNotify::CopyFrom(const SVRRadioPushSetNotify& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:im.SVRRadioPushSetNotify)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool SVRUserPushSetNotify::IsInitialized() const {
+bool SVRRadioPushSetNotify::IsInitialized() const {
   return true;
 }
 
-void SVRUserPushSetNotify::Swap(SVRUserPushSetNotify* other) {
+void SVRRadioPushSetNotify::Swap(SVRRadioPushSetNotify* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void SVRUserPushSetNotify::InternalSwap(SVRUserPushSetNotify* other) {
+void SVRRadioPushSetNotify::InternalSwap(SVRRadioPushSetNotify* other) {
   using std::swap;
   smsgid_.Swap(&other->smsgid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   suserid_.Swap(&other->suserid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
+  sradioid_.Swap(&other->sradioid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(notifytype_, other->notifytype_);
+  swap(status_, other->status_);
   swap(msgtime_, other->msgtime_);
-  swap(pushtype_, other->pushtype_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
-::std::string SVRUserPushSetNotify::GetTypeName() const {
-  return "im.SVRUserPushSetNotify";
+::std::string SVRRadioPushSetNotify::GetTypeName() const {
+  return "im.SVRRadioPushSetNotify";
 }
 
 
@@ -5631,8 +5713,8 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::SVRMSGCommonMsgNotify* Arena
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::SVRRadioMsgNotify* Arena::CreateMaybeMessage< ::im::SVRRadioMsgNotify >(Arena* arena) {
   return Arena::CreateInternal< ::im::SVRRadioMsgNotify >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::SVRUserPushSetNotify* Arena::CreateMaybeMessage< ::im::SVRUserPushSetNotify >(Arena* arena) {
-  return Arena::CreateInternal< ::im::SVRUserPushSetNotify >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::SVRRadioPushSetNotify* Arena::CreateMaybeMessage< ::im::SVRRadioPushSetNotify >(Arena* arena) {
+  return Arena::CreateInternal< ::im::SVRRadioPushSetNotify >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::im::SVRMSGNotifyACK* Arena::CreateMaybeMessage< ::im::SVRMSGNotifyACK >(Arena* arena) {
   return Arena::CreateInternal< ::im::SVRMSGNotifyACK >(arena);

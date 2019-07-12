@@ -18,8 +18,6 @@
 
 #define MIN_CACHE_CONN_CNT	2
 
-CacheManager* CacheManager::s_cache_manager = NULL;
-
 CacheConn::CacheConn(CachePool* pCachePool)
 {
 	m_pCachePool = pCachePool;
@@ -55,38 +53,49 @@ int CacheConn::Init()
 	// 200ms超时
 	struct timeval timeout = {0, 200000};
 	m_pContext = redisConnectWithTimeout(m_pCachePool->GetServerIP(), m_pCachePool->GetServerPort(), timeout);
-	if (!m_pContext || m_pContext->err) {
-		if (m_pContext) {
+	if (!m_pContext || m_pContext->err)
+	{
+		if (m_pContext) 
+		{
 			ErrLog("redisConnect failed: %s", m_pContext->errstr);
 			redisFree(m_pContext);
 			m_pContext = NULL;
-		} else {
+		}
+		else 
+		{
 			ErrLog("redisConnect failed");
 		}
-
 		return 1;
 	}
 
-	if(!m_pCachePool->GetPassWord().empty())
+	if(!m_pCachePool->GetPassWord().empty() || nullptr != m_pContext)
 	{
 		redisReply* reply = (redisReply *)redisCommand(m_pContext, "AUTH %s", m_pCachePool->GetPassWord().c_str());
-		if (reply && (reply->type == REDIS_REPLY_STATUS) && (strncmp(reply->str, "OK", 2) == 0)) {
+		if (reply && (reply->type == REDIS_REPLY_STATUS) && (strncmp(reply->str, "OK", 2) == 0))
+		{
 			freeReplyObject(reply);
-			
-		} else {
+		}
+		else
+		{
 			ErrLog("author failed");
 			return 2;
 		}
 	}
-		
-	redisReply* reply1 = (redisReply *)redisCommand(m_pContext, "SELECT %d", m_pCachePool->GetDBNum());
-	if (reply1 && (reply1->type == REDIS_REPLY_STATUS) && (strncmp(reply1->str, "OK", 2) == 0)) {
-		freeReplyObject(reply1);
-		return 0;
-	} else {
-		ErrLog("select cache db failed");
-		return 3;
+	if(nullptr != m_pContext)
+	{
+		redisReply* reply1 = (redisReply *)redisCommand(m_pContext, "SELECT %d", m_pCachePool->GetDBNum());
+		if (reply1 && (reply1->type == REDIS_REPLY_STATUS) && (strncmp(reply1->str, "OK", 2) == 0))
+		{
+			freeReplyObject(reply1);
+			return 0;
+		}
+		else
+		{
+			ErrLog("select cache db failed");
+			return 3;
+		}
 	}
+	return 4;
 }
 
 
@@ -951,6 +960,216 @@ REDIS_OPER_CODE CacheConn::smove(const std::string& srcKey, const std::string& d
 }
 
 
+// redis sorted set structure
+REDIS_OPER_CODE CacheConn::zadd(const std::string& key, const std::string& sMember, int nScore)
+{
+	if(Init())
+		return REDIS_OPER_CONNFAIL;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "ZADD %s %d %s", key.c_str(), nScore, sMember.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+
+	long long ret_value = reply->integer;
+	freeReplyObject(reply);
+	if(ret_value < 1)
+		return REDIS_OPER_NODATE;
+	return REDIS_OPER_OK;
+}
+
+REDIS_OPER_CODE CacheConn::zadd(const std::string& key, const std::map<string, int>& values)
+{
+	if(Init())
+		return REDIS_OPER_CONNFAIL;
+
+	char buf[128];
+	std::string strValue = "ZADD " + key;
+	for(auto& itor : values)
+	{
+		memset(buf, 128, 0);
+		snprintf(buf, sizeof(buf), "%d %s", itor.second, itor.first.c_str());
+		strValue = strValue + " " + buf;
+	}
+	DbgLog("value:%s", strValue.c_str());
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, strValue.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+
+	long long ret_value = reply->integer;
+	if(ret_value < 1)
+		return REDIS_OPER_NODATE;
+	freeReplyObject(reply);
+	return REDIS_OPER_OK;
+}
+
+// 获取元素个数
+REDIS_OPER_CODE CacheConn::zcard(const std::string& key, long& ret_value)
+{
+	if (Init())
+		return REDIS_OPER_CONNFAIL;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "ZCARD %s", key.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+	ret_value = reply->integer;
+	freeReplyObject(reply);
+	return REDIS_OPER_OK;
+}
+
+// 获取所有元素
+REDIS_OPER_CODE CacheConn::zrange(const std::string& key, std::vector<string>& values)
+{
+	if (Init())
+		return REDIS_OPER_CONNFAIL;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "ZRANGE %s 0 -1", key.c_str());
+	if (!reply) {
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+
+	if (reply->type == REDIS_REPLY_ARRAY)
+	{
+		for (size_t i = 0; i < reply->elements; i++)
+		{
+			redisReply* value_reply = reply->element[i];
+			std::string value1(value_reply->str, value_reply->len);
+			values.emplace_back(value1);
+		}
+		freeReplyObject(reply);
+		return REDIS_OPER_OK;
+	}
+
+	freeReplyObject(reply);
+	return REDIS_OPER_NODATE;
+}
+
+// 获取所有元素包含分数
+REDIS_OPER_CODE CacheConn::zrange(const std::string& key, std::map<string, int>& values)
+{
+	if (Init())
+		return REDIS_OPER_CONNFAIL;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "ZRANGE %s 0 -1 WITHSCORES", key.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+
+	if ( (reply->type == REDIS_REPLY_ARRAY) && (reply->elements % 2 == 0) ) 
+	{
+		for (size_t i = 0; i < reply->elements; i += 2) 
+		{
+			redisReply* field_reply = reply->element[i];
+			redisReply* value_reply = reply->element[i + 1];
+
+			std::string field(field_reply->str, field_reply->len);
+			std::string value1(value_reply->str, value_reply->len);
+			values.insert(make_pair(field, atoi(value1.c_str())));
+		}
+		freeReplyObject(reply);
+		return REDIS_OPER_OK;
+	}
+	freeReplyObject(reply);
+	return REDIS_OPER_NODATE;
+}
+
+// 删除元素
+REDIS_OPER_CODE CacheConn::zrem(const std::string& key, const std::vector<string>& values)
+{
+	if (Init()) 
+		return REDIS_OPER_CONNFAIL;
+
+	std::string strValue = "ZREM " + key;
+	for(auto& itor : values)
+		strValue = strValue + " " + itor;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, strValue.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+
+	long long ret_value = reply->integer;
+	freeReplyObject(reply);
+	if(ret_value < 1)
+		return REDIS_OPER_NODATE;
+	return REDIS_OPER_OK;
+}
+
+REDIS_OPER_CODE CacheConn::zrem(const std::string& key, const std::string& value)
+{
+	if (Init()) 
+		return REDIS_OPER_CONNFAIL;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "ZREM %s %s", key.c_str(), value.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+	long long ret_value = reply->integer;
+	freeReplyObject(reply);
+	if(ret_value < 1)
+		return REDIS_OPER_NODATE;
+	return REDIS_OPER_OK;
+}
+
+// 获取某个元素的分数
+REDIS_OPER_CODE CacheConn::zscore(const std::string& key, const std::string& sMember, int& nScore)
+{
+	if(Init())
+		return REDIS_OPER_CONNFAIL;
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "ZSCORE %s %s", key.c_str(), sMember.c_str());
+	if (!reply)
+	{
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return REDIS_OPER_DISCONN;
+	}
+
+	if (reply->type == REDIS_REPLY_STRING)
+	{
+		std::string value1(reply->str, reply->len);
+		nScore = atoi(value1.c_str());
+		freeReplyObject(reply);
+		return REDIS_OPER_OK;
+	}
+
+	freeReplyObject(reply);
+	return REDIS_OPER_NODATE;
+}
+
+
+
+
 
 
 ///////////////
@@ -981,14 +1200,11 @@ CachePool::~CachePool()
 
 int CachePool::Init()
 {
-	for (int i = 0; i < m_cur_conn_cnt; i++) {
+	for (int i = 0; i < m_cur_conn_cnt; i++) 
+	{
 		CacheConn* pConn = new CacheConn(this);
-		if (pConn->Init()) {
-			delete pConn;
-			return 1;
-		}
-
 		m_free_list.push_back(pConn);
+		pConn->Init();
 	}
 
 	log("cache pool: %s, list size: %lu", m_pool_name.c_str(), m_free_list.size());
@@ -1010,18 +1226,10 @@ CacheConn* CachePool::GetCacheConn()
 			CacheConn* pCacheConn = new CacheConn(this);
 			int ret = pCacheConn->Init();
 			if (ret) 
-			{
 				log("Init CacheConn failed");
-				delete pCacheConn;
-				m_free_notify.Unlock();
-				return NULL;
-			} 
-			else
-			{
-				m_free_list.push_back(pCacheConn);
-				m_cur_conn_cnt++;
-				log("new cache connection: %s, conn_cnt: %d", m_pool_name.c_str(), m_cur_conn_cnt);
-			}
+			m_free_list.push_back(pCacheConn);
+			m_cur_conn_cnt++;
+			log("new cache connection: %s, conn_cnt: %d", m_pool_name.c_str(), m_cur_conn_cnt);
 		}
 	}
 
@@ -1063,19 +1271,6 @@ CacheManager::~CacheManager()
 
 }
 
-CacheManager* CacheManager::getInstance()
-{
-	if (!s_cache_manager) {
-		s_cache_manager = new CacheManager();
-		if (s_cache_manager->Init()) {
-			delete s_cache_manager;
-			s_cache_manager = NULL;
-		}
-	}
-
-	return s_cache_manager;
-}
-
 int CacheManager::Init()
 {
 	CConfigFileReader config_file("server.conf");
@@ -1092,9 +1287,10 @@ int CacheManager::Init()
     char maxconncnt[64];
 	char password[64];
 	CStrExplode instances_name(cache_instances, ',');
-	for (uint32_t i = 0; i < instances_name.GetItemCnt(); i++) {
+	for (uint32_t i = 0; i < instances_name.GetItemCnt(); i++) 
+	{
 		char* pool_name = instances_name.GetItem(i);
-		//printf("%s", pool_name);
+		DbgLog("%s", pool_name);
 		snprintf(host, 64, "%s_host", pool_name);
 		snprintf(port, 64, "%s_port", pool_name);
 		snprintf(db, 64, "%s_db", pool_name);
@@ -1114,11 +1310,13 @@ int CacheManager::Init()
 
 		CachePool* pCachePool = new CachePool(pool_name, cache_host, atoi(str_cache_port),
 				atoi(str_cache_db), atoi(str_max_conn_cnt),str_password);
-		if (pCachePool->Init()) {
+		if (pCachePool->Init()) 
+		{
 			log("Init cache pool failed");
+			delete pCachePool;
+			pCachePool = nullptr;
 			return 3;
 		}
-
 		m_cache_pool_map.insert(make_pair(pool_name, pCachePool));
 	}
 

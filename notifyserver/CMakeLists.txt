@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 PROJECT(offlineMsg)
-
+#SET(CMAKE_CXX_COMPILER "/usr/local/gcc/bin/g++")
+#SET(CMAKE_C_COMPILER "/usr/local/gcc/bin/gcc")
 SET(ACL_CPP_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../base/acl/lib_acl_cpp)
 SET(ACL_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../base/acl/lib_acl)
 SET(IM_PB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../base/pb) 
@@ -29,7 +30,7 @@ INCLUDE_DIRECTORIES(
 	${COMMON_LIB_DIR}
 )
 
-LINK_DIRECTORIES(. ./../lib ./../../lib /usr/local/lib)
+LINK_DIRECTORIES(. ./../lib /usr/local/lib)
 
 foreach(_target  notify_server 
 	notify_client)
@@ -44,8 +45,7 @@ foreach(_target  notify_server
 	"${_target}.cc")
 #if(${_target} STREQUAL "notify_server")
 	TARGET_LINK_LIBRARIES(${_target}  _acl_cpp _acl 
-	       	protobuf-lite database base commongrpc zookeeper_mt curl mongocxx bsoncxx 
-		mongoc-1.0 bson-1.0 slog pthread dl uuid grpc++ grpc)	
+	       	protobuf-lite base commongrpc zookeeper_mt curl slog pthread dl uuid grpc++ grpc)	
 	#   else()
 	#TARGET_LINK_LIBRARIES(${_target}  protobuf grpc++ grpc)
 	#    endif()

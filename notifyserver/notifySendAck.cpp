@@ -32,7 +32,7 @@ bool CNotifySendAck::RegistPacketExecutor(void)
 	CmdRegist(im::SVR_FRIEND_RELATION_NOTIFY_ACK, m_nActualServiceInst,  CommandProc(&CNotifySendAck::OnFriendRelationAck));
 	CmdRegist(im::SVR_COMMON_MSG_NOTIFY_ACK, m_nActualServiceInst,  CommandProc(&CNotifySendAck::OnCommonMsgNotifyAck));
 	CmdRegist(im::SVR_RADIO_RELATIN_NOTIFY_ACK, m_nActualServiceInst,  CommandProc(&CNotifySendAck::OnRadioMsgNotifyAck));
-	CmdRegist(im::SVR_USER_PUSHSET_NOTIFY_ACK, m_nActualServiceInst,  CommandProc(&CNotifySendAck::OnUserPushSetNotifyAck));
+	CmdRegist(im::SVR_RADIO_PUSHSET_NOTIFY_ACK, m_nActualServiceInst,  CommandProc(&CNotifySendAck::OnUserPushSetNotifyAck));
 	return true;
 }
 
